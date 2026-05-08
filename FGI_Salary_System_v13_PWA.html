@@ -10,73 +10,25 @@
 <meta name="apple-mobile-web-app-title" content="FGI Salary">
 <link rel="manifest" id="fgi-salary-manifest">
 <link rel="apple-touch-icon" id="fgi-salary-icon">
-<title>FGI Salary System v13</title>
+<title>FGI Salary System v14</title>
 <script>
 (function(){
-  // ── Icon SVG ──
   var svg='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="80" fill="#0f2744"/><rect x="0" y="400" width="512" height="20" fill="#c9a84c"/><text x="256" y="310" font-family="Arial Black,sans-serif" font-weight="900" font-size="220" fill="#c9a84c" text-anchor="middle">FGI</text><text x="256" y="385" font-family="Arial,sans-serif" font-size="55" fill="#f0d080" text-anchor="middle" opacity="0.9">SALARY</text></svg>';
   var url='data:image/svg+xml;base64,'+btoa(svg);
   var al=document.getElementById('fgi-salary-icon');
   if(al){al.href=url;al.setAttribute('sizes','512x512');}
-
-  // ── Manifest ──
-  var m={
-    name:'FGI Salary System',
-    short_name:'FGI Salary',
-    description:'Faisal Goraya Industry - Salary Management',
-    start_url:'.',
-    display:'standalone',
-    orientation:'portrait',
-    background_color:'#0f2744',
-    theme_color:'#0f2744',
-    icons:[
-      {src:url,sizes:'192x192',type:'image/svg+xml'},
-      {src:url,sizes:'512x512',type:'image/svg+xml'}
-    ]
-  };
+  var m={name:'FGI Salary System',short_name:'FGI Salary',description:'Faisal Goraya Industry - Salary Management',start_url:'.',display:'standalone',orientation:'portrait',background_color:'#0f2744',theme_color:'#0f2744',icons:[{src:url,sizes:'192x192',type:'image/svg+xml'},{src:url,sizes:'512x512',type:'image/svg+xml'}]};
   var ml=document.getElementById('fgi-salary-manifest');
   if(ml){try{var b=new Blob([JSON.stringify(m)],{type:'application/json'});ml.href=URL.createObjectURL(b);}catch(e){}}
-
-  // ── Service Worker ──
   if('serviceWorker' in navigator){
     var swCode=`
-const CACHE='fgi-salary-v13';
-const CDNS=[
-  'https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.2/sql-wasm.js',
-  'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js',
-  'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js',
-  'https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Nunito:wght@400;600;700;800&display=swap'
-];
-self.addEventListener('install',e=>{
-  e.waitUntil(caches.open(CACHE).then(c=>{
-    return Promise.allSettled(CDNS.map(u=>c.add(u).catch(()=>null)));
-  }).then(()=>self.skipWaiting()));
-});
-self.addEventListener('activate',e=>{
-  e.waitUntil(caches.keys().then(keys=>
-    Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))
-  ).then(()=>self.clients.claim()));
-});
-self.addEventListener('fetch',e=>{
-  e.respondWith(caches.match(e.request).then(cached=>{
-    if(cached)return cached;
-    return fetch(e.request).then(resp=>{
-      if(resp&&resp.status===200&&e.request.url.startsWith('https')){
-        var rc=resp.clone();
-        caches.open(CACHE).then(c=>c.put(e.request,rc));
-      }
-      return resp;
-    }).catch(()=>cached||new Response('Offline',{status:503}));
-  }));
-});
+const CACHE='fgi-salary-v14';
+const CDNS=['https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.2/sql-wasm.js','https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js','https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js','https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Nunito:wght@400;600;700;800&display=swap'];
+self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>{return Promise.allSettled(CDNS.map(u=>c.add(u).catch(()=>null)));}).then(()=>self.skipWaiting()));});
+self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()));});
+self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(cached=>{if(cached)return cached;return fetch(e.request).then(resp=>{if(resp&&resp.status===200&&e.request.url.startsWith('https')){var rc=resp.clone();caches.open(CACHE).then(c=>c.put(e.request,rc));}return resp;}).catch(()=>cached||new Response('Offline',{status:503}));}));});
 `;
-    try{
-      var swBlob=new Blob([swCode],{type:'application/javascript'});
-      var swUrl=URL.createObjectURL(swBlob);
-      navigator.serviceWorker.register(swUrl,{scope:'./'})
-        .then(function(reg){console.log('FGI Salary SW registered',reg.scope);})
-        .catch(function(e){console.warn('SW reg failed (local file):',e.message);});
-    }catch(e){console.warn('SW blob error:',e);}
+    try{var swBlob=new Blob([swCode],{type:'application/javascript'});var swUrl=URL.createObjectURL(swBlob);navigator.serviceWorker.register(swUrl,{scope:'./'}).then(function(reg){console.log('FGI Salary SW registered',reg.scope);}).catch(function(e){console.warn('SW reg failed:',e.message);});}catch(e){console.warn('SW blob error:',e);}
   }
 })();
 </script>
@@ -100,292 +52,83 @@ self.addEventListener('fetch',e=>{
     --radius: 14px;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: 'Nunito', sans-serif;
-    background: var(--cream);
-    color: var(--navy);
-    min-height: 100vh;
-  }
+  body { font-family: 'Nunito', sans-serif; background: var(--cream); color: var(--navy); min-height: 100vh; }
 
-  /* ===== LOGIN PAGE ===== */
-  #loginPage {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(135deg, var(--navy) 60%, #1a3a60 100%);
-    position: relative;
-    overflow: hidden;
-  }
-  #loginPage::before {
-    content: '';
-    position: absolute;
-    top: -80px; right: -80px;
-    width: 340px; height: 340px;
-    background: radial-gradient(circle, rgba(201,168,76,0.18) 0%, transparent 70%);
-    border-radius: 50%;
-  }
-  #loginPage::after {
-    content: '';
-    position: absolute;
-    bottom: -60px; left: -60px;
-    width: 260px; height: 260px;
-    background: radial-gradient(circle, rgba(201,168,76,0.12) 0%, transparent 70%);
-    border-radius: 50%;
-  }
-  .login-card {
-    background: var(--white);
-    border-radius: 22px;
-    padding: 52px 48px 44px;
-    width: 400px;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.35);
-    position: relative;
-    z-index: 2;
-    text-align: center;
-  }
-  .login-logo {
-    font-family: 'Playfair Display', serif;
-    font-size: 42px;
-    font-weight: 900;
-    color: var(--gold);
-    letter-spacing: 3px;
-    margin-bottom: 4px;
-  }
-  .login-subtitle {
-    font-size: 13px;
-    color: var(--slate);
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    margin-bottom: 36px;
-  }
-  .login-card h2 {
-    font-size: 20px;
-    color: var(--navy);
-    margin-bottom: 28px;
-    font-weight: 700;
-  }
-  .form-group { margin-bottom: 18px; text-align: left; }
-  .form-group label {
-    display: block;
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--slate);
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    margin-bottom: 7px;
-  }
-  .form-group input {
-    width: 100%;
-    padding: 13px 16px;
-    border: 2px solid #dde4ef;
-    border-radius: 10px;
-    font-family: 'Nunito', sans-serif;
-    font-size: 15px;
-    color: var(--navy);
-    transition: border-color 0.2s;
-    outline: none;
-    background: #f8faff;
-  }
-  .form-group input:focus { border-color: var(--gold); background: #fffef8; }
-  .btn-primary {
-    width: 100%;
-    padding: 14px;
-    background: linear-gradient(135deg, var(--navy) 0%, #1a3a60 100%);
-    color: var(--gold);
-    border: none;
-    border-radius: 10px;
-    font-family: 'Nunito', sans-serif;
-    font-size: 16px;
-    font-weight: 800;
-    letter-spacing: 1px;
-    cursor: pointer;
-    margin-top: 8px;
-    transition: opacity 0.2s, transform 0.1s;
-  }
-  .btn-primary:hover { opacity: 0.92; transform: translateY(-1px); }
-  .error-msg {
-    color: var(--red);
-    font-size: 13px;
-    margin-top: 10px;
-    font-weight: 600;
-    min-height: 20px;
-  }
-
-  /* ===== MAIN APP ===== */
-  #app { display: none; min-height: 100vh; }
-  .topbar {
-    background: var(--navy);
-    color: var(--white);
-    padding: 0 32px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    height: 64px;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.2);
-    position: sticky; top: 0; z-index: 100;
-  }
-  .topbar-brand {
-    font-family: 'Playfair Display', serif;
-    font-size: 22px;
-    font-weight: 900;
-    color: var(--gold);
-    letter-spacing: 2px;
-  }
-  .topbar-brand span {
-    font-family: 'Nunito', sans-serif;
-    font-size: 12px;
-    color: #adc4e0;
-    display: block;
-    letter-spacing: 1px;
-    font-weight: 600;
-    margin-top: -4px;
-  }
-  .nav-tabs {
-    display: flex;
-    gap: 6px;
-  }
-  .nav-tab {
+  /* DRIVE STATUS BAR */
+  #driveStatusBar {
+    display: none;
     padding: 8px 20px;
-    border-radius: 8px;
-    background: transparent;
-    color: #adc4e0;
-    border: none;
-    font-family: 'Nunito', sans-serif;
-    font-size: 14px;
+    font-size: 12px;
     font-weight: 700;
-    cursor: pointer;
-    transition: all 0.2s;
+    text-align: center;
     letter-spacing: 0.5px;
   }
+  #driveStatusBar.connected { background: #1a4a2a; color: #80e0a0; }
+  #driveStatusBar.disconnected { background: #2a2a3a; color: #adc4e0; }
+  #driveStatusBar.error { background: #4a1a1a; color: #ff9090; cursor: pointer; }
+  #driveStatusBar.syncing { background: #2a3a1a; color: #c0d880; }
+
+  /* LOGIN PAGE */
+  #loginPage { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, var(--navy) 60%, #1a3a60 100%); position: relative; overflow: hidden; flex-direction: column; gap: 0; }
+  #loginPage::before { content: ''; position: absolute; top: -80px; right: -80px; width: 340px; height: 340px; background: radial-gradient(circle, rgba(201,168,76,0.18) 0%, transparent 70%); border-radius: 50%; }
+  #loginPage::after { content: ''; position: absolute; bottom: -60px; left: -60px; width: 260px; height: 260px; background: radial-gradient(circle, rgba(201,168,76,0.12) 0%, transparent 70%); border-radius: 50%; }
+  .login-card { background: var(--white); border-radius: 22px; padding: 52px 48px 44px; width: 400px; box-shadow: 0 20px 60px rgba(0,0,0,0.35); position: relative; z-index: 2; text-align: center; }
+  .login-logo { font-family: 'Playfair Display', serif; font-size: 42px; font-weight: 900; color: var(--gold); letter-spacing: 3px; margin-bottom: 4px; }
+  .login-subtitle { font-size: 13px; color: var(--slate); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 36px; }
+  .login-card h2 { font-size: 20px; color: var(--navy); margin-bottom: 28px; font-weight: 700; }
+  .form-group { margin-bottom: 18px; text-align: left; }
+  .form-group label { display: block; font-size: 12px; font-weight: 700; color: var(--slate); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 7px; }
+  .form-group input { width: 100%; padding: 13px 16px; border: 2px solid #dde4ef; border-radius: 10px; font-family: 'Nunito', sans-serif; font-size: 15px; color: var(--navy); transition: border-color 0.2s; outline: none; background: #f8faff; }
+  .form-group input:focus { border-color: var(--gold); background: #fffef8; }
+  .btn-primary { width: 100%; padding: 14px; background: linear-gradient(135deg, var(--navy) 0%, #1a3a60 100%); color: var(--gold); border: none; border-radius: 10px; font-family: 'Nunito', sans-serif; font-size: 16px; font-weight: 800; letter-spacing: 1px; cursor: pointer; margin-top: 8px; transition: opacity 0.2s, transform 0.1s; }
+  .btn-primary:hover { opacity: 0.92; transform: translateY(-1px); }
+  .error-msg { color: var(--red); font-size: 13px; margin-top: 10px; font-weight: 600; min-height: 20px; }
+
+  /* RESET PANEL */
+  #resetPanel { display: none; background: var(--white); border-radius: 22px; padding: 40px 48px; width: 400px; box-shadow: 0 20px 60px rgba(0,0,0,0.35); position: relative; z-index: 2; flex-direction: column; gap: 14px; }
+  #resetPanel h3 { font-family: 'Playfair Display', serif; font-size: 20px; color: var(--navy); margin-bottom: 4px; }
+  #resetQDisplay { font-size: 14px; font-weight: 700; color: var(--slate); padding: 10px 14px; background: #f0f5ff; border-radius: 8px; margin-bottom: 8px; }
+  .reset-input { width: 100%; padding: 12px 14px; border: 2px solid #dde4ef; border-radius: 10px; font-family: 'Nunito', sans-serif; font-size: 14px; color: var(--navy); outline: none; background: #f8faff; margin-bottom: 8px; }
+  .reset-input:focus { border-color: var(--gold); }
+  #resetErr, #resetErr2 { color: var(--red); font-size: 12px; font-weight: 700; min-height: 18px; }
+  .btn-reset-back { background: none; border: none; color: var(--slate); font-size: 13px; font-weight: 700; cursor: pointer; text-decoration: underline; margin-top: 4px; }
+
+  /* MAIN APP */
+  #app { display: none; min-height: 100vh; }
+  .topbar { background: var(--navy); color: var(--white); padding: 0 32px; display: flex; align-items: center; justify-content: space-between; height: 64px; box-shadow: 0 2px 12px rgba(0,0,0,0.2); position: sticky; top: 0; z-index: 100; }
+  .topbar-brand { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 900; color: var(--gold); letter-spacing: 2px; }
+  .topbar-brand span { font-family: 'Nunito', sans-serif; font-size: 12px; color: #adc4e0; display: block; letter-spacing: 1px; font-weight: 600; margin-top: -4px; }
+  .nav-tabs { display: flex; gap: 6px; }
+  .nav-tab { padding: 8px 20px; border-radius: 8px; background: transparent; color: #adc4e0; border: none; font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s; letter-spacing: 0.5px; }
   .nav-tab:hover { background: rgba(201,168,76,0.12); color: var(--gold-light); }
   .nav-tab.active { background: var(--gold); color: var(--navy); }
-  .logout-btn {
-    padding: 7px 16px;
-    background: rgba(176,48,48,0.2);
-    color: #ff9090;
-    border: 1px solid rgba(176,48,48,0.3);
-    border-radius: 8px;
-    font-family: 'Nunito', sans-serif;
-    font-size: 13px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
+  .logout-btn { padding: 7px 16px; background: rgba(176,48,48,0.2); color: #ff9090; border: 1px solid rgba(176,48,48,0.3); border-radius: 8px; font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
   .logout-btn:hover { background: var(--red); color: white; }
 
-  /* ===== PAGE CONTENT ===== */
+  /* PAGES */
   .page { display: none; padding: 28px 32px; max-width: 1400px; margin: 0 auto; }
   .page.active { display: block; }
+  .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 2px solid var(--light); }
+  .page-title { font-family: 'Playfair Display', serif; font-size: 28px; color: var(--navy); font-weight: 700; }
+  .page-title span { font-family: 'Nunito', sans-serif; font-size: 13px; color: var(--slate); display: block; font-weight: 600; margin-top: 2px; }
 
-  .page-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 24px;
-    padding-bottom: 16px;
-    border-bottom: 2px solid var(--light);
-  }
-  .page-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 28px;
-    color: var(--navy);
-    font-weight: 700;
-  }
-  .page-title span {
-    font-family: 'Nunito', sans-serif;
-    font-size: 13px;
-    color: var(--slate);
-    display: block;
-    font-weight: 600;
-    margin-top: 2px;
-  }
+  /* CARD */
+  .card { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); padding: 28px; margin-bottom: 24px; }
+  .card-title { font-size: 14px; font-weight: 800; color: var(--gold); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid var(--light); }
 
-  /* ===== DATA ENTRY FORM ===== */
-  .card {
-    background: var(--white);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    padding: 28px;
-    margin-bottom: 24px;
-  }
-  .card-title {
-    font-size: 14px;
-    font-weight: 800;
-    color: var(--gold);
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    margin-bottom: 20px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid var(--light);
-  }
-
-  .form-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 16px;
-  }
+  .form-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
   .form-grid .full { grid-column: 1 / -1; }
   .form-grid .half { grid-column: span 2; }
-
   .field { display: flex; flex-direction: column; gap: 5px; }
-  .field label {
-    font-size: 11px;
-    font-weight: 700;
-    color: var(--slate);
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-  }
-  .field input, .field select {
-    padding: 10px 13px;
-    border: 2px solid #dde4ef;
-    border-radius: 9px;
-    font-family: 'Nunito', sans-serif;
-    font-size: 14px;
-    color: var(--navy);
-    background: #f8faff;
-    outline: none;
-    transition: border-color 0.2s, background 0.2s;
-  }
-  .field input:focus, .field select:focus {
-    border-color: var(--gold);
-    background: #fffef8;
-  }
-  .field input[readonly] {
-    background: linear-gradient(135deg, #eaf5ee, #f0f8f4);
-    color: var(--green);
-    font-weight: 800;
-    border-color: #b8dfc8;
-    cursor: default;
-  }
-  .field input.auto-calc {
-    background: linear-gradient(135deg, #edf3fb, #f0f5ff);
-    color: var(--navy);
-    font-weight: 700;
-    border-color: #b8ccee;
-  }
-  .field-note {
-    font-size: 10px;
-    color: #8899bb;
-    margin-top: 1px;
-  }
+  .field label { font-size: 11px; font-weight: 700; color: var(--slate); text-transform: uppercase; letter-spacing: 0.8px; }
+  .field input, .field select { padding: 10px 13px; border: 2px solid #dde4ef; border-radius: 9px; font-family: 'Nunito', sans-serif; font-size: 14px; color: var(--navy); background: #f8faff; outline: none; transition: border-color 0.2s, background 0.2s; }
+  .field input:focus, .field select:focus { border-color: var(--gold); background: #fffef8; }
+  .field input[readonly] { background: linear-gradient(135deg, #eaf5ee, #f0f8f4); color: var(--green); font-weight: 800; border-color: #b8dfc8; cursor: default; }
+  .field input.auto-calc { background: linear-gradient(135deg, #edf3fb, #f0f5ff); color: var(--navy); font-weight: 700; border-color: #b8ccee; }
+  .field-note { font-size: 10px; color: #8899bb; margin-top: 1px; }
 
-  .btn-row {
-    display: flex;
-    gap: 12px;
-    margin-top: 20px;
-    flex-wrap: wrap;
-  }
-  .btn {
-    padding: 11px 24px;
-    border-radius: 9px;
-    border: none;
-    font-family: 'Nunito', sans-serif;
-    font-size: 14px;
-    font-weight: 800;
-    cursor: pointer;
-    transition: all 0.18s;
-    letter-spacing: 0.5px;
-  }
+  .btn-row { display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap; }
+  .btn { padding: 11px 24px; border-radius: 9px; border: none; font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 800; cursor: pointer; transition: all 0.18s; letter-spacing: 0.5px; }
   .btn-save { background: var(--navy); color: var(--gold); }
   .btn-save:hover { background: #1a3a60; }
   .btn-clear { background: #e8ecf4; color: var(--slate); }
@@ -398,180 +141,49 @@ self.addEventListener('fetch',e=>{
   .btn-danger:hover { background: #8a2020; }
   .btn-sm { padding: 7px 14px; font-size: 12px; }
 
-  /* ===== WORKER TABLE ===== */
+  /* DRIVE BADGE */
+  .drive-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 800; letter-spacing: 0.5px; }
+  .drive-badge.connected { background: #1a4a2a; color: #80e0a0; }
+  .drive-badge.disconnected { background: #2a2a3a; color: #adc4e0; }
+
+  /* WORKER TABLE */
   .table-wrap { overflow-x: auto; }
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 13px;
-  }
-  thead th {
-    background: var(--navy);
-    color: var(--gold);
-    padding: 11px 12px;
-    text-align: left;
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    font-weight: 700;
-    white-space: nowrap;
-  }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  thead th { background: var(--navy); color: var(--gold); padding: 11px 12px; text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px; font-weight: 700; white-space: nowrap; }
   tbody tr { border-bottom: 1px solid #e8ecf4; }
   tbody tr:hover { background: #f4f8ff; }
   tbody td { padding: 10px 12px; vertical-align: middle; }
   tbody td .action-btns { display: flex; gap: 6px; }
 
-  /* ===== REPORT PAGE ===== */
-  .filter-row {
-    display: flex;
-    gap: 14px;
-    flex-wrap: wrap;
-    align-items: flex-end;
-    margin-bottom: 20px;
-  }
+  /* REPORT */
+  .filter-row { display: flex; gap: 14px; flex-wrap: wrap; align-items: flex-end; margin-bottom: 20px; }
   .filter-row .field { min-width: 180px; }
-
-  .report-cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 16px;
-    margin-bottom: 28px;
-  }
-  .report-worker-card {
-    background: var(--white);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    padding: 20px;
-    cursor: pointer;
-    border: 2px solid transparent;
-    transition: border-color 0.2s, transform 0.15s;
-  }
+  .report-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; margin-bottom: 28px; }
+  .report-worker-card { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px; cursor: pointer; border: 2px solid transparent; transition: border-color 0.2s, transform 0.15s; }
   .report-worker-card:hover { border-color: var(--gold); transform: translateY(-2px); }
-  .report-worker-card .worker-name {
-    font-family: 'Playfair Display', serif;
-    font-size: 17px;
-    font-weight: 700;
-    color: var(--navy);
-    margin-bottom: 4px;
-  }
+  .report-worker-card .worker-name { font-family: 'Playfair Display', serif; font-size: 17px; font-weight: 700; color: var(--navy); margin-bottom: 4px; }
   .report-worker-card .worker-date { font-size: 12px; color: var(--slate); margin-bottom: 10px; }
-  .report-worker-card .worker-amount {
-    font-size: 20px;
-    font-weight: 800;
-    color: var(--green);
-  }
+  .report-worker-card .worker-amount { font-size: 20px; font-weight: 800; color: var(--green); }
   .report-worker-card .worker-amount small { font-size: 12px; color: var(--slate); font-weight: 600; }
 
-  /* ===== PRINT PREVIEW MODAL ===== */
-  #printModal {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(10,20,40,0.85);
-    z-index: 500;
-    flex-direction: column;
-  }
+  /* PRINT MODAL */
+  #printModal { display: none; position: fixed; inset: 0; background: rgba(10,20,40,0.85); z-index: 500; flex-direction: column; }
   #printModal.open { display: flex; }
-  .print-modal-bar {
-    background: var(--navy);
-    padding: 14px 24px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    flex-shrink: 0;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.3);
-  }
-  .print-modal-bar .bar-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 18px;
-    color: var(--gold);
-    font-weight: 700;
-  }
+  .print-modal-bar { background: var(--navy); padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-shrink: 0; box-shadow: 0 2px 12px rgba(0,0,0,0.3); }
+  .print-modal-bar .bar-title { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--gold); font-weight: 700; }
   .print-modal-bar .bar-btns { display: flex; gap: 10px; }
-  .print-modal-body {
-    flex: 1;
-    overflow-y: auto;
-    padding: 32px 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background: #2a3a50;
-  }
-  .print-page {
-    width: 210mm;
-    min-height: 270mm;
-    padding: 14mm 16mm;
-    background: #fff;
-    box-shadow: 0 8px 40px rgba(0,0,0,0.4);
-    margin-bottom: 28px;
-    box-sizing: border-box;
-    font-family: 'Nunito', sans-serif;
-    color: #000;
-  }
-  .print-header {
-    text-align: center;
-    border-bottom: 3px double #000;
-    padding-bottom: 10px;
-    margin-bottom: 14px;
-  }
-  .print-header h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: 22pt;
-    font-weight: 900;
-    letter-spacing: 2px;
-    color: #000;
-    margin: 0;
-  }
-  .print-header p {
-    font-size: 9pt;
-    letter-spacing: 2px;
-    color: #333;
-    margin: 4px 0 0;
-  }
-  .print-info {
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 6px;
-    font-size: 9pt;
-    margin-bottom: 14px;
-    background: #f5f5f5;
-    padding: 8px 12px;
-    border-radius: 6px;
-  }
-  .print-title {
-    font-size: 11pt;
-    font-weight: 800;
-    margin-bottom: 10px;
-    color: #000;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-  }
+  .print-modal-body { flex: 1; overflow-y: auto; padding: 32px 0; display: flex; flex-direction: column; align-items: center; background: #2a3a50; }
+  .print-page { width: 210mm; min-height: 270mm; padding: 14mm 16mm; background: #fff; box-shadow: 0 8px 40px rgba(0,0,0,0.4); margin-bottom: 28px; box-sizing: border-box; font-family: 'Nunito', sans-serif; color: #000; }
+  .print-header { text-align: center; border-bottom: 3px double #000; padding-bottom: 10px; margin-bottom: 14px; }
+  .print-header h1 { font-family: 'Playfair Display', serif; font-size: 22pt; font-weight: 900; letter-spacing: 2px; color: #000; margin: 0; }
+  .print-header p { font-size: 9pt; letter-spacing: 2px; color: #333; margin: 4px 0 0; }
+  .print-info { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 6px; font-size: 9pt; margin-bottom: 14px; background: #f5f5f5; padding: 8px 12px; border-radius: 6px; }
   .print-table { width: 100%; border-collapse: collapse; font-size: 9pt; }
-  .print-table th {
-    background: #1a1a1a;
-    color: #fff;
-    padding: 7px 8px;
-    text-align: left;
-    font-size: 8pt;
-    letter-spacing: 0.5px;
-  }
+  .print-table th { background: #1a1a1a; color: #fff; padding: 7px 8px; text-align: left; font-size: 8pt; letter-spacing: 0.5px; }
   .print-table td { padding: 6px 8px; border-bottom: 1px solid #ddd; }
   .print-table tr:nth-child(even) td { background: #f9f9f9; }
-  .print-grand td {
-    background: #c9a84c !important;
-    color: #000 !important;
-    font-weight: 900 !important;
-    font-size: 11pt !important;
-  }
-  .print-footer {
-    margin-top: 20px;
-    border-top: 1px solid #000;
-    padding-top: 10px;
-    display: flex;
-    justify-content: space-between;
-  }
+  .print-grand td { background: #c9a84c !important; color: #000 !important; font-weight: 900 !important; font-size: 11pt !important; }
+  .print-footer { margin-top: 20px; border-top: 1px solid #000; padding-top: 10px; display: flex; justify-content: space-between; }
   .sig-line { border-top: 1px solid #000; padding-top: 4px; width: 120px; text-align: center; font-size: 8pt; }
 
   @media print {
@@ -582,63 +194,17 @@ self.addEventListener('fetch',e=>{
   }
   #printDirectArea { display: none; }
 
-  /* toast */
-  #toast {
-    position: fixed;
-    bottom: 28px; right: 28px;
-    background: var(--navy);
-    color: var(--gold);
-    padding: 13px 22px;
-    border-radius: 10px;
-    font-size: 14px;
-    font-weight: 700;
-    box-shadow: 0 6px 24px rgba(0,0,0,0.25);
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s;
-    z-index: 999;
-  }
+  /* TOAST */
+  #toast { position: fixed; bottom: 28px; right: 28px; background: var(--navy); color: var(--gold); padding: 13px 22px; border-radius: 10px; font-size: 14px; font-weight: 700; box-shadow: 0 6px 24px rgba(0,0,0,0.25); opacity: 0; pointer-events: none; transition: opacity 0.3s; z-index: 999; }
   #toast.show { opacity: 1; }
 
-  .month-badge {
-    background: var(--gold);
-    color: var(--navy);
-    padding: 3px 10px;
-    border-radius: 20px;
-    font-size: 11px;
-    font-weight: 800;
-    letter-spacing: 0.5px;
-  }
-
-  .stat-row {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: 14px;
-    margin-bottom: 24px;
-  }
-  .stat-card {
-    background: var(--white);
-    border-radius: 12px;
-    padding: 16px 18px;
-    box-shadow: var(--shadow);
-    border-left: 4px solid var(--gold);
-  }
+  .month-badge { background: var(--gold); color: var(--navy); padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 800; letter-spacing: 0.5px; }
+  .stat-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; margin-bottom: 24px; }
+  .stat-card { background: var(--white); border-radius: 12px; padding: 16px 18px; box-shadow: var(--shadow); border-left: 4px solid var(--gold); }
   .stat-card .stat-label { font-size: 11px; color: var(--slate); text-transform: uppercase; letter-spacing: 0.8px; font-weight: 700; }
   .stat-card .stat-value { font-size: 22px; font-weight: 800; color: var(--navy); margin-top: 4px; }
-
   .divider { height: 1px; background: var(--light); margin: 20px 0; }
-
-  select.field-select {
-    padding: 10px 13px;
-    border: 2px solid #dde4ef;
-    border-radius: 9px;
-    font-family: 'Nunito', sans-serif;
-    font-size: 14px;
-    color: var(--navy);
-    background: #f8faff;
-    outline: none;
-  }
-
+  select.field-select { padding: 10px 13px; border: 2px solid #dde4ef; border-radius: 9px; font-family: 'Nunito', sans-serif; font-size: 14px; color: var(--navy); background: #f8faff; outline: none; }
   .sr-toggle { display: flex; gap: 8px; align-items: center; }
   .sr-toggle label { font-size: 12px; font-weight: 700; color: var(--slate); }
   .sr-toggle input[type=checkbox] { width: 16px; height: 16px; accent-color: var(--navy); cursor: pointer; }
@@ -646,28 +212,50 @@ self.addEventListener('fetch',e=>{
 </head>
 <body>
 
-<!-- ===== LOGIN PAGE ===== -->
+<!-- LOGIN PAGE -->
 <div id="loginPage">
-  <div class="login-card">
+  <div class="login-card" id="loginBox">
     <div class="login-logo">FGI</div>
     <div class="login-subtitle">Faisal Goraya Industry</div>
     <h2>🔐 Salary System Login</h2>
     <div class="form-group">
       <label>Password</label>
-      <input type="password" id="loginPass" placeholder="Enter password..." onkeydown="if(event.key==='Enter')doLogin()">
+      <input type="password" id="loginPass" placeholder="Password daalen..." onkeydown="if(event.key==='Enter')doLogin()">
     </div>
     <button class="btn-primary" onclick="doLogin()">LOGIN</button>
     <div class="error-msg" id="loginError"></div>
+    <div style="margin-top:16px;display:flex;gap:12px;justify-content:center;">
+      <button onclick="showResetPanel()" style="background:none;border:none;color:var(--slate);font-size:12px;font-weight:700;cursor:pointer;text-decoration:underline;">🔑 Password Bhool Gaye?</button>
+    </div>
+  </div>
+
+  <!-- SECRET QUESTION RESET PANEL -->
+  <div id="resetPanel">
+    <h3>🔑 Password Reset</h3>
+    <div id="resetStep1">
+      <div id="resetQDisplay" style="font-size:14px;font-weight:700;color:var(--slate);padding:10px 14px;background:#f0f5ff;border-radius:8px;margin-bottom:12px;">Sawaal load ho raha hai...</div>
+      <input type="text" class="reset-input" id="resetAnsInput" placeholder="Jawab darj karein..." maxlength="50">
+      <div id="resetErr" style="color:var(--red);font-size:12px;font-weight:700;min-height:18px;"></div>
+      <button class="btn-primary" onclick="verifySecretAnswer()" style="margin-top:8px;">✅ Jawab Confirm</button>
+    </div>
+    <div id="resetStep2" style="display:none;">
+      <p style="font-size:13px;color:var(--green);font-weight:700;margin-bottom:10px;">✅ Jawab sahi hai! Naya password set karein:</p>
+      <input type="password" class="reset-input" id="resetNewPass" placeholder="Naya password...">
+      <input type="password" class="reset-input" id="resetConfPass" placeholder="Dobara likhein...">
+      <div id="resetErr2" style="color:var(--red);font-size:12px;font-weight:700;min-height:18px;"></div>
+      <button class="btn-primary" onclick="doResetPass()" style="margin-top:8px;">🔐 Password Reset Karein</button>
+    </div>
+    <button class="btn-reset-back" onclick="hideResetPanel()">← Wapas Jao</button>
   </div>
 </div>
 
-<!-- ===== MAIN APP ===== -->
+<!-- MAIN APP -->
 <div id="app">
+  <!-- DRIVE STATUS BAR -->
+  <div id="driveStatusBar" onclick="if(this.className==='error')goToDriveSettings()"></div>
+
   <div class="topbar">
-    <div class="topbar-brand">
-      FGI
-      <span>Faisal Goraya Industry · Salary System</span>
-    </div>
+    <div class="topbar-brand">FGI<span>Faisal Goraya Industry · Salary System</span></div>
     <div class="nav-tabs">
       <button class="nav-tab active" onclick="showPage('dataEntry')">📝 Data Entry</button>
       <button class="nav-tab" onclick="showPage('midmonth')">💰 Mid Month</button>
@@ -678,15 +266,12 @@ self.addEventListener('fetch',e=>{
       <button class="nav-tab" onclick="showPage('settings')">⚙️ Settings</button>
     </div>
     <button class="logout-btn" onclick="doLogout()">Logout</button>
-    <div id="syncStatus" style="font-size:11px;font-weight:700;color:#adc4e0;letter-spacing:0.5px;min-width:140px;text-align:right;">⏳ Connecting...</div>
   </div>
 
-  <!-- PAGE: DATA ENTRY -->
+  <!-- DATA ENTRY PAGE -->
   <div class="page active" id="page-dataEntry">
     <div class="page-header">
-      <div class="page-title">Data Entry
-        <span>Salary / Payment Entry Form — Faisal Goraya Industry</span>
-      </div>
+      <div class="page-title">Data Entry<span>Salary / Payment Entry Form — Faisal Goraya Industry</span></div>
       <div style="display:flex;gap:10px;align-items:center;">
         <button class="btn btn-green btn-sm" onclick="manualSaveDB()">💾 Save Data</button>
         <select class="field-select" id="entryMode" onchange="toggleEditMode()">
@@ -698,135 +283,46 @@ self.addEventListener('fetch',e=>{
         </select>
       </div>
     </div>
-
-    <!-- Section 1: Basic Info -->
     <div class="card">
       <div class="card-title">📋 Basic Information</div>
       <div class="form-grid">
-        <div class="field">
-          <label>Date</label>
-          <input type="date" id="f_date">
-        </div>
-        <div class="field">
-          <label>Month / Year</label>
-          <input type="month" id="f_month" onchange="onMonthChange()">
-        </div>
-        <div class="field">
-          <label>
-            Sr. No &nbsp;
-            <span class="sr-toggle">
-              <input type="checkbox" id="srAuto" checked onchange="toggleSrAuto()"> Auto
-            </span>
-          </label>
-          <input type="number" id="f_sr" placeholder="Auto..." readonly>
-        </div>
-        <div class="field">
-          <label>Worker Name</label>
-          <input type="text" id="f_name" list="workerList" placeholder="Worker name..." oninput="onWorkerSelect()">
-          <input type="hidden" id="f_workerCode">
-          <datalist id="workerList"></datalist>
-        </div>
-        <div class="field">
-          <label>Basic Salary (Rs.)</label>
-          <input type="number" id="f_basic" placeholder="e.g. 15000" oninput="calcAll()">
-        </div>
+        <div class="field"><label>Date</label><input type="date" id="f_date"></div>
+        <div class="field"><label>Month / Year</label><input type="month" id="f_month" onchange="onMonthChange()"></div>
+        <div class="field"><label>Sr. No &nbsp;<span class="sr-toggle"><input type="checkbox" id="srAuto" checked onchange="toggleSrAuto()"> Auto</span></label><input type="number" id="f_sr" placeholder="Auto..." readonly></div>
+        <div class="field"><label>Worker Name</label><input type="text" id="f_name" list="workerList" placeholder="Worker name..." oninput="onWorkerSelect()"><input type="hidden" id="f_workerCode"><datalist id="workerList"></datalist></div>
+        <div class="field"><label>Basic Salary (Rs.)</label><input type="number" id="f_basic" placeholder="e.g. 15000" oninput="calcAll()"></div>
       </div>
     </div>
-
-    <!-- Section 2: Overtime -->
     <div class="card">
       <div class="card-title">⏱️ Overtime Calculation</div>
       <div class="form-grid">
-        <div class="field">
-          <label>OT Hours (Total extra hrs worked)</label>
-          <input type="number" id="f_ot" placeholder="e.g. 60" oninput="calcAll()">
-          <span class="field-note">After 8hr/day — enter total OT hours manually</span>
-        </div>
-        <div class="field">
-          <label>Over Days (auto)</label>
-          <input type="number" id="f_overDays" class="auto-calc" readonly placeholder="Auto...">
-          <span class="field-note">OT ÷ 8 = full days</span>
-        </div>
-        <div class="field">
-          <label>OH — Remaining Hours (auto)</label>
-          <input type="number" id="f_oh" class="auto-calc" readonly placeholder="Auto...">
-          <span class="field-note">OT hours after full days</span>
-        </div>
-        <div class="field">
-          <label>Over Hrs Pay / hr (auto)</label>
-          <input type="number" id="f_ohp" class="auto-calc" readonly placeholder="Auto...">
-          <span class="field-note">Basic ÷ 30 ÷ 8 × OH hrs</span>
-        </div>
+        <div class="field"><label>OT Hours</label><input type="number" id="f_ot" placeholder="e.g. 60" oninput="calcAll()"><span class="field-note">After 8hr/day — enter total OT hours manually</span></div>
+        <div class="field"><label>Over Days (auto)</label><input type="number" id="f_overDays" class="auto-calc" readonly placeholder="Auto..."><span class="field-note">OT ÷ 8 = full days</span></div>
+        <div class="field"><label>OH — Remaining Hours (auto)</label><input type="number" id="f_oh" class="auto-calc" readonly placeholder="Auto..."><span class="field-note">OT hours after full days</span></div>
+        <div class="field"><label>Over Hrs Pay / hr (auto)</label><input type="number" id="f_ohp" class="auto-calc" readonly placeholder="Auto..."><span class="field-note">Basic ÷ 30 ÷ 8 × OH hrs</span></div>
       </div>
     </div>
-
-    <!-- Section 3: Days & Salary -->
     <div class="card">
       <div class="card-title">📅 Days & Monthly Salary</div>
       <div class="form-grid">
-        <div class="field">
-          <label>Days Worked (manual)</label>
-          <input type="number" id="f_days" placeholder="e.g. 28" oninput="calcAll()">
-        </div>
-        <div class="field">
-          <label>Total Days (auto)</label>
-          <input type="number" id="f_totalDays" class="auto-calc" readonly placeholder="Auto...">
-          <span class="field-note">Days + Over Days</span>
-        </div>
-        <div class="field">
-          <label>Monthly Salary (auto)</label>
-          <input type="number" id="f_mSalary" class="auto-calc" readonly placeholder="Auto...">
-          <span class="field-note">Total Days × (Basic ÷ 30)</span>
-        </div>
+        <div class="field"><label>Days Worked (manual)</label><input type="number" id="f_days" placeholder="e.g. 28" oninput="calcAll()"></div>
+        <div class="field"><label>Total Days (auto)</label><input type="number" id="f_totalDays" class="auto-calc" readonly placeholder="Auto..."><span class="field-note">Days + Over Days</span></div>
+        <div class="field"><label>Monthly Salary (auto)</label><input type="number" id="f_mSalary" class="auto-calc" readonly placeholder="Auto..."><span class="field-note">Total Days × (Basic ÷ 30)</span></div>
       </div>
     </div>
-
-    <!-- Section 4: Deductions -->
     <div class="card">
       <div class="card-title">💳 Advances & Deductions</div>
       <div class="form-grid">
-        <div class="field">
-          <label>Mid Month Kharcha (auto / manual)</label>
-          <input type="number" id="f_midMonth" placeholder="e.g. 8500" oninput="calcAll()">
-          <span class="field-note">Worker + month select pe auto-fill hoga</span>
-        </div>
-        <div class="field">
-          <label>Monthly Rem. Salary (auto)</label>
-          <input type="number" id="f_remSalary" class="auto-calc" readonly placeholder="Auto...">
-          <span class="field-note">Monthly Salary − Mid Month</span>
-        </div>
-        <div class="field">
-          <label>Previous Adv. (auto — carry forward)</label>
-          <input type="number" id="f_prevAdv" class="auto-calc" readonly placeholder="Worker select karo...">
-          <span class="field-note">Pichle mahine ka bacha hua adv</span>
-        </div>
-        <div class="field">
-          <label>New Advance (manual)</label>
-          <input type="number" id="f_newAdv" placeholder="e.g. 2000" oninput="calcAll()">
-          <span class="field-note">Is mahine naya advance</span>
-        </div>
-        <div class="field">
-          <label>Total Advance (auto)</label>
-          <input type="number" id="f_totalAdv" class="auto-calc" readonly placeholder="Auto...">
-          <span class="field-note">Previous + New Adv</span>
-        </div>
-        <div class="field">
-          <label>Deduction from Adv. (manual)</label>
-          <input type="number" id="f_deductAdv" placeholder="e.g. 5000" oninput="calcAll()">
-        </div>
-        <div class="field">
-          <label>Rem. Total Adv. (auto)</label>
-          <input type="number" id="f_remAdv" class="auto-calc" readonly placeholder="Auto...">
-          <span class="field-note">Total Adv − Deduction</span>
-        </div>
-        <div class="field">
-          <label>Total Rem. Salary (auto)</label>
-          <input type="number" id="f_totalRemSalary" class="auto-calc" readonly placeholder="Auto...">
-          <span class="field-note">Rem. Salary − Deduction</span>
-        </div>
+        <div class="field"><label>Mid Month Kharcha</label><input type="number" id="f_midMonth" placeholder="e.g. 8500" oninput="calcAll()"><span class="field-note">Worker + month select pe auto-fill hoga</span></div>
+        <div class="field"><label>Monthly Rem. Salary (auto)</label><input type="number" id="f_remSalary" class="auto-calc" readonly placeholder="Auto..."><span class="field-note">Monthly Salary − Mid Month</span></div>
+        <div class="field"><label>Previous Adv. (auto)</label><input type="number" id="f_prevAdv" class="auto-calc" readonly placeholder="Worker select karo..."><span class="field-note">Pichle mahine ka bacha hua adv</span></div>
+        <div class="field"><label>New Advance (manual)</label><input type="number" id="f_newAdv" placeholder="e.g. 2000" oninput="calcAll()"><span class="field-note">Is mahine naya advance</span></div>
+        <div class="field"><label>Total Advance (auto)</label><input type="number" id="f_totalAdv" class="auto-calc" readonly placeholder="Auto..."><span class="field-note">Previous + New Adv</span></div>
+        <div class="field"><label>Deduction from Adv. (manual)</label><input type="number" id="f_deductAdv" placeholder="e.g. 5000" oninput="calcAll()"></div>
+        <div class="field"><label>Rem. Total Adv. (auto)</label><input type="number" id="f_remAdv" class="auto-calc" readonly placeholder="Auto..."><span class="field-note">Total Adv − Deduction</span></div>
+        <div class="field"><label>Total Rem. Salary (auto)</label><input type="number" id="f_totalRemSalary" class="auto-calc" readonly placeholder="Auto..."><span class="field-note">Rem. Salary − Deduction</span></div>
       </div>
     </div>
-
     <div class="btn-row">
       <button class="btn btn-save" onclick="saveEntry()">💾 Save Entry</button>
       <button class="btn btn-clear" onclick="clearForm()">🗑️ Clear Form</button>
@@ -834,12 +330,10 @@ self.addEventListener('fetch',e=>{
     <div id="saveMsg" style="margin-top:12px;font-size:14px;font-weight:700;color:var(--green);min-height:20px;"></div>
   </div>
 
-  <!-- PAGE: WORKERS -->
+  <!-- WORKERS PAGE -->
   <div class="page" id="page-workers">
     <div class="page-header">
-      <div class="page-title">Workers
-        <span>Manage worker profiles & carry-forward data</span>
-      </div>
+      <div class="page-title">Workers<span>Manage worker profiles & carry-forward data</span></div>
       <div style="display:flex;gap:10px;">
         <input type="text" id="workerSearch" placeholder="Search worker..." style="padding:9px 14px;border:2px solid #dde4ef;border-radius:9px;font-family:'Nunito',sans-serif;font-size:13px;outline:none;" oninput="renderWorkerTable()">
         <button class="btn btn-save" onclick="openAddWorker()">+ Add Worker</button>
@@ -848,39 +342,18 @@ self.addEventListener('fetch',e=>{
     <div class="card">
       <div class="table-wrap">
         <table id="workerTable">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Code</th>
-              <th>Worker Name</th>
-              <th>Basic Salary</th>
-              <th>Rem. Advance</th>
-              <th>Last Entry</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
+          <thead><tr><th>#</th><th>Code</th><th>Worker Name</th><th>Basic Salary</th><th>Rem. Advance</th><th>Last Entry</th><th>Actions</th></tr></thead>
           <tbody id="workerTbody"></tbody>
         </table>
       </div>
     </div>
-
-    <!-- Add Worker Modal -->
-    <div id="workerModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;display:none;align-items:center;justify-content:center;">
+    <div id="workerModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;align-items:center;justify-content:center;">
       <div style="background:white;border-radius:18px;padding:36px;width:440px;box-shadow:0 20px 60px rgba(0,0,0,0.3);">
         <h3 style="font-family:'Playfair Display',serif;font-size:22px;margin-bottom:22px;color:var(--navy);">Worker Profile</h3>
         <input type="hidden" id="wm_id">
-        <div class="field" style="margin-bottom:14px;">
-          <label>Worker Name</label>
-          <input type="text" id="wm_name" placeholder="Full name...">
-        </div>
-        <div class="field" style="margin-bottom:14px;">
-          <label>Basic Salary (Rs.)</label>
-          <input type="number" id="wm_basic" placeholder="e.g. 15000">
-        </div>
-        <div class="field" style="margin-bottom:22px;">
-          <label>Remaining Advance (Rs.)</label>
-          <input type="number" id="wm_remAdv" placeholder="Carry-forward advance...">
-        </div>
+        <div class="field" style="margin-bottom:14px;"><label>Worker Name</label><input type="text" id="wm_name" placeholder="Full name..."></div>
+        <div class="field" style="margin-bottom:14px;"><label>Basic Salary (Rs.)</label><input type="number" id="wm_basic" placeholder="e.g. 15000"></div>
+        <div class="field" style="margin-bottom:22px;"><label>Remaining Advance (Rs.)</label><input type="number" id="wm_remAdv" placeholder="Carry-forward advance..."></div>
         <div style="display:flex;gap:10px;">
           <button class="btn btn-save" onclick="saveWorker()">Save Worker</button>
           <button class="btn btn-clear" onclick="closeWorkerModal()">Cancel</button>
@@ -889,53 +362,24 @@ self.addEventListener('fetch',e=>{
     </div>
   </div>
 
-  <!-- PAGE: BACKLE -->
+  <!-- BACKLE PAGE -->
   <div class="page" id="page-backle">
     <div class="page-header">
-      <div class="page-title">🧱 Backle Entry
-        <span>Worker se alag — sirf backle / production data</span>
-      </div>
+      <div class="page-title">🧱 Backle Entry<span>Worker se alag — sirf backle / production data</span></div>
       <div style="display:flex;gap:10px;align-items:center;">
-        <select class="field-select" id="backleMode" onchange="toggleBackleMode()">
-          <option value="new">+ New Entry</option>
-          <option value="edit">✏️ Edit Entry</option>
-        </select>
-        <select class="field-select" id="backleEditSelect" style="display:none;" onchange="loadBackleEdit()">
-          <option value="">-- Select Entry --</option>
-        </select>
+        <select class="field-select" id="backleMode" onchange="toggleBackleMode()"><option value="new">+ New Entry</option><option value="edit">✏️ Edit Entry</option></select>
+        <select class="field-select" id="backleEditSelect" style="display:none;" onchange="loadBackleEdit()"><option value="">-- Select Entry --</option></select>
       </div>
     </div>
-
     <div class="card" style="border:2px dashed #c9a84c;background:linear-gradient(135deg,#fffef5,#fff8e0);">
       <div class="card-title" style="color:#8a6010;">🧱 Backle / Production Entry</div>
       <div class="form-grid">
-        <div class="field">
-          <label>Date</label>
-          <input type="date" id="b_date">
-        </div>
-        <div class="field">
-          <label>Month / Year</label>
-          <input type="month" id="b_month">
-        </div>
-        <div class="field">
-          <label>Note / Description (optional)</label>
-          <input type="text" id="b_note" placeholder="e.g. March production...">
-        </div>
-        <div class="field">
-          <label>Backle Quantity</label>
-          <input type="number" id="b_qty" placeholder="e.g. 1050" oninput="calcBackle()">
-        </div>
-        <div class="field">
-          <label>Price per Backle (Rs.)</label>
-          <input type="number" id="b_price" placeholder="e.g. 5" oninput="calcBackle()">
-          <span class="field-note">Last saved price auto-loads</span>
-        </div>
-        <div class="field">
-          <label>Total Backle Amount (auto)</label>
-          <input type="number" id="b_total" readonly
-            style="background:linear-gradient(135deg,#fff3cc,#ffe89a);color:#6b4a00;font-weight:800;font-size:18px;border-color:#c9a84c;">
-          <span class="field-note">Qty × Price</span>
-        </div>
+        <div class="field"><label>Date</label><input type="date" id="b_date"></div>
+        <div class="field"><label>Month / Year</label><input type="month" id="b_month"></div>
+        <div class="field"><label>Note / Description (optional)</label><input type="text" id="b_note" placeholder="e.g. March production..."></div>
+        <div class="field"><label>Backle Quantity</label><input type="number" id="b_qty" placeholder="e.g. 1050" oninput="calcBackle()"></div>
+        <div class="field"><label>Price per Backle (Rs.)</label><input type="number" id="b_price" placeholder="e.g. 5" oninput="calcBackle()"><span class="field-note">Last saved price auto-loads</span></div>
+        <div class="field"><label>Total Backle Amount (auto)</label><input type="number" id="b_total" readonly style="background:linear-gradient(135deg,#fff3cc,#ffe89a);color:#6b4a00;font-weight:800;font-size:18px;border-color:#c9a84c;"><span class="field-note">Qty × Price</span></div>
       </div>
       <div class="btn-row">
         <button class="btn btn-save" onclick="saveBackleEntry()">💾 Save</button>
@@ -943,181 +387,88 @@ self.addEventListener('fetch',e=>{
       </div>
       <div id="backleSaveMsg" style="margin-top:10px;font-size:13px;font-weight:700;color:var(--green);min-height:18px;"></div>
     </div>
-
-    <!-- Backle entries table -->
     <div class="card">
       <div class="card-title">📋 Backle Entries</div>
       <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>#</th><th>Date</th><th>Month</th><th>Note</th>
-              <th>Qty</th><th>Price</th><th>Total</th><th>Actions</th>
-            </tr>
-          </thead>
-          <tbody id="backleTbody"></tbody>
-        </table>
+        <table><thead><tr><th>#</th><th>Date</th><th>Month</th><th>Note</th><th>Qty</th><th>Price</th><th>Total</th><th>Actions</th></tr></thead><tbody id="backleTbody"></tbody></table>
       </div>
     </div>
   </div>
 
-  <!-- PAGE: CALCULATOR -->
+  <!-- CALCULATOR PAGE -->
   <div class="page" id="page-calculator">
     <div class="page-header">
-      <div class="page-title">🧮 Salary Calculator
-        <span>Per Day / Per Hour calculator — Workers ki basic salary se</span>
-      </div>
+      <div class="page-title">🧮 Salary Calculator<span>Per Day / Per Hour calculator</span></div>
       <button class="btn btn-gold" onclick="printCalcReport()">🖨️ Print</button>
     </div>
-
-    <!-- Add Row -->
     <div class="card" style="border:2px solid #dde4ef;">
       <div class="card-title">➕ Worker Add Karo</div>
       <div class="form-grid">
-        <div class="field">
-          <label>Worker Name</label>
-          <input type="text" id="calc_name" list="calcWorkerList" placeholder="Naam likhو ya select karo..." oninput="calcAutoLoad()">
-          <datalist id="calcWorkerList"></datalist>
-        </div>
-        <div class="field">
-          <label>Basic Salary (Rs.)</label>
-          <input type="number" id="calc_basic" placeholder="e.g. 30000" oninput="calcPreview()">
-          <span class="field-note">Worker select karne par auto-load</span>
-        </div>
-        <div class="field">
-          <label>Per Day (auto)</label>
-          <input type="number" id="calc_perDay" readonly
-            style="background:linear-gradient(135deg,#edf3fb,#f0f5ff);color:var(--navy);font-weight:800;border-color:#b8ccee;">
-          <span class="field-note">Basic ÷ 30</span>
-        </div>
-        <div class="field">
-          <label>Per Hour (auto)</label>
-          <input type="number" id="calc_perHour" readonly
-            style="background:linear-gradient(135deg,#edf3fb,#f0f5ff);color:var(--navy);font-weight:800;border-color:#b8ccee;">
-          <span class="field-note">Per Day ÷ 8</span>
-        </div>
+        <div class="field"><label>Worker Name</label><input type="text" id="calc_name" list="calcWorkerList" placeholder="Naam likhو ya select karo..." oninput="calcAutoLoad()"><datalist id="calcWorkerList"></datalist></div>
+        <div class="field"><label>Basic Salary (Rs.)</label><input type="number" id="calc_basic" placeholder="e.g. 30000" oninput="calcPreview()"><span class="field-note">Worker select karne par auto-load</span></div>
+        <div class="field"><label>Per Day (auto)</label><input type="number" id="calc_perDay" readonly style="background:linear-gradient(135deg,#edf3fb,#f0f5ff);color:var(--navy);font-weight:800;border-color:#b8ccee;"><span class="field-note">Basic ÷ 30</span></div>
+        <div class="field"><label>Per Hour (auto)</label><input type="number" id="calc_perHour" readonly style="background:linear-gradient(135deg,#edf3fb,#f0f5ff);color:var(--navy);font-weight:800;border-color:#b8ccee;"><span class="field-note">Per Day ÷ 8</span></div>
       </div>
       <div class="btn-row">
         <button class="btn btn-save" onclick="addCalcRow()">➕ List Mein Add Karo</button>
         <button class="btn btn-clear" onclick="clearCalcInput()">🗑️ Clear</button>
       </div>
     </div>
-
-    <!-- Workers List -->
     <div class="card" id="calcListCard" style="display:none;">
       <div class="card-title">📋 Selected Workers</div>
       <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Worker Name</th>
-              <th>Basic Salary</th>
-              <th>Per Day</th>
-              <th>Per Hour</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody id="calcTbody"></tbody>
-        </table>
+        <table><thead><tr><th>#</th><th>Worker Name</th><th>Basic Salary</th><th>Per Day</th><th>Per Hour</th><th>Action</th></tr></thead><tbody id="calcTbody"></tbody></table>
       </div>
-
-      <!-- Summary -->
       <div id="calcSummary" style="margin-top:20px;display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;"></div>
     </div>
   </div>
 
-  <!-- PAGE: REPORT -->
+  <!-- REPORT PAGE -->
   <div class="page" id="page-report">
     <div class="page-header">
-      <div class="page-title">Reports
-        <span>View &amp; print salary slips</span>
-      </div>
+      <div class="page-title">Reports<span>View &amp; print salary slips</span></div>
       <div style="display:flex;gap:10px;">
         <button class="btn btn-clear" onclick="loadReport()">🔄 Refresh</button>
         <button class="btn btn-danger btn-sm" onclick="cleanOrphanEntries()">🧹 Clean</button>
         <button class="btn btn-gold" onclick="printAllWorkers()">🖨️ Print All</button>
       </div>
     </div>
-
     <div style="display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap;">
       <button id="rptModeBtn1" class="btn btn-save" onclick="switchReportMode('monthly')">📅 Month-wise Report</button>
       <button id="rptModeBtn2" class="btn btn-clear" onclick="switchReportMode('remadv')" style="opacity:0.7;">💳 Rem. Advance Overview</button>
     </div>
-
-    <!-- Monthly Section -->
     <div id="rptSectionMonthly">
       <div class="filter-row">
-        <div class="field">
-          <label>Month / Year</label>
-          <input type="month" id="rpt_month" onchange="loadReport()">
-        </div>
-        <div class="field">
-          <label>Worker Name (khali = sab)</label>
-          <input type="text" id="rpt_worker" list="rptWorkerList" placeholder="All workers..." oninput="loadReport()" onchange="loadReport()">
-          <datalist id="rptWorkerList"></datalist>
-        </div>
+        <div class="field"><label>Month / Year</label><input type="month" id="rpt_month" onchange="loadReport()"></div>
+        <div class="field"><label>Worker Name (khali = sab)</label><input type="text" id="rpt_worker" list="rptWorkerList" placeholder="All workers..." oninput="loadReport()" onchange="loadReport()"><datalist id="rptWorkerList"></datalist></div>
         <button class="btn btn-green" onclick="loadReport()">🔍 Search</button>
       </div>
       <div id="reportCards" class="report-cards"></div>
       <div id="reportTable" class="card" style="display:none;">
         <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Sr</th><th>Worker</th><th>Month</th><th>Basic</th>
-                <th>OT Hrs</th><th>Over Days</th><th>OH</th><th>OHP</th>
-                <th>Days</th><th>Total Days</th><th>M.Salary</th>
-                <th>Mid Kharcha</th><th>Rem.Sal</th>
-                <th>Prev.Adv</th><th>New Adv</th><th>T.Adv</th><th>Deduct.Adv</th><th>Rem.Adv</th>
-                <th>T.Rem.Sal</th><th>Print</th>
-              </tr>
-            </thead>
-            <tbody id="reportTbody"></tbody>
-          </table>
+          <table><thead><tr><th>Sr</th><th>Worker</th><th>Month</th><th>Basic</th><th>OT Hrs</th><th>Over Days</th><th>OH</th><th>OHP</th><th>Days</th><th>Total Days</th><th>M.Salary</th><th>Mid Kharcha</th><th>Rem.Sal</th><th>Prev.Adv</th><th>New Adv</th><th>T.Adv</th><th>Deduct.Adv</th><th>Rem.Adv</th><th>T.Rem.Sal</th><th>Print</th></tr></thead><tbody id="reportTbody"></tbody></table>
         </div>
       </div>
     </div>
-
-    <!-- Rem Adv Overview Section -->
     <div id="rptSectionRemAdv" style="display:none;">
-      <div style="margin-bottom:14px;">
-        <input type="text" id="rptRemAdvSearch" placeholder="🔍 Worker naam se search..."
-          style="padding:10px 15px;border:2px solid #dde4ef;border-radius:9px;font-family:'Nunito',sans-serif;font-size:14px;width:300px;outline:none;"
-          oninput="renderRemAdvOverview()">
-      </div>
+      <div style="margin-bottom:14px;"><input type="text" id="rptRemAdvSearch" placeholder="🔍 Worker naam se search..." style="padding:10px 15px;border:2px solid #dde4ef;border-radius:9px;font-family:'Nunito',sans-serif;font-size:14px;width:300px;outline:none;" oninput="renderRemAdvOverview()"></div>
       <div id="remAdvCards" class="report-cards"></div>
     </div>
   </div>
 
-  <!-- PAGE: MID MONTH -->
+  <!-- MID MONTH PAGE -->
   <div class="page" id="page-midmonth">
     <div class="page-header">
-      <div class="page-title">💰 Mid Month Record
-        <span>Next month salary info + Mid Month Kharcha tracker</span>
-      </div>
+      <div class="page-title">💰 Mid Month Record<span>Next month salary info + Mid Month Kharcha tracker</span></div>
       <button class="btn btn-save" onclick="manualSaveDB()">💾 Save Data</button>
     </div>
-
     <div class="card" style="border:2px solid #c9a84c;background:linear-gradient(135deg,#fffef5,#fff8e8);">
       <div class="card-title" style="color:#8a6010;">🔍 Worker Select karo — 3 Info Auto Load</div>
       <div class="form-grid">
-        <div class="field">
-          <label>Worker Name</label>
-          <input type="text" id="mm_workerName" list="mmWorkerList" placeholder="Worker naam likhein..." oninput="onMidMonthWorkerSelect()">
-          <datalist id="mmWorkerList"></datalist>
-        </div>
-        <div class="field">
-          <label>Date</label>
-          <input type="date" id="mm_date">
-        </div>
-        <div class="field">
-          <label>Month (Konsa month ka record?)</label>
-          <input type="month" id="mm_month">
-        </div>
+        <div class="field"><label>Worker Name</label><input type="text" id="mm_workerName" list="mmWorkerList" placeholder="Worker naam likhein..." oninput="onMidMonthWorkerSelect()"><datalist id="mmWorkerList"></datalist></div>
+        <div class="field"><label>Date</label><input type="date" id="mm_date"></div>
+        <div class="field"><label>Month</label><input type="month" id="mm_month"></div>
       </div>
-
-      <!-- 3 Auto Info Boxes -->
       <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-top:18px;">
         <div style="background:var(--white);border-radius:10px;padding:16px;box-shadow:var(--shadow);border-left:4px solid var(--navy);">
           <div style="font-size:10px;color:var(--slate);font-weight:700;text-transform:uppercase;letter-spacing:1px;">1️⃣ Basic Salary (Auto)</div>
@@ -1132,16 +483,9 @@ self.addEventListener('fetch',e=>{
           <div style="font-size:24px;font-weight:900;color:var(--red);margin-top:6px;" id="mm_remAdvDisplay">—</div>
         </div>
       </div>
-
       <div style="margin-top:20px;display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;">
-        <div class="field" style="min-width:200px;">
-          <label>💵 Mid Month Kharcha (is dafa)</label>
-          <input type="number" id="mm_kharcha" placeholder="e.g. 8500" style="font-size:16px;font-weight:700;">
-        </div>
-        <div class="field" style="min-width:220px;">
-          <label>📝 Note (optional)</label>
-          <input type="text" id="mm_note" placeholder="e.g. March mid payment...">
-        </div>
+        <div class="field" style="min-width:200px;"><label>💵 Mid Month Kharcha (is dafa)</label><input type="number" id="mm_kharcha" placeholder="e.g. 8500" style="font-size:16px;font-weight:700;"></div>
+        <div class="field" style="min-width:220px;"><label>📝 Note (optional)</label><input type="text" id="mm_note" placeholder="e.g. March mid payment..."></div>
         <div style="display:flex;gap:10px;padding-bottom:5px;">
           <button class="btn btn-save" onclick="saveMidMonthRecord()">💾 Save Record</button>
           <button class="btn btn-clear" onclick="clearMidMonthForm()">🗑️ Clear</button>
@@ -1149,110 +493,109 @@ self.addEventListener('fetch',e=>{
       </div>
       <div id="mmSaveMsg" style="margin-top:10px;font-size:14px;font-weight:700;color:var(--green);min-height:20px;"></div>
     </div>
-
-    <!-- Records Table -->
     <div class="card">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--light);flex-wrap:wrap;gap:10px;">
         <div class="card-title" style="margin:0;padding:0;border:none;">📋 Saved Mid Month Records</div>
         <div style="display:flex;gap:10px;flex-wrap:wrap;">
-          <input type="text" id="mmTableSearch" placeholder="Worker filter..."
-            style="padding:8px 12px;border:2px solid #dde4ef;border-radius:8px;font-family:'Nunito',sans-serif;font-size:13px;outline:none;width:160px;"
-            oninput="renderMidMonthTable()">
-          <select id="mmTableMonth" onchange="renderMidMonthTable()"
-            style="padding:8px 12px;border:2px solid #dde4ef;border-radius:8px;font-family:'Nunito',sans-serif;font-size:13px;outline:none;background:#f8faff;">
-            <option value="">Sab months</option>
-          </select>
+          <input type="text" id="mmTableSearch" placeholder="Worker filter..." style="padding:8px 12px;border:2px solid #dde4ef;border-radius:8px;font-family:'Nunito',sans-serif;font-size:13px;outline:none;width:160px;" oninput="renderMidMonthTable()">
+          <select id="mmTableMonth" onchange="renderMidMonthTable()" style="padding:8px 12px;border:2px solid #dde4ef;border-radius:8px;font-family:'Nunito',sans-serif;font-size:13px;outline:none;background:#f8faff;"><option value="">Sab months</option></select>
         </div>
       </div>
       <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>#</th><th>Date</th><th>Month</th><th>Worker Name</th>
-              <th>Basic Salary</th><th>Mid Month Kharcha</th><th>Rem. Total Adv</th>
-              <th>Note</th><th>Action</th>
-            </tr>
-          </thead>
-          <tbody id="mmTableBody"></tbody>
-        </table>
+        <table><thead><tr><th>#</th><th>Date</th><th>Month</th><th>Worker Name</th><th>Basic Salary</th><th>Mid Month Kharcha</th><th>Rem. Total Adv</th><th>Note</th><th>Action</th></tr></thead><tbody id="mmTableBody"></tbody></table>
       </div>
     </div>
   </div>
 
-  <!-- PAGE: SETTINGS -->
+  <!-- SETTINGS PAGE -->
   <div class="page" id="page-settings">
     <div class="page-header">
-      <div class="page-title">Settings
-        <span>System configuration</span>
+      <div class="page-title">Settings<span>System configuration</span></div>
+    </div>
+
+    <!-- GOOGLE DRIVE CARD -->
+    <div class="card" id="driveCard" style="max-width:560px;border:2px solid var(--gold);background:linear-gradient(135deg,#f8faff,#edf3fb);">
+      <div class="card-title" style="color:#1a3a60;">☁️ Google Drive Auto-Save</div>
+      <p style="font-size:13px;color:var(--navy);font-weight:600;margin-bottom:14px;">Har entry automatically Google Drive pe save hogi!</p>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+        <span id="driveBadgeMain" class="drive-badge disconnected">⚡ Connect nahi</span>
+        <span id="driveLastSync" style="font-size:11px;color:var(--slate);font-weight:600;"></span>
+      </div>
+      <div id="driveSetupForm">
+        <div class="field" style="margin-bottom:12px;">
+          <label>Google Client ID</label>
+          <input type="text" id="driveClientId" placeholder="xxxx.apps.googleusercontent.com" style="font-size:12px;">
+        </div>
+        <div style="font-size:11px;color:var(--slate);margin-bottom:12px;" id="driveSetupNote">Client ID paste karein aur Connect dabayein</div>
+        <button class="btn btn-save" onclick="initDriveAuth()">🔗 Google Drive Connect</button>
+      </div>
+      <div id="driveConnectedInfo" style="display:none;">
+        <div style="background:#1a4a2a;border-radius:10px;padding:14px 16px;margin-bottom:12px;">
+          <div style="color:#80e0a0;font-size:13px;font-weight:700;">✅ Google Drive Connected!</div>
+          <div style="color:#a0c8a0;font-size:11px;margin-top:4px;">Data automatically sync ho raha hai</div>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <button class="btn btn-green btn-sm" onclick="manualDriveSync()">🔄 Manual Sync</button>
+          <button class="btn btn-danger btn-sm" onclick="disconnectDrive()">🔌 Disconnect</button>
+        </div>
       </div>
     </div>
 
-    <!-- DATA TRANSFER CARD — SABSE UPAR, PROMINENT -->
+    <!-- SECRET QUESTION CARD -->
+    <div class="card" style="max-width:560px;">
+      <div class="card-title">🔑 Secret Question (Password Reset)</div>
+      <p style="font-size:13px;color:var(--slate);margin-bottom:14px;">Password bhoolne par yeh sawaal kaam aayega</p>
+      <div id="sqStatusDesc" style="font-size:12px;font-weight:700;color:var(--slate);margin-bottom:12px;">Loading...</div>
+      <div class="field" style="margin-bottom:12px;">
+        <label>Sawaal Chunein</label>
+        <select id="sqSelect" style="padding:10px 13px;border:2px solid #dde4ef;border-radius:9px;font-family:'Nunito',sans-serif;font-size:13px;color:var(--navy);background:#f8faff;outline:none;">
+          <option value="">-- Sawaal chunein --</option>
+          <option>Aap ki walida ka naam kya hai?</option>
+          <option>Aap ka pehla school kaunsa tha?</option>
+          <option>Aap ke pehle dost ka naam?</option>
+          <option>Aap ka favorite khana kya hai?</option>
+          <option>Aap ki pehli gaari ka model?</option>
+          <option>Aap ka favorite rang kya hai?</option>
+          <option>Aap ke ghar ka purana address?</option>
+          <option>Aap ka nickname kya hai?</option>
+        </select>
+      </div>
+      <div class="field" style="margin-bottom:16px;">
+        <label>Jawab</label>
+        <input type="text" id="sqAnswer" placeholder="Jawab darj karein..." maxlength="50">
+      </div>
+      <button class="btn btn-save" onclick="saveSecretQ()">💾 Secret Question Save</button>
+    </div>
+
+    <!-- DATA TRANSFER CARD -->
     <div class="card" style="max-width:560px;border:2px solid var(--gold);background:linear-gradient(135deg,#fffef5,#fff8e0);">
       <div class="card-title" style="color:#8a6010;">📦 Data Transfer / Backup</div>
-      <p style="font-size:13px;color:var(--navy);font-weight:700;margin-bottom:14px;">
-        Nayi file mein data lane ka tarika — ya kisi bhi device / browser mein.
-      </p>
-
-      <!-- Export -->
       <div style="background:#f0f8f4;border-radius:10px;padding:14px 16px;margin-bottom:12px;border:1px solid #b8dfc8;">
-        <div style="font-size:12px;font-weight:800;color:var(--green);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">⬇️ Step 1 — Purani File Se Export Karo</div>
-        <p style="font-size:12px;color:var(--slate);margin-bottom:10px;">Yeh button purana wala file (v8 ya koi bhi) khol ke dabao. JSON file download ho jaegi.</p>
+        <div style="font-size:12px;font-weight:800;color:var(--green);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">⬇️ Export Backup</div>
         <button class="btn btn-green" onclick="exportData()">⬇️ Export Backup (.json)</button>
         <div id="exportMsg" style="font-size:12px;color:var(--green);font-weight:700;margin-top:6px;min-height:16px;"></div>
       </div>
-
-      <!-- Import -->
       <div style="background:#edf3fb;border-radius:10px;padding:14px 16px;border:1px solid #b8ccee;">
-        <div style="font-size:12px;font-weight:800;color:var(--navy);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">⬆️ Step 2 — Nayi File Mein Import Karo</div>
-        <p style="font-size:12px;color:var(--slate);margin-bottom:10px;">Nai file (v9 ya koi bhi update) mein yeh button dabao aur exported JSON file select karo.</p>
+        <div style="font-size:12px;font-weight:800;color:var(--navy);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">⬆️ Import Backup</div>
         <button class="btn btn-save" onclick="document.getElementById('importFile').click()">⬆️ Import Backup (.json)</button>
         <input type="file" id="importFile" accept=".json" style="display:none;" onchange="importData(event)">
         <div id="importMsg" style="font-size:12px;font-weight:700;margin-top:6px;min-height:16px;"></div>
       </div>
-
-      <div style="margin-top:12px;padding:10px 14px;background:#fff3cd;border-radius:8px;border:1px solid #f0c04a;">
-        <p style="font-size:12px;color:#7a5500;font-weight:700;">
-          💡 <strong>IP ya browser change hone se data nahi jaata</strong> — jab tak usi browser mein usi file ko kholo.<br>
-          Nayi file ya nayi device ke liye: Export → Import karo. Data bilkul safe rahega ✅
-        </p>
-      </div>
-    </div>
-
-    <!-- CLOUD SYNC CARD -->
-    <div class="card" style="max-width:560px;margin-top:0;">
-      <div class="card-title">☁️ Cloud Sync (JSONBin)</div>
-      <p style="font-size:12px;color:var(--slate);margin-bottom:12px;">Data automatically cloud pe save hota hai. Manually bhi sync kar sakte hain.</p>
-      <div style="display:flex;gap:12px;flex-wrap:wrap;">
-        <button class="btn btn-gold" onclick="pushToCloud().then(()=>showToast('✅ Cloud pe save ho gaya!'))">⬆️ Push to Cloud</button>
-        <button class="btn btn-green" onclick="pullFromCloud().then(ok=>{ if(ok){initApp();showToast('✅ Cloud se load ho gaya!');} else showToast('⚠️ Cloud data nahi mila');})">⬇️ Pull from Cloud</button>
-      </div>
-      <div id="syncStatusSettings" style="margin-top:8px;font-size:12px;font-weight:700;"></div>
     </div>
 
     <!-- PASSWORD CARD -->
-    <div class="card" style="max-width:480px;margin-top:0;">
+    <div class="card" style="max-width:480px;">
       <div class="card-title">🔐 Change Password</div>
-      <div class="field" style="margin-bottom:14px;">
-        <label>Current Password</label>
-        <input type="password" id="s_curPass" placeholder="...">
-      </div>
-      <div class="field" style="margin-bottom:14px;">
-        <label>New Password</label>
-        <input type="password" id="s_newPass" placeholder="...">
-      </div>
-      <div class="field" style="margin-bottom:18px;">
-        <label>Confirm New Password</label>
-        <input type="password" id="s_conPass" placeholder="...">
-      </div>
+      <div class="field" style="margin-bottom:14px;"><label>Current Password</label><input type="password" id="s_curPass" placeholder="..."></div>
+      <div class="field" style="margin-bottom:14px;"><label>New Password</label><input type="password" id="s_newPass" placeholder="..."></div>
+      <div class="field" style="margin-bottom:18px;"><label>Confirm New Password</label><input type="password" id="s_conPass" placeholder="..."></div>
       <button class="btn btn-save" onclick="changePassword()">Update Password</button>
       <div id="passMsg" style="margin-top:10px;font-size:13px;font-weight:700;min-height:18px;"></div>
     </div>
-
   </div>
 </div>
 
-<!-- Print Preview Modal -->
+<!-- PRINT MODAL -->
 <div id="printModal">
   <div class="print-modal-bar">
     <div class="bar-title">🖨️ Print Preview — FGI Salary Slip</div>
@@ -1265,79 +608,14 @@ self.addEventListener('fetch',e=>{
   <div class="print-modal-body" id="printModalBody"></div>
 </div>
 
-<!-- For actual browser print -->
 <div id="printDirectArea"></div>
-
-<!-- Toast -->
 <div id="toast"></div>
 
 <script>
 // ===========================
-// DATABASE (localStorage-based SQLite simulation)
-// Using localStorage for offline-first, sync concept for Netlify
+// DATABASE
 // ===========================
-
 const APP_VERSION = 'FGI_v1';
-
-// ===== JSONBIN CLOUD SYNC =====
-const JBIN_KEY  = '$2a$10$XEGdASyJh9GSo98NcpJr6uoAyJSVeF8qqh5pVyR/svUjb7NdFVYJy';
-const JBIN_BIN  = '$2a$10$yFyhW17.wqRRqplflLiHEOHq515yoBluoXcTWYhmtcG8SFMohAiCG';
-const JBIN_URL  = `https://api.jsonbin.io/v3/b/${JBIN_BIN}`;
-let   syncTimer = null;
-let   isSyncing = false;
-
-function showSyncStatus(msg, color='#adc4e0') {
-  let el = document.getElementById('syncStatus');
-  if (!el) return;
-  el.textContent = msg;
-  el.style.color = color;
-}
-
-async function pushToCloud() {
-  try {
-    isSyncing = true;
-    showSyncStatus('☁️ Saving...', '#f0d080');
-    const res = await fetch(JBIN_URL, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Master-Key': JBIN_KEY,
-        'X-Bin-Versioning': 'false'
-      },
-      body: JSON.stringify(DB)
-    });
-    if (res.ok) showSyncStatus('✅ Cloud synced', '#80e0a0');
-    else showSyncStatus('⚠️ Sync failed', '#ff9090');
-  } catch(e) {
-    showSyncStatus('📴 Offline — local only', '#ffcc60');
-  }
-  isSyncing = false;
-}
-
-async function pullFromCloud() {
-  try {
-    showSyncStatus('☁️ Loading from cloud...', '#f0d080');
-    const res = await fetch(JBIN_URL + '/latest', {
-      headers: { 'X-Master-Key': JBIN_KEY }
-    });
-    if (res.ok) {
-      const json = await res.json();
-      const data = json.record;
-      if (data && data.entries !== undefined) {
-        DB = data;
-        if (!Array.isArray(DB.backleEntries)) DB.backleEntries = [];
-        if (!DB.nextBackleId) DB.nextBackleId = 1;
-        if (DB.lastBacklePrice === undefined) DB.lastBacklePrice = '';
-        localStorage.setItem(APP_VERSION, JSON.stringify(DB));
-        showSyncStatus('✅ Cloud data loaded', '#80e0a0');
-        return true;
-      }
-    }
-  } catch(e) {
-    showSyncStatus('📴 Offline — using local data', '#ffcc60');
-  }
-  return false;
-}
 
 let DB = {
   password: 'fgi123',
@@ -1364,19 +642,11 @@ function loadDB() {
       if (!DB.nextWorkerCode) DB.nextWorkerCode = 1;
       if (!Array.isArray(DB.midMonthRecords)) DB.midMonthRecords = [];
       if (!DB.nextMidMonthId) DB.nextMidMonthId = 1;
-      // Purane workers ko code assign karo agar nahi hai
       DB.workers.forEach(w => {
-        if (!w.code) {
-          w.code = 'FGI-' + String(DB.nextWorkerCode).padStart(3, '0');
-          DB.nextWorkerCode++;
-        }
+        if (!w.code) { w.code = 'FGI-' + String(DB.nextWorkerCode).padStart(3, '0'); DB.nextWorkerCode++; }
       });
-      // Purani entries mein workerCode nahi hoga — name se match karke code assign karo
       DB.entries.forEach(e => {
-        if (!e.workerCode) {
-          const w = DB.workers.find(w => w.name.trim() === e.name.trim());
-          if (w) e.workerCode = w.code;
-        }
+        if (!e.workerCode) { const w = DB.workers.find(w => w.name.trim() === e.name.trim()); if (w) e.workerCode = w.code; }
       });
     }
   } catch(e) {}
@@ -1384,9 +654,7 @@ function loadDB() {
 
 function saveDB() {
   localStorage.setItem(APP_VERSION, JSON.stringify(DB));
-  // Cloud sync — debounce 1.5 sec
-  clearTimeout(syncTimer);
-  syncTimer = setTimeout(() => pushToCloud(), 1500);
+  scheduleSync();
 }
 
 loadDB();
@@ -1394,15 +662,14 @@ loadDB();
 // ===========================
 // AUTH
 // ===========================
-async function doLogin() {
+function doLogin() {
   const pass = document.getElementById('loginPass').value;
   if (pass === DB.password) {
     document.getElementById('loginPage').style.display = 'none';
     document.getElementById('app').style.display = 'block';
+    loadDriveState();
+    handleOAuthRedirect();
     initApp();
-    // Cloud se latest data pull karo
-    const pulled = await pullFromCloud();
-    if (pulled) initApp(); // UI refresh with cloud data
   } else {
     document.getElementById('loginError').textContent = '❌ Galat password! Dobara try karein.';
     document.getElementById('loginPass').value = '';
@@ -1428,26 +695,268 @@ function changePassword() {
   saveDB();
   msg.style.color = 'var(--green)';
   msg.textContent = '✅ Password updated!';
-  document.getElementById('s_curPass').value = '';
-  document.getElementById('s_newPass').value = '';
-  document.getElementById('s_conPass').value = '';
+  ['s_curPass','s_newPass','s_conPass'].forEach(id => document.getElementById(id).value = '');
+}
+
+// ===========================
+// SECRET QUESTION
+// ===========================
+const SECRET_KEY = 'fgi_salary_secret_v1';
+
+function hashStr(s){let h=0;for(let i=0;i<s.length;i++){h=((h<<5)-h)+s.charCodeAt(i);h|=0}return h.toString(36)}
+function getSecret(){try{const r=localStorage.getItem(SECRET_KEY);return r?JSON.parse(r):null}catch{return null}}
+function setSecret(obj){localStorage.setItem(SECRET_KEY,JSON.stringify(obj))}
+
+function showResetPanel(){
+  const secret = getSecret();
+  if(!secret){
+    document.getElementById('loginError').textContent='⚠️ Secret question set nahi! Settings mein pehle set karein.';
+    setTimeout(()=>document.getElementById('loginError').textContent='',3000);
+    return;
+  }
+  document.getElementById('loginBox').style.display='none';
+  document.getElementById('resetPanel').style.display='flex';
+  document.getElementById('resetQDisplay').textContent='❓ '+secret.q;
+  document.getElementById('resetStep1').style.display='block';
+  document.getElementById('resetStep2').style.display='none';
+  document.getElementById('resetErr').textContent='';
+  document.getElementById('resetAnsInput').value='';
+  document.getElementById('resetNewPass').value='';
+  document.getElementById('resetConfPass').value='';
+}
+
+function hideResetPanel(){
+  document.getElementById('resetPanel').style.display='none';
+  document.getElementById('loginBox').style.display='block';
+}
+
+function verifySecretAnswer(){
+  const secret=getSecret();
+  if(!secret)return;
+  const ans=document.getElementById('resetAnsInput').value.trim().toLowerCase();
+  if(!ans){document.getElementById('resetErr').textContent='⚠️ Jawab darj karein!';return}
+  if(hashStr(ans)!==secret.a){
+    document.getElementById('resetErr').textContent='❌ Jawab galat! Dobara koshish karein.';
+    document.getElementById('resetAnsInput').value='';
+    return;
+  }
+  document.getElementById('resetStep1').style.display='none';
+  document.getElementById('resetStep2').style.display='block';
+  document.getElementById('resetErr').textContent='';
+}
+
+function doResetPass(){
+  const np=document.getElementById('resetNewPass').value;
+  const cp=document.getElementById('resetConfPass').value;
+  if(!np||np.length<4){document.getElementById('resetErr2').textContent='⚠️ Kam az kam 4 characters!';return}
+  if(np!==cp){document.getElementById('resetErr2').textContent='❌ Passwords match nahi karte!';return}
+  DB.password=np;
+  saveDB();
+  hideResetPanel();
+  showToast('✅ Password reset ho gaya!');
+}
+
+function saveSecretQ(){
+  const q=document.getElementById('sqSelect').value;
+  const a=document.getElementById('sqAnswer').value.trim().toLowerCase();
+  if(!q){showToast('⚠️ Sawaal chunein!');return}
+  if(!a||a.length<2){showToast('⚠️ Jawab darj karein!');return}
+  setSecret({q,a:hashStr(a)});
+  document.getElementById('sqAnswer').value='';
+  const sq=getSecret();
+  document.getElementById('sqStatusDesc').textContent=sq?'✅ Set hai — "'+sq.q+'"':'❌ Set nahi';
+  showToast('✅ Secret question save ho gaya!');
+}
+
+function loadSqStatus(){
+  const sq=getSecret();
+  const el=document.getElementById('sqStatusDesc');
+  if(el)el.textContent=sq?'✅ Set hai — "'+sq.q+'"':'❌ Abhi set nahi — zaroor set karein!';
+  if(sq&&document.getElementById('sqSelect'))document.getElementById('sqSelect').value=sq.q;
+}
+
+// ===========================
+// GOOGLE DRIVE AUTO-SAVE
+// ===========================
+const DRIVE_CLIENT_KEY='fgi_salary_client_id';
+const DRIVE_TOKEN_KEY='fgi_salary_token';
+const DRIVE_FOLDER_KEY='fgi_salary_folder_id';
+const DRIVE_FILE_KEY='fgi_salary_file_id';
+const DRIVE_SYNC_KEY='fgi_salary_last_sync';
+const DRIVE_FILENAME='FGI_Salary_Data.json';
+
+let driveToken=null,driveFolderId=null,driveFileId=null,driveClientId=null,driveConnected=false,syncInProgress=false;
+
+function loadDriveState(){
+  driveClientId=localStorage.getItem(DRIVE_CLIENT_KEY)||'';
+  driveToken=localStorage.getItem(DRIVE_TOKEN_KEY)||null;
+  driveFolderId=localStorage.getItem(DRIVE_FOLDER_KEY)||null;
+  driveFileId=localStorage.getItem(DRIVE_FILE_KEY)||null;
+  if(driveClientId&&document.getElementById('driveClientId'))document.getElementById('driveClientId').value=driveClientId;
+  if(driveToken){driveConnected=true;showDriveConnected()}
+  updateDriveBar();
+  loadSqStatus();
+}
+
+function updateDriveBar(){
+  const bar=document.getElementById('driveStatusBar');
+  bar.style.display='block';
+  if(!driveClientId){bar.className='disconnected';bar.textContent='☁️ Google Drive: Setup nahi — Settings mein karein'}
+  else if(driveConnected){const ls=localStorage.getItem(DRIVE_SYNC_KEY);bar.className='connected';bar.textContent='✅ Google Drive Connected'+(ls?' — '+ls:'')}
+  else{bar.className='error';bar.textContent='⚠️ Drive Token expire — Settings mein reconnect karein'}
+}
+
+function initDriveAuth(){
+  const cid=document.getElementById('driveClientId').value.trim();
+  if(!cid||!cid.includes('.apps.googleusercontent.com')){
+    document.getElementById('driveSetupNote').textContent='⚠️ Valid Client ID darj karein!';return;
+  }
+  localStorage.setItem(DRIVE_CLIENT_KEY,cid);driveClientId=cid;
+  const scope='https://www.googleapis.com/auth/drive.file';
+  const redirect='https://qaiisar-maker.github.io/fgi-salary/';
+  const url=`https://accounts.google.com/o/oauth2/v2/auth?client_id=${encodeURIComponent(cid)}&redirect_uri=${encodeURIComponent(redirect)}&response_type=token&scope=${encodeURIComponent(scope)}&prompt=consent`;
+  document.getElementById('driveSetupNote').textContent='🔄 Google login page khul raha hai...';
+  window.location.href=url;
+}
+
+function handleOAuthRedirect(){
+  const hash=window.location.hash;
+  if(!hash||!hash.includes('access_token'))return;
+  const params=new URLSearchParams(hash.replace('#','?'));
+  const token=params.get('access_token');
+  if(token){
+    localStorage.setItem(DRIVE_TOKEN_KEY,token);
+    driveToken=token;driveConnected=true;
+    window.history.replaceState({},document.title,window.location.pathname);
+    showToast('✅ Google Drive connect ho gaya!');
+    showDriveConnected();updateDriveBar();
+    setTimeout(()=>ensureDriveFolder(),500);
+  }
+}
+
+function showDriveConnected(){
+  const sf=document.getElementById('driveSetupForm');
+  const ci=document.getElementById('driveConnectedInfo');
+  if(sf)sf.style.display='none';
+  if(ci)ci.style.display='block';
+  const ls=localStorage.getItem(DRIVE_SYNC_KEY);
+  const dlEl=document.getElementById('driveLastSync');
+  if(dlEl&&ls)dlEl.textContent='⏱️ Last sync: '+ls;
+  const badge=document.getElementById('driveBadgeMain');
+  if(badge){badge.className='drive-badge connected';badge.textContent='✅ Connected';}
+}
+
+function disconnectDrive(){
+  if(!confirm('Google Drive se disconnect karein?'))return;
+  localStorage.removeItem(DRIVE_TOKEN_KEY);
+  driveToken=null;driveConnected=false;
+  const sf=document.getElementById('driveSetupForm');
+  const ci=document.getElementById('driveConnectedInfo');
+  if(sf)sf.style.display='block';
+  if(ci)ci.style.display='none';
+  const badge=document.getElementById('driveBadgeMain');
+  if(badge){badge.className='drive-badge disconnected';badge.textContent='⚡ Connect nahi';}
+  updateDriveBar();showToast('🔌 Drive disconnect ho gaya');
+}
+
+async function ensureDriveFolder(){
+  if(!driveToken||driveFolderId)return;
+  try{
+    const sr=await fetch(`https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent("mimeType='application/vnd.google-apps.folder' and name='FGI_Salary_Data' and trashed=false")}&fields=files(id,name)`,{headers:{'Authorization':'Bearer '+driveToken}});
+    const sd=await sr.json();
+    if(sd.files&&sd.files.length>0){driveFolderId=sd.files[0].id;localStorage.setItem(DRIVE_FOLDER_KEY,driveFolderId);return}
+    const cr=await fetch('https://www.googleapis.com/drive/v3/files',{method:'POST',headers:{'Authorization':'Bearer '+driveToken,'Content-Type':'application/json'},body:JSON.stringify({name:'FGI_Salary_Data',mimeType:'application/vnd.google-apps.folder'})});
+    const cd=await cr.json();
+    if(cd.id){driveFolderId=cd.id;localStorage.setItem(DRIVE_FOLDER_KEY,driveFolderId)}
+  }catch(e){console.error('Folder error',e)}
+}
+
+async function autoSyncToDrive(){
+  if(!driveConnected||!driveToken||syncInProgress)return;
+  syncInProgress=true;
+  const bar=document.getElementById('driveStatusBar');
+  if(bar){bar.className='syncing';bar.textContent='🔄 Drive sync ho raha hai...';}
+  try{
+    if(!driveFolderId)await ensureDriveFolder();
+    const data=JSON.stringify({...DB,syncedAt:new Date().toISOString(),version:'v14'},null,2);
+    const blob=new Blob([data],{type:'application/json'});
+    if(!driveFileId){
+      const q=`name='${DRIVE_FILENAME}' and trashed=false${driveFolderId?" and '"+driveFolderId+"' in parents":''}`;
+      const sr=await fetch(`https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(q)}&fields=files(id,name)`,{headers:{'Authorization':'Bearer '+driveToken}});
+      const sd=await sr.json();
+      if(sd.files&&sd.files.length>0){driveFileId=sd.files[0].id;localStorage.setItem(DRIVE_FILE_KEY,driveFileId)}
+    }
+    let res;const form=new FormData();
+    if(driveFileId){
+      form.append('metadata',new Blob([JSON.stringify({name:DRIVE_FILENAME})],{type:'application/json'}));
+      form.append('file',blob);
+      res=await fetch(`https://www.googleapis.com/upload/drive/v3/files/${driveFileId}?uploadType=multipart`,{method:'PATCH',headers:{'Authorization':'Bearer '+driveToken},body:form});
+    }else{
+      const meta={name:DRIVE_FILENAME,mimeType:'application/json'};
+      if(driveFolderId)meta.parents=[driveFolderId];
+      form.append('metadata',new Blob([JSON.stringify(meta)],{type:'application/json'}));
+      form.append('file',blob);
+      res=await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart',{method:'POST',headers:{'Authorization':'Bearer '+driveToken},body:form});
+      const rd=await res.clone().json();
+      if(rd.id){driveFileId=rd.id;localStorage.setItem(DRIVE_FILE_KEY,driveFileId)}
+    }
+    if(res.ok){
+      const now=new Date().toLocaleString('en-PK');
+      localStorage.setItem(DRIVE_SYNC_KEY,now);
+      const dlEl=document.getElementById('driveLastSync');
+      if(dlEl)dlEl.textContent='⏱️ Last sync: '+now;
+      if(bar){bar.className='connected';bar.textContent='✅ Drive Synced — '+now;}
+    }else{
+      const ed=await res.json().catch(()=>({}));
+      if(ed.error&&ed.error.code===401){
+        driveConnected=false;driveToken=null;localStorage.removeItem(DRIVE_TOKEN_KEY);
+        if(bar){bar.className='error';bar.textContent='⚠️ Token expire — Reconnect karein';}
+      }else if(bar){bar.className='connected';bar.textContent='⚠️ Sync error'}
+    }
+  }catch(e){if(bar)bar.textContent='⚠️ Network error'}
+  syncInProgress=false;
+}
+
+async function manualDriveSync(){
+  if(!driveConnected){showToast('⚠️ Pehle connect karein!');return}
+  await autoSyncToDrive();showToast('✅ Drive sync complete!');
+}
+
+function goToDriveSettings(){
+  showPage('settings',document.querySelector('.nav-tab:last-of-type'));
+  setTimeout(()=>{const dc=document.getElementById('driveCard');if(dc)dc.scrollIntoView({behavior:'smooth'});},200);
+}
+
+function scheduleSync(){
+  clearTimeout(scheduleSync._t);
+  scheduleSync._t=setTimeout(()=>autoSyncToDrive(),2500);
 }
 
 // ===========================
 // NAV
 // ===========================
-function showPage(p) {
+function showPage(p, btn) {
   document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active'));
   document.getElementById('page-' + p).classList.add('active');
-  event.currentTarget.classList.add('active');
+  if(btn)btn.classList.add('active');
+  else{const tabs=document.querySelectorAll('.nav-tab');tabs.forEach(t=>{if(t.getAttribute('onclick')&&t.getAttribute('onclick').includes("'"+p+"'"))t.classList.add('active');})}
   if (p === 'workers') renderWorkerTable();
   if (p === 'report') initReport();
   if (p === 'dataEntry') initDataEntry();
   if (p === 'backle') initBackle();
   if (p === 'calculator') initCalculator();
   if (p === 'midmonth') initMidMonth();
+  if (p === 'settings') loadSqStatus();
 }
+
+// nav-tab onclick handler
+document.querySelectorAll('.nav-tab').forEach(tab => {
+  tab.addEventListener('click', function() {
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
 
 // ===========================
 // INIT
@@ -1458,7 +967,6 @@ function initApp() {
 }
 
 function initDataEntry() {
-  // Set today's date
   const today = new Date();
   document.getElementById('f_date').value = today.toISOString().slice(0,10);
   document.getElementById('f_month').value = today.toISOString().slice(0,7);
@@ -1478,9 +986,7 @@ function toggleSrAuto() {
 }
 
 function autoSrNo() {
-  if (document.getElementById('srAuto').checked) {
-    document.getElementById('f_sr').value = DB.nextEntryId;
-  }
+  if (document.getElementById('srAuto').checked) document.getElementById('f_sr').value = DB.nextEntryId;
 }
 
 // ===========================
@@ -1491,10 +997,8 @@ function renderWorkerDatalist() {
   dl.innerHTML = '';
   DB.workers.forEach(w => {
     const opt = document.createElement('option');
-    // Same naam wale workers ke liye code bhi add karo
     const hasDup = DB.workers.filter(x => x.name.trim() === w.name.trim()).length > 1;
     opt.value = hasDup ? `${w.name} [${w.code}]` : w.name;
-    opt.dataset.code = w.code || '';
     dl.appendChild(opt);
   });
   const dl2 = document.getElementById('rptWorkerList');
@@ -1512,63 +1016,32 @@ function renderWorkerDatalist() {
 function onWorkerSelect() {
   const val = document.getElementById('f_name').value.trim();
   let worker = null;
-
-  // [FGI-001] format check
   const codeMatch = val.match(/\[([A-Z]+-\d+)\]/);
-  if (codeMatch) {
-    worker = DB.workers.find(w => w.code === codeMatch[1]);
-    if (worker) document.getElementById('f_name').value = worker.name;
-  } else {
-    worker = DB.workers.find(w => w.name.trim() === val);
-  }
-
+  if (codeMatch) { worker = DB.workers.find(w => w.code === codeMatch[1]); if (worker) document.getElementById('f_name').value = worker.name; }
+  else { worker = DB.workers.find(w => w.name.trim() === val); }
   if (worker) {
     document.getElementById('f_workerCode').value = worker.code || '';
     document.getElementById('f_basic').value = worker.basic || '';
     document.getElementById('f_prevAdv').value = worker.remAdv || '';
-
-    // --- Auto Mid Month Kharcha ---
-    // Selected month form se lo
-    const selectedMonth = document.getElementById('f_month').value; // e.g. "2026-03"
+    const selectedMonth = document.getElementById('f_month').value;
     if (selectedMonth && DB.midMonthRecords) {
-      // Is worker ka, is mahine ka mid month record dhundo
-      const midRec = DB.midMonthRecords
-        .filter(r => r.workerCode === worker.code && r.month === selectedMonth)
-        .sort((a, b) => b.id - a.id)[0]; // latest record lo agar multiple hain
+      const midRec = DB.midMonthRecords.filter(r => r.workerCode === worker.code && r.month === selectedMonth).sort((a, b) => b.id - a.id)[0];
       if (midRec && midRec.midKharcha > 0) {
-        // Sirf tab fill karo jab field khali ho (user ne manually nahi bhara)
         const currentMid = document.getElementById('f_midMonth').value;
-        if (!currentMid) {
-          document.getElementById('f_midMonth').value = midRec.midKharcha;
-          showToast('✅ Mid Month Kharcha auto-fill: Rs. ' + midRec.midKharcha.toLocaleString());
-        }
+        if (!currentMid) { document.getElementById('f_midMonth').value = midRec.midKharcha; showToast('✅ Mid Month Kharcha auto-fill: Rs. ' + midRec.midKharcha.toLocaleString()); }
       }
     }
     calcAll();
   }
 }
 
-// Month change hone par mid month re-check
 function onMonthChange() {
-  const workerName = document.getElementById('f_name').value.trim();
-  if (!workerName) return;
   const workerCode = document.getElementById('f_workerCode').value;
   if (!workerCode) return;
-
   const selectedMonth = document.getElementById('f_month').value;
   if (!selectedMonth || !DB.midMonthRecords) return;
-
-  const midRec = DB.midMonthRecords
-    .filter(r => r.workerCode === workerCode && r.month === selectedMonth)
-    .sort((a, b) => b.id - a.id)[0];
-
-  if (midRec && midRec.midKharcha > 0) {
-    document.getElementById('f_midMonth').value = midRec.midKharcha;
-    showToast('✅ Mid Month Kharcha auto-fill: Rs. ' + midRec.midKharcha.toLocaleString());
-  } else {
-    // Koi record nahi — field clear karo (sirf agar pehle auto-fill thi)
-    // User manually bhari ho to preserve karo — isliye hum clear nahi karte
-  }
+  const midRec = DB.midMonthRecords.filter(r => r.workerCode === workerCode && r.month === selectedMonth).sort((a, b) => b.id - a.id)[0];
+  if (midRec && midRec.midKharcha > 0) { document.getElementById('f_midMonth').value = midRec.midKharcha; showToast('✅ Mid Month Kharcha auto-fill: Rs. ' + midRec.midKharcha.toLocaleString()); }
   calcAll();
 }
 
@@ -1579,49 +1052,17 @@ function v(id) { return parseFloat(document.getElementById(id).value) || 0; }
 function set(id, val) { document.getElementById(id).value = val !== '' ? Math.round(val * 100) / 100 : ''; }
 
 function calcAll() {
-  const basic = v('f_basic');
-  const ot = v('f_ot');
-  const days = v('f_days');
-  const midMonth = v('f_midMonth');
-  const prevAdv = v('f_prevAdv');
-  const newAdv = v('f_newAdv');
-  const deductAdv = v('f_deductAdv');
-
-  // Over Days and OH
-  const overDays = Math.floor(ot / 8);
-  const oh = ot % 8;
-  set('f_overDays', overDays || '');
-  set('f_oh', oh || '');
-
-  // Over Hrs Pay
-  const daySalary = basic / 30;
-  const hrSalary = daySalary / 8;
-  const ohp = hrSalary * oh;
+  const basic = v('f_basic'), ot = v('f_ot'), days = v('f_days'), midMonth = v('f_midMonth'), prevAdv = v('f_prevAdv'), newAdv = v('f_newAdv'), deductAdv = v('f_deductAdv');
+  const overDays = Math.floor(ot / 8), oh = ot % 8;
+  set('f_overDays', overDays || ''); set('f_oh', oh || '');
+  const daySalary = basic / 30, hrSalary = daySalary / 8, ohp = hrSalary * oh;
   set('f_ohp', basic > 0 ? Math.round(ohp) : '');
-
-  // Total Days
-  const totalDays = days + overDays;
-  set('f_totalDays', totalDays || '');
-
-  // Monthly Salary
-  const mSalary = (basic / 30) * totalDays + ohp;
-  set('f_mSalary', basic > 0 ? Math.round(mSalary) : '');
-
-  // Rem Salary
-  const remSalary = mSalary - midMonth;
-  set('f_remSalary', basic > 0 ? Math.round(remSalary) : '');
-
-  // Total Adv = Previous + New
-  const totalAdv = prevAdv + newAdv;
-  set('f_totalAdv', totalAdv || '');
-
-  // Rem Total Adv
-  const remAdv = totalAdv - deductAdv;
-  set('f_remAdv', remAdv >= 0 ? Math.round(remAdv) : '');
-
-  // Total Rem Salary = Rem Salary - Deduction only
-  const totalRemSalary = remSalary - deductAdv;
-  set('f_totalRemSalary', basic > 0 ? Math.round(totalRemSalary) : '');
+  const totalDays = days + overDays; set('f_totalDays', totalDays || '');
+  const mSalary = (basic / 30) * totalDays + ohp; set('f_mSalary', basic > 0 ? Math.round(mSalary) : '');
+  const remSalary = mSalary - midMonth; set('f_remSalary', basic > 0 ? Math.round(remSalary) : '');
+  const totalAdv = prevAdv + newAdv; set('f_totalAdv', totalAdv || '');
+  const remAdv = totalAdv - deductAdv; set('f_remAdv', remAdv >= 0 ? Math.round(remAdv) : '');
+  const totalRemSalary = remSalary - deductAdv; set('f_totalRemSalary', basic > 0 ? Math.round(totalRemSalary) : '');
 }
 
 // ===========================
@@ -1631,7 +1072,6 @@ function saveEntry() {
   const name = document.getElementById('f_name').value.trim();
   if (!name) { showToast('⚠️ Worker name daalna zaroori hai!'); return; }
   if (!v('f_basic')) { showToast('⚠️ Basic salary daalna zaroori hai!'); return; }
-
   const entry = {
     id: DB.nextEntryId,
     date: document.getElementById('f_date').value,
@@ -1639,83 +1079,39 @@ function saveEntry() {
     sr: v('f_sr') || DB.nextEntryId,
     name,
     workerCode: document.getElementById('f_workerCode').value || '',
-    basic: v('f_basic'),
-    ot: v('f_ot'),
-    overDays: v('f_overDays'),
-    oh: v('f_oh'),
-    ohp: v('f_ohp'),
-    days: v('f_days'),
-    totalDays: v('f_totalDays'),
-    mSalary: v('f_mSalary'),
-    midMonth: v('f_midMonth'),
-    remSalary: v('f_remSalary'),
-    prevAdv: v('f_prevAdv'),
-    newAdv: v('f_newAdv'),
-    totalAdv: v('f_totalAdv'),
-    deductAdv: v('f_deductAdv'),
-    remAdv: v('f_remAdv'),
-    totalRemSalary: v('f_totalRemSalary')
+    basic: v('f_basic'), ot: v('f_ot'), overDays: v('f_overDays'), oh: v('f_oh'), ohp: v('f_ohp'),
+    days: v('f_days'), totalDays: v('f_totalDays'), mSalary: v('f_mSalary'),
+    midMonth: v('f_midMonth'), remSalary: v('f_remSalary'),
+    prevAdv: v('f_prevAdv'), newAdv: v('f_newAdv'), totalAdv: v('f_totalAdv'),
+    deductAdv: v('f_deductAdv'), remAdv: v('f_remAdv'), totalRemSalary: v('f_totalRemSalary')
   };
-
-  // Check if editing existing
   const mode = document.getElementById('entryMode').value;
   if (mode === 'edit') {
     const selId = parseInt(document.getElementById('editSelect').value);
     const idx = DB.entries.findIndex(e => e.id === selId);
     if (idx > -1) { entry.id = selId; DB.entries[idx] = entry; }
-  } else {
-    DB.entries.push(entry);
-    DB.nextEntryId++;
-  }
-
-  // Update worker profile (workerCode se match karo)
+  } else { DB.entries.push(entry); DB.nextEntryId++; }
   const wCode = document.getElementById('f_workerCode').value;
-  let worker = wCode ? DB.workers.find(w => w.code === wCode) :
-               DB.workers.find(w => w.name.trim() === name.trim());
-  if (worker) {
-    worker.basic = entry.basic;
-    worker.remAdv = entry.remAdv;
-  } else {
-    // Naya worker — code generate karo
-    const newCode = 'FGI-' + String(DB.nextWorkerCode).padStart(3, '0');
-    DB.nextWorkerCode++;
-    DB.workers.push({
-      id: DB.nextWorkerId++,
-      code: newCode,
-      name,
-      basic: entry.basic,
-      remAdv: entry.remAdv
-    });
+  let worker = wCode ? DB.workers.find(w => w.code === wCode) : DB.workers.find(w => w.name.trim() === name.trim());
+  if (worker) { worker.basic = entry.basic; worker.remAdv = entry.remAdv; }
+  else {
+    const newCode = 'FGI-' + String(DB.nextWorkerCode).padStart(3, '0'); DB.nextWorkerCode++;
+    DB.workers.push({ id: DB.nextWorkerId++, code: newCode, name, basic: entry.basic, remAdv: entry.remAdv });
     entry.workerCode = newCode;
   }
-
-  saveDB();
-  renderWorkerDatalist();
-  populateEditSelect();
-
-  if (mode === 'new') {
-    clearForm();
-    autoSrNo();
-  }
+  saveDB(); renderWorkerDatalist(); populateEditSelect();
+  if (mode === 'new') { clearForm(); autoSrNo(); }
   showToast('✅ Entry save ho gayi!');
   document.getElementById('saveMsg').textContent = `✅ ${name} ki entry successfully saved! (ID: ${entry.id})`;
   setTimeout(() => document.getElementById('saveMsg').textContent = '', 4000);
-  // Report refresh karo taake edited data wahan bhi update ho
   if (document.getElementById('page-report').classList.contains('active')) loadReport();
 }
 
 function clearForm() {
-  ['f_sr','f_name','f_basic','f_ot','f_overDays','f_oh','f_ohp',
-   'f_days','f_totalDays','f_mSalary','f_midMonth','f_remSalary',
-   'f_prevAdv','f_newAdv','f_totalAdv','f_deductAdv','f_remAdv','f_totalRemSalary'].forEach(id => {
-    document.getElementById(id).value = '';
-  });
+  ['f_sr','f_name','f_basic','f_ot','f_overDays','f_oh','f_ohp','f_days','f_totalDays','f_mSalary','f_midMonth','f_remSalary','f_prevAdv','f_newAdv','f_totalAdv','f_deductAdv','f_remAdv','f_totalRemSalary'].forEach(id => { document.getElementById(id).value = ''; });
   autoSrNo();
 }
 
-// ===========================
-// EDIT MODE
-// ===========================
 function toggleEditMode() {
   const mode = document.getElementById('entryMode').value;
   const editSel = document.getElementById('editSelect');
@@ -1728,8 +1124,7 @@ function populateEditSelect() {
   sel.innerHTML = '<option value="">-- Select Entry --</option>';
   [...DB.entries].reverse().forEach(e => {
     const opt = document.createElement('option');
-    opt.value = e.id;
-    opt.textContent = `#${e.id} | ${e.name} | ${e.month}`;
+    opt.value = e.id; opt.textContent = `#${e.id} | ${e.name} | ${e.month}`;
     sel.appendChild(opt);
   });
 }
@@ -1760,42 +1155,20 @@ function renderWorkerTable() {
   const search = document.getElementById('workerSearch').value.toLowerCase();
   const tbody = document.getElementById('workerTbody');
   tbody.innerHTML = '';
-  // Name ya code dono se search karo
-  const filtered = DB.workers.filter(w =>
-    w.name.toLowerCase().includes(search) ||
-    (w.code && w.code.toLowerCase().includes(search))
-  );
-  if (!filtered.length) {
-    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--slate);">Koi worker nahi mila...</td></tr>';
-    return;
-  }
+  const filtered = DB.workers.filter(w => w.name.toLowerCase().includes(search) || (w.code && w.code.toLowerCase().includes(search)));
+  if (!filtered.length) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--slate);">Koi worker nahi mila...</td></tr>'; return; }
   filtered.forEach((w, i) => {
-    // Code se last entry find karo, warna naam se
-    const lastEntry = [...DB.entries].reverse().find(e =>
-      (e.workerCode && e.workerCode === w.code) ||
-      (!e.workerCode && e.name.trim() === w.name.trim())
-    );
+    const lastEntry = [...DB.entries].reverse().find(e => (e.workerCode && e.workerCode === w.code) || (!e.workerCode && e.name.trim() === w.name.trim()));
     const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td>${i+1}</td>
-      <td><span style="background:var(--navy);color:var(--gold);padding:3px 8px;border-radius:6px;font-size:11px;font-weight:800;letter-spacing:1px;">${w.code||'—'}</span></td>
-      <td><strong>${w.name}</strong></td>
-      <td>Rs. ${(w.basic||0).toLocaleString()}</td>
-      <td style="color:var(--red);font-weight:700;">Rs. ${(w.remAdv||0).toLocaleString()}</td>
-      <td>${lastEntry ? lastEntry.month : '—'}</td>
-      <td class="action-btns">
-        <button class="btn btn-gold btn-sm" onclick="editWorker(${w.id})">✏️ Edit</button>
-        <button class="btn btn-danger btn-sm" onclick="deleteWorker(${w.id})">🗑️</button>
-      </td>
-    `;
+    tr.innerHTML = `<td>${i+1}</td><td><span style="background:var(--navy);color:var(--gold);padding:3px 8px;border-radius:6px;font-size:11px;font-weight:800;letter-spacing:1px;">${w.code||'—'}</span></td><td><strong>${w.name}</strong></td><td>Rs. ${(w.basic||0).toLocaleString()}</td><td style="color:var(--red);font-weight:700;">Rs. ${(w.remAdv||0).toLocaleString()}</td><td>${lastEntry ? lastEntry.month : '—'}</td><td class="action-btns"><button class="btn btn-gold btn-sm" onclick="editWorker(${w.id})">✏️ Edit</button><button class="btn btn-danger btn-sm" onclick="deleteWorker(${w.id})">🗑️</button></td>`;
     tbody.appendChild(tr);
   });
 }
+
 function openAddWorker() {
   document.getElementById('wm_id').value = '';
   document.getElementById('wm_name').value = '';
   document.getElementById('wm_basic').value = '';
-  document.getElementById('wm_price').value = '';
   document.getElementById('wm_remAdv').value = '';
   document.getElementById('workerModal').style.display = 'flex';
 }
@@ -1806,7 +1179,6 @@ function editWorker(id) {
   document.getElementById('wm_id').value = w.id;
   document.getElementById('wm_name').value = w.name;
   document.getElementById('wm_basic').value = w.basic || '';
-  document.getElementById('wm_price').value = w.price || '';
   document.getElementById('wm_remAdv').value = w.remAdv || '';
   document.getElementById('workerModal').style.display = 'flex';
 }
@@ -1815,54 +1187,26 @@ function saveWorker() {
   const id = parseInt(document.getElementById('wm_id').value);
   const name = document.getElementById('wm_name').value.trim();
   if (!name) { showToast('⚠️ Worker ka naam daalen!'); return; }
-
-  const data = {
-    name,
-    basic: parseFloat(document.getElementById('wm_basic').value)||0,
-    remAdv: parseFloat(document.getElementById('wm_remAdv').value)||0
-  };
-
-  if (id) {
-    // Edit — code wahi rahe, sirf data update ho
-    const idx = DB.workers.findIndex(w => w.id === id);
-    if (idx > -1) Object.assign(DB.workers[idx], data);
-  } else {
-    // New worker — unique code generate karo
-    const code = 'FGI-' + String(DB.nextWorkerCode).padStart(3, '0');
-    DB.nextWorkerCode++;
-    DB.workers.push({ id: DB.nextWorkerId++, code, ...data });
-  }
-  saveDB();
-  renderWorkerDatalist();
-  renderWorkerTable();
-  closeWorkerModal();
-  showToast(`✅ Worker saved!`);
+  const data = { name, basic: parseFloat(document.getElementById('wm_basic').value)||0, remAdv: parseFloat(document.getElementById('wm_remAdv').value)||0 };
+  if (id) { const idx = DB.workers.findIndex(w => w.id === id); if (idx > -1) Object.assign(DB.workers[idx], data); }
+  else { const code = 'FGI-' + String(DB.nextWorkerCode).padStart(3, '0'); DB.nextWorkerCode++; DB.workers.push({ id: DB.nextWorkerId++, code, ...data }); }
+  saveDB(); renderWorkerDatalist(); renderWorkerTable(); closeWorkerModal(); showToast('✅ Worker saved!');
 }
 
 function deleteWorker(id) {
   const worker = DB.workers.find(w => w.id === id);
   if (!worker) return;
   if (!confirm(`"${worker.name}" (${worker.code}) aur us ki SARI entries delete ho jayengi!\n\nConfirm?`)) return;
-  // Code se entries delete karo
-  if (worker.code) {
-    DB.entries = DB.entries.filter(e => e.workerCode !== worker.code);
-  } else {
-    // Purani entries (bina code) naam se delete
-    DB.entries = DB.entries.filter(e => e.name.trim() !== worker.name.trim());
-  }
+  if (worker.code) DB.entries = DB.entries.filter(e => e.workerCode !== worker.code);
+  else DB.entries = DB.entries.filter(e => e.name.trim() !== worker.name.trim());
   DB.workers = DB.workers.filter(w => w.id !== id);
-  saveDB();
-  renderWorkerTable();
-  renderWorkerDatalist();
+  saveDB(); renderWorkerTable(); renderWorkerDatalist();
   showToast(`🗑️ ${worker.name} aur us ki sari entries delete ho gayi!`);
 }
 
 function cleanOrphanEntries() {
   const activeCodes = DB.workers.map(w => w.code).filter(Boolean);
-  const hasDupNames = new Set(
-    DB.workers.map(w => w.name.trim().toLowerCase())
-      .filter((n, i, arr) => arr.indexOf(n) !== i)
-  );
+  const hasDupNames = new Set(DB.workers.map(w => w.name.trim().toLowerCase()).filter((n, i, arr) => arr.indexOf(n) !== i));
   const before = DB.entries.length;
   DB.entries = DB.entries.filter(e => {
     if (e.workerCode) return activeCodes.includes(e.workerCode);
@@ -1870,14 +1214,11 @@ function cleanOrphanEntries() {
     return DB.workers.some(w => w.name.trim() === e.name.trim());
   });
   const removed = before - DB.entries.length;
-  saveDB();
-  loadReport();
+  saveDB(); loadReport();
   showToast(`🧹 ${removed} entr${removed===1?'y':'ies'} clean ho gayi!`);
 }
 
-function closeWorkerModal() {
-  document.getElementById('workerModal').style.display = 'none';
-}
+function closeWorkerModal() { document.getElementById('workerModal').style.display = 'none'; }
 
 // ===========================
 // REPORTS
@@ -1885,237 +1226,81 @@ function closeWorkerModal() {
 function initReport() {
   const today = new Date();
   document.getElementById('rpt_month').value = today.toISOString().slice(0,7);
-  renderWorkerDatalist();
-  loadReport();
+  renderWorkerDatalist(); loadReport();
 }
 
 function loadReport() {
   const month = document.getElementById('rpt_month').value;
   const workerFilter = document.getElementById('rpt_worker').value.trim().toLowerCase();
-  // Active worker codes aur naam dono
   const activeCodes = DB.workers.map(w => w.code).filter(Boolean);
-  // Har entry ke liye — workerCode hai to code se check, nahi to naam se
-  // Lekin same naam k multiple workers hain to — sirf workerCode wali entries lo
-  const hasDupNames = new Set(
-    DB.workers.map(w => w.name.trim().toLowerCase())
-      .filter((n, i, arr) => arr.indexOf(n) !== i)
-  );
-
+  const hasDupNames = new Set(DB.workers.map(w => w.name.trim().toLowerCase()).filter((n, i, arr) => arr.indexOf(n) !== i));
   let entries = DB.entries.filter(e => {
     const mMatch = !month || e.month === month;
     const wMatch = !workerFilter || e.name.toLowerCase().includes(workerFilter);
     let isActive = false;
-    if (e.workerCode) {
-      // Code hai — code se match karo
-      isActive = activeCodes.includes(e.workerCode);
-    } else if (hasDupNames.has(e.name.trim().toLowerCase())) {
-      // Duplicate naam hai aur code nahi — skip karo (ambiguous)
-      isActive = false;
-    } else {
-      // Unique naam, code nahi — naam se match karo
-      isActive = DB.workers.some(w => w.name.trim() === e.name.trim());
-    }
+    if (e.workerCode) isActive = activeCodes.includes(e.workerCode);
+    else if (hasDupNames.has(e.name.trim().toLowerCase())) isActive = false;
+    else isActive = DB.workers.some(w => w.name.trim() === e.name.trim());
     return mMatch && wMatch && isActive;
   });
-
   const cards = document.getElementById('reportCards');
   const tableWrap = document.getElementById('reportTable');
   const tbody = document.getElementById('reportTbody');
-  cards.innerHTML = '';
-  tbody.innerHTML = '';
-
-  if (!entries.length) {
-    cards.innerHTML = '<div style="color:var(--slate);font-size:15px;padding:20px;">Koi data nahi mila is period ka.</div>';
-    tableWrap.style.display = 'none';
-    return;
-  }
-
+  cards.innerHTML = ''; tbody.innerHTML = '';
+  if (!entries.length) { cards.innerHTML = '<div style="color:var(--slate);font-size:15px;padding:20px;">Koi data nahi mila is period ka.</div>'; tableWrap.style.display = 'none'; return; }
   tableWrap.style.display = '';
   let totalRemSalSum = 0;
-
-  // Single worker filter — naam heading show karo
   if (workerFilter && entries.length > 0) {
     const nameHeading = document.createElement('div');
     nameHeading.style.cssText = 'grid-column:1/-1;';
-    nameHeading.innerHTML = `
-      <div style="background:linear-gradient(135deg,var(--navy),#1a3a60);border-radius:12px;padding:14px 22px;display:flex;align-items:center;gap:14px;">
-        <span style="font-size:28px;">👷</span>
-        <div>
-          <div style="color:#adc4e0;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;">Worker Report</div>
-          <div style="color:var(--gold);font-family:'Playfair Display',serif;font-size:22px;font-weight:900;">${entries[0].name}</div>
-        </div>
-      </div>
-    `;
+    nameHeading.innerHTML = `<div style="background:linear-gradient(135deg,var(--navy),#1a3a60);border-radius:12px;padding:14px 22px;display:flex;align-items:center;gap:14px;"><span style="font-size:28px;">👷</span><div><div style="color:#adc4e0;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;">Worker Report</div><div style="color:var(--gold);font-family:'Playfair Display',serif;font-size:22px;font-weight:900;">${entries[0].name}</div></div></div>`;
     cards.appendChild(nameHeading);
   }
-
   entries.forEach(e => {
     totalRemSalSum += Math.round(e.totalRemSalary||0);
-
-    // Worker Card — salary only, no backle, no grand total
     const card = document.createElement('div');
     card.className = 'report-worker-card';
-    card.innerHTML = `
-      <div class="worker-name">👷 ${e.name}</div>
-      <div class="worker-date">📅 ${e.month} &nbsp; <span class="month-badge">Sr #${e.sr}</span></div>
-      <div style="font-size:12px;color:var(--slate);margin-bottom:8px;">Date: ${fmtDate(e.date)}</div>
-      <div class="worker-amount">Rs. ${Math.round(e.totalRemSalary||0).toLocaleString()} <small>Total Rem. Salary</small></div>
-      <div style="margin-top:8px;font-size:12px;color:var(--slate);">
-        Mid Kharcha: <strong style="color:#8a6010;">Rs. ${(e.midMonth||0).toLocaleString()}</strong> &nbsp;|&nbsp;
-        Rem. Adv: <strong style="color:var(--red);">Rs. ${Math.round(e.remAdv||0).toLocaleString()}</strong>
-      </div>
-      <div style="display:flex;gap:8px;margin-top:12px;">
-        <button class="btn btn-save btn-sm" onclick="printSingle(${e.id})">🖨️ Print</button>
-      </div>
-    `;
+    card.innerHTML = `<div class="worker-name">👷 ${e.name}</div><div class="worker-date">📅 ${e.month} &nbsp; <span class="month-badge">Sr #${e.sr}</span></div><div style="font-size:12px;color:var(--slate);margin-bottom:8px;">Date: ${fmtDate(e.date)}</div><div class="worker-amount">Rs. ${Math.round(e.totalRemSalary||0).toLocaleString()} <small>Total Rem. Salary</small></div><div style="margin-top:8px;font-size:12px;color:var(--slate);">Mid Kharcha: <strong style="color:#8a6010;">Rs. ${(e.midMonth||0).toLocaleString()}</strong> &nbsp;|&nbsp; Rem. Adv: <strong style="color:var(--red);">Rs. ${Math.round(e.remAdv||0).toLocaleString()}</strong></div><div style="display:flex;gap:8px;margin-top:12px;"><button class="btn btn-save btn-sm" onclick="printSingle(${e.id})">🖨️ Print</button></div>`;
     cards.appendChild(card);
-
-    // Table row — no grand total column
     const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td>${e.sr}</td><td><strong>${e.name}</strong></td><td>${e.month}</td>
-      <td>${(e.basic||0).toLocaleString()}</td><td>${e.ot||0}</td>
-      <td>${e.overDays||0}</td><td>${e.oh||0}</td><td>${Math.round(e.ohp||0).toLocaleString()}</td>
-      <td>${e.days||0}</td><td>${e.totalDays||0}</td><td>${Math.round(e.mSalary||0).toLocaleString()}</td>
-      <td>${(e.midMonth||0).toLocaleString()}</td><td>${Math.round(e.remSalary||0).toLocaleString()}</td>
-      <td>${(e.prevAdv||0).toLocaleString()}</td><td>${(e.newAdv||0).toLocaleString()}</td>
-      <td>${(e.totalAdv||0).toLocaleString()}</td><td>${(e.deductAdv||0).toLocaleString()}</td>
-      <td>${Math.round(e.remAdv||0).toLocaleString()}</td>
-      <td style="font-weight:800;color:var(--green);">${Math.round(e.totalRemSalary||0).toLocaleString()}</td>
-      <td><button class="btn btn-gold btn-sm" onclick="printSingle(${e.id})">🖨️</button></td>
-    `;
+    tr.innerHTML = `<td>${e.sr}</td><td><strong>${e.name}</strong></td><td>${e.month}</td><td>${(e.basic||0).toLocaleString()}</td><td>${e.ot||0}</td><td>${e.overDays||0}</td><td>${e.oh||0}</td><td>${Math.round(e.ohp||0).toLocaleString()}</td><td>${e.days||0}</td><td>${e.totalDays||0}</td><td>${Math.round(e.mSalary||0).toLocaleString()}</td><td>${(e.midMonth||0).toLocaleString()}</td><td>${Math.round(e.remSalary||0).toLocaleString()}</td><td>${(e.prevAdv||0).toLocaleString()}</td><td>${(e.newAdv||0).toLocaleString()}</td><td>${(e.totalAdv||0).toLocaleString()}</td><td>${(e.deductAdv||0).toLocaleString()}</td><td>${Math.round(e.remAdv||0).toLocaleString()}</td><td style="font-weight:800;color:var(--green);">${Math.round(e.totalRemSalary||0).toLocaleString()}</td><td><button class="btn btn-gold btn-sm" onclick="printSingle(${e.id})">🖨️</button></td>`;
     tbody.appendChild(tr);
   });
-
-  // ---- Backle section (DB.backleEntries se, month filter apply) ----
   const backleEntries = DB.backleEntries.filter(e => !month || e.month === month);
   const backleSum = backleEntries.reduce((s,e) => s + (e.total||0), 0);
   const grandSum = totalRemSalSum + backleSum;
-
   if (backleEntries.length > 0 && !workerFilter) {
-    // Backle heading
     const backleHeading = document.createElement('div');
     backleHeading.style.cssText = 'grid-column:1/-1;';
-    backleHeading.innerHTML = `
-      <div style="background:linear-gradient(135deg,#7a5a00,#b8860b);border-radius:12px;padding:12px 22px;display:flex;align-items:center;gap:12px;">
-        <span style="font-size:22px;">🧱</span>
-        <div>
-          <div style="color:#ffe090;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;">Backle / Production Section</div>
-          <div style="color:#fff8dc;font-size:13px;font-weight:600;margin-top:2px;">${backleEntries.length} entr${backleEntries.length > 1 ? 'ies' : 'y'} — ${month || 'All Months'}</div>
-        </div>
-      </div>
-    `;
+    backleHeading.innerHTML = `<div style="background:linear-gradient(135deg,#7a5a00,#b8860b);border-radius:12px;padding:12px 22px;display:flex;align-items:center;gap:12px;"><span style="font-size:22px;">🧱</span><div><div style="color:#ffe090;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;">Backle / Production Section</div><div style="color:#fff8dc;font-size:13px;font-weight:600;margin-top:2px;">${backleEntries.length} entr${backleEntries.length > 1 ? 'ies' : 'y'} — ${month || 'All Months'}</div></div></div>`;
     cards.appendChild(backleHeading);
-
-    // Individual backle cards
     backleEntries.forEach(e => {
       const bc = document.createElement('div');
-      bc.className = 'report-worker-card';
-      bc.style.borderColor = '#c9a84c';
-      bc.innerHTML = `
-        <div class="worker-name" style="font-size:14px;color:#6b4a00;">${e.note || '(No description)'}</div>
-        <div class="worker-date">📅 ${fmtDate(e.date)||''} &nbsp; <span class="month-badge">${e.month}</span></div>
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:10px 0;font-size:12px;">
-          <div><span style="color:var(--slate);display:block;font-size:10px;font-weight:700;">QTY</span><strong>${(e.qty||0).toLocaleString()}</strong></div>
-          <div><span style="color:var(--slate);display:block;font-size:10px;font-weight:700;">PRICE</span><strong>Rs. ${e.price||0}</strong></div>
-          <div><span style="color:var(--slate);display:block;font-size:10px;font-weight:700;">TOTAL</span><strong style="color:#8a6010;">Rs. ${(e.total||0).toLocaleString()}</strong></div>
-        </div>
-      `;
+      bc.className = 'report-worker-card'; bc.style.borderColor = '#c9a84c';
+      bc.innerHTML = `<div class="worker-name" style="font-size:14px;color:#6b4a00;">${e.note || '(No description)'}</div><div class="worker-date">📅 ${fmtDate(e.date)||''} &nbsp; <span class="month-badge">${e.month}</span></div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:10px 0;font-size:12px;"><div><span style="color:var(--slate);display:block;font-size:10px;font-weight:700;">QTY</span><strong>${(e.qty||0).toLocaleString()}</strong></div><div><span style="color:var(--slate);display:block;font-size:10px;font-weight:700;">PRICE</span><strong>Rs. ${e.price||0}</strong></div><div><span style="color:var(--slate);display:block;font-size:10px;font-weight:700;">TOTAL</span><strong style="color:#8a6010;">Rs. ${(e.total||0).toLocaleString()}</strong></div></div>`;
       cards.appendChild(bc);
     });
-
-    // Backle kul total
     const backleTotalCard = document.createElement('div');
     backleTotalCard.style.cssText = 'grid-column:1/-1;';
-    backleTotalCard.innerHTML = `
-      <div style="background:linear-gradient(135deg,#5a4000,#8a6010);border-radius:12px;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
-        <div style="color:#ffe090;font-size:13px;font-weight:700;">🧱 Kul Backle Total (${backleEntries.length} entries)</div>
-        <div style="color:var(--gold);font-family:'Playfair Display',serif;font-size:26px;font-weight:900;">Rs. ${backleSum.toLocaleString()}</div>
-      </div>
-    `;
+    backleTotalCard.innerHTML = `<div style="background:linear-gradient(135deg,#5a4000,#8a6010);border-radius:12px;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;"><div style="color:#ffe090;font-size:13px;font-weight:700;">🧱 Kul Backle Total (${backleEntries.length} entries)</div><div style="color:var(--gold);font-family:'Playfair Display',serif;font-size:26px;font-weight:900;">Rs. ${backleSum.toLocaleString()}</div></div>`;
     cards.appendChild(backleTotalCard);
   }
-
-  // ---- Grand Total (T.Rem.Sal + Backle) ----
   if (entries.length >= 1) {
     const totalCard = document.createElement('div');
     totalCard.style.cssText = 'grid-column:1/-1;margin-top:4px;';
-    totalCard.innerHTML = `
-      <div style="background:linear-gradient(135deg,var(--navy) 0%,#1a3a60 100%);border-radius:14px;padding:22px 28px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;box-shadow:0 6px 24px rgba(0,0,0,0.2);">
-        <div>
-          <div style="color:#adc4e0;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;">Total Workers: ${entries.length}</div>
-          <div style="color:#adc4e0;font-size:12px;margin-top:6px;">T.Rem.Salary: <strong style="color:var(--gold-light);">Rs. ${totalRemSalSum.toLocaleString()}</strong></div>
-          ${backleSum > 0 ? `<div style="color:#adc4e0;font-size:12px;margin-top:4px;">Backle Total: <strong style="color:var(--gold-light);">Rs. ${backleSum.toLocaleString()}</strong></div>` : ''}
-        </div>
-        <div style="text-align:right;">
-          <div style="color:#adc4e0;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;">🏆 Kul Grand Total</div>
-          <div style="color:var(--gold);font-family:'Playfair Display',serif;font-size:34px;font-weight:900;letter-spacing:1px;">Rs. ${grandSum.toLocaleString()}</div>
-        </div>
-      </div>
-    `;
+    totalCard.innerHTML = `<div style="background:linear-gradient(135deg,var(--navy) 0%,#1a3a60 100%);border-radius:14px;padding:22px 28px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;box-shadow:0 6px 24px rgba(0,0,0,0.2);"><div><div style="color:#adc4e0;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;">Total Workers: ${entries.length}</div><div style="color:#adc4e0;font-size:12px;margin-top:6px;">T.Rem.Salary: <strong style="color:var(--gold-light);">Rs. ${totalRemSalSum.toLocaleString()}</strong></div>${backleSum > 0 ? `<div style="color:#adc4e0;font-size:12px;margin-top:4px;">Backle Total: <strong style="color:var(--gold-light);">Rs. ${backleSum.toLocaleString()}</strong></div>` : ''}</div><div style="text-align:right;"><div style="color:#adc4e0;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;">🏆 Kul Grand Total</div><div style="color:var(--gold);font-family:'Playfair Display',serif;font-size:34px;font-weight:900;letter-spacing:1px;">Rs. ${grandSum.toLocaleString()}</div></div></div>`;
     cards.appendChild(totalCard);
   }
 }
 
 // ===========================
-// PRINT PREVIEW MODAL
+// PRINT
 // ===========================
 function buildSlipHTML(e) {
   const now = new Date().toLocaleDateString('en-PK');
   const r = (v) => Math.round(v||0).toLocaleString();
   const rs = (v) => 'Rs. ' + r(v);
-
-  return `
-  <div class="print-page">
-    <div class="print-header">
-      <h1>FAISAL GORAYA INDUSTRY</h1>
-      <p>SALARY SLIP &nbsp;·&nbsp; FGI Production Unit</p>
-    </div>
-
-    <div class="print-info">
-      <span><strong>Worker:</strong> ${e.name}</span>
-      <span><strong>Sr #:</strong> ${e.sr}</span>
-      <span><strong>Month:</strong> ${e.month}</span>
-      <span><strong>Date:</strong> ${fmtDate(e.date)||''}</span>
-      <span><strong>Printed:</strong> ${now}</span>
-    </div>
-
-    <table class="print-table">
-      <thead>
-        <tr>
-          <th style="width:5%">#</th>
-          <th style="width:45%">Description</th>
-          <th style="width:50%">Value</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr><td>1</td><td>Basic Salary</td><td>${rs(e.basic)}</td></tr>
-        <tr><td>2</td><td>OT Hours (Total Overtime)</td><td>${e.ot||0} hrs</td></tr>
-        <tr><td>3</td><td>Over Days (OT ÷ 8)</td><td>${e.overDays||0} days</td></tr>
-        <tr><td>4</td><td>OH — Over Hours (baqi hrs)</td><td>${e.oh||0} hrs</td></tr>
-        <tr><td>5</td><td>Over Hrs Pay (OHP)</td><td>${rs(e.ohp)}</td></tr>
-        <tr><td>6</td><td>Days Worked</td><td>${e.days||0} days</td></tr>
-        <tr><td>7</td><td>Total Days (Days + Over Days)</td><td>${e.totalDays||0} days</td></tr>
-        <tr><td>8</td><td>Monthly Salary</td><td>${rs(e.mSalary)}</td></tr>
-        <tr><td>9</td><td>Mid Month Kharcha</td><td>${rs(e.midMonth)}</td></tr>
-        <tr><td>10</td><td>Rem. Monthly Salary (8 − 9)</td><td>${rs(e.remSalary)}</td></tr>
-        <tr><td>11</td><td>Total Advance</td><td>${rs(e.totalAdv)}</td></tr>
-        <tr><td>12</td><td>Deduction from Advance</td><td>${rs(e.deductAdv)}</td></tr>
-        <tr><td>13</td><td>Rem. Total Advance (11 − 12)</td><td>${rs(e.remAdv)}</td></tr>
-        <tr style="background:#f0f5ff;font-weight:700;">
-          <td>14</td><td>Total Rem. Salary (10 − 12)</td><td>${rs(e.totalRemSalary)}</td>
-        </tr>
-      </tbody>
-    </table>
-
-    <div class="print-footer">
-      <div><div class="sig-line">Worker Signature</div></div>
-      <div style="text-align:center;font-size:8pt;color:#555;align-self:flex-end;">
-        <em>Faisal Goraya Industry (FGI) — Official Salary Record</em>
-      </div>
-      <div><div class="sig-line">Manager Signature</div></div>
-    </div>
-  </div>`;
+  return `<div class="print-page"><div class="print-header"><h1>FAISAL GORAYA INDUSTRY</h1><p>SALARY SLIP &nbsp;·&nbsp; FGI Production Unit</p></div><div class="print-info"><span><strong>Worker:</strong> ${e.name}</span><span><strong>Sr #:</strong> ${e.sr}</span><span><strong>Month:</strong> ${e.month}</span><span><strong>Date:</strong> ${fmtDate(e.date)||''}</span><span><strong>Printed:</strong> ${now}</span></div><table class="print-table"><thead><tr><th style="width:5%">#</th><th style="width:45%">Description</th><th style="width:50%">Value</th></tr></thead><tbody><tr><td>1</td><td>Basic Salary</td><td>${rs(e.basic)}</td></tr><tr><td>2</td><td>OT Hours (Total Overtime)</td><td>${e.ot||0} hrs</td></tr><tr><td>3</td><td>Over Days (OT ÷ 8)</td><td>${e.overDays||0} days</td></tr><tr><td>4</td><td>OH — Over Hours (baqi hrs)</td><td>${e.oh||0} hrs</td></tr><tr><td>5</td><td>Over Hrs Pay (OHP)</td><td>${rs(e.ohp)}</td></tr><tr><td>6</td><td>Days Worked</td><td>${e.days||0} days</td></tr><tr><td>7</td><td>Total Days (Days + Over Days)</td><td>${e.totalDays||0} days</td></tr><tr><td>8</td><td>Monthly Salary</td><td>${rs(e.mSalary)}</td></tr><tr><td>9</td><td>Mid Month Kharcha</td><td>${rs(e.midMonth)}</td></tr><tr><td>10</td><td>Rem. Monthly Salary (8 − 9)</td><td>${rs(e.remSalary)}</td></tr><tr><td>11</td><td>Total Advance</td><td>${rs(e.totalAdv)}</td></tr><tr><td>12</td><td>Deduction from Advance</td><td>${rs(e.deductAdv)}</td></tr><tr><td>13</td><td>Rem. Total Advance (11 − 12)</td><td>${rs(e.remAdv)}</td></tr><tr style="background:#f0f5ff;font-weight:700;"><td>14</td><td>Total Rem. Salary (10 − 12)</td><td>${rs(e.totalRemSalary)}</td></tr></tbody></table><div class="print-footer"><div><div class="sig-line">Worker Signature</div></div><div style="text-align:center;font-size:8pt;color:#555;align-self:flex-end;"><em>Faisal Goraya Industry (FGI) — Official Salary Record</em></div><div><div class="sig-line">Manager Signature</div></div></div></div>`;
 }
 
 let _currentPrintHTML = '';
@@ -2124,9 +1309,7 @@ function openPrintModal(html) {
   _currentPrintHTML = html;
   document.getElementById('printModalBody').innerHTML = html;
   document.getElementById('printModal').classList.add('open');
-  // Show share button only if Web Share API available
-  document.getElementById('shareBtn').style.display =
-    navigator.share ? '' : 'none';
+  document.getElementById('shareBtn').style.display = navigator.share ? '' : 'none';
 }
 
 function closePrintModal() {
@@ -2134,127 +1317,59 @@ function closePrintModal() {
   document.getElementById('printModalBody').innerHTML = '';
 }
 
-// ── PDF GENERATION (html2canvas + jsPDF) ──────────────────────────
 async function _buildPDFBlob() {
   const isLandscape = _currentPrintHTML.includes('277mm');
-
-  // Render into a hidden off-screen div
   const wrapper = document.createElement('div');
   wrapper.style.cssText = 'position:fixed;left:-9999px;top:0;background:#fff;z-index:-1;';
-  wrapper.style.width = isLandscape ? '1060px' : '794px'; // A4 landscape=297mm≈1122px, but use 1060 for safe margin
-  wrapper.innerHTML = `
-    <style>
-      * { box-sizing:border-box; margin:0; padding:0; }
-      body { font-family:'Nunito',sans-serif; }
-      .print-page { width:100%; padding:30px 36px; background:#fff; }
-      .print-header { text-align:center; border-bottom:3px double #000; padding-bottom:10px; margin-bottom:14px; }
-      .print-header h1 { font-family:'Playfair Display',serif; font-size:22pt; font-weight:900; letter-spacing:2px; margin:0; }
-      .print-header p { font-size:9pt; letter-spacing:2px; color:#333; margin:4px 0 0; }
-      .print-info { display:flex; justify-content:space-between; flex-wrap:wrap; gap:6px; font-size:9pt; margin-bottom:14px; background:#f5f5f5; padding:8px 12px; border-radius:6px; }
-      .print-table { width:100%; border-collapse:collapse; font-size:8pt; table-layout:fixed; border:1.5px solid #333; }
-      .print-table th { background:#2a2a2a; color:#fff; padding:5px 2px; text-align:center; font-size:7.8pt; border:1px solid #555; }
-      .print-table td { padding:4px 3px; border:1px solid #bbb; }
-      .print-table tr:nth-child(even) td { background:#f9f9f9; }
-      .print-grand td { background:#c9a84c !important; color:#000 !important; font-weight:900 !important; }
-      .print-footer { margin-top:16px; border-top:1px solid #000; padding-top:10px; display:flex; justify-content:space-between; font-size:8pt; }
-      .sig-line { border-top:1px solid #000; padding-top:4px; width:120px; text-align:center; font-size:8pt; margin-top:20px; }
-    </style>
-    ${_currentPrintHTML}
-  `;
+  wrapper.style.width = isLandscape ? '1060px' : '794px';
+  wrapper.innerHTML = `<style>*{box-sizing:border-box;margin:0;padding:0;}body{font-family:'Nunito',sans-serif;}.print-page{width:100%;padding:30px 36px;background:#fff;}.print-header{text-align:center;border-bottom:3px double #000;padding-bottom:10px;margin-bottom:14px;}.print-header h1{font-family:'Playfair Display',serif;font-size:22pt;font-weight:900;letter-spacing:2px;margin:0;}.print-header p{font-size:9pt;letter-spacing:2px;color:#333;margin:4px 0 0;}.print-info{display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px;font-size:9pt;margin-bottom:14px;background:#f5f5f5;padding:8px 12px;border-radius:6px;}.print-table{width:100%;border-collapse:collapse;font-size:8pt;table-layout:fixed;border:1.5px solid #333;}.print-table th{background:#2a2a2a;color:#fff;padding:5px 2px;text-align:center;font-size:7.8pt;border:1px solid #555;}.print-table td{padding:4px 3px;border:1px solid #bbb;}.print-table tr:nth-child(even) td{background:#f9f9f9;}.print-grand td{background:#c9a84c!important;color:#000!important;font-weight:900!important;}.print-footer{margin-top:16px;border-top:1px solid #000;padding-top:10px;display:flex;justify-content:space-between;font-size:8pt;}.sig-line{border-top:1px solid #000;padding-top:4px;width:120px;text-align:center;font-size:8pt;margin-top:20px;}</style>${_currentPrintHTML}`;
   document.body.appendChild(wrapper);
-
   try {
-    const canvas = await html2canvas(wrapper, {
-      scale: 2,
-      useCORS: true,
-      backgroundColor: '#ffffff',
-      logging: false
-    });
-
+    const canvas = await html2canvas(wrapper, { scale: 2, useCORS: true, backgroundColor: '#ffffff', logging: false });
     const { jsPDF } = window.jspdf;
     const orientation = isLandscape ? 'landscape' : 'portrait';
     const pdf = new jsPDF({ orientation, unit: 'mm', format: 'a4' });
-
-    const pageW = pdf.internal.pageSize.getWidth();
-    const pageH = pdf.internal.pageSize.getHeight();
-    const imgW = pageW;
-    const imgH = (canvas.height * imgW) / canvas.width;
-
-    // If content taller than one page, split across pages
-    if (imgH <= pageH) {
-      pdf.addImage(canvas.toDataURL('image/jpeg', 0.95), 'JPEG', 0, 0, imgW, imgH);
-    } else {
-      let yPos = 0;
-      let remaining = imgH;
-      let pageNum = 0;
+    const pageW = pdf.internal.pageSize.getWidth(), pageH = pdf.internal.pageSize.getHeight();
+    const imgW = pageW, imgH = (canvas.height * imgW) / canvas.width;
+    if (imgH <= pageH) { pdf.addImage(canvas.toDataURL('image/jpeg', 0.95), 'JPEG', 0, 0, imgW, imgH); }
+    else {
+      let remaining = imgH, pageNum = 0;
       while (remaining > 0) {
         if (pageNum > 0) pdf.addPage();
         const sliceH = Math.min(pageH, remaining);
-        const srcY = pageNum * pageH * (canvas.height / imgH);
-        const srcH = sliceH * (canvas.height / imgH);
+        const srcY = pageNum * pageH * (canvas.height / imgH), srcH = sliceH * (canvas.height / imgH);
         const sliceCanvas = document.createElement('canvas');
-        sliceCanvas.width = canvas.width;
-        sliceCanvas.height = srcH;
+        sliceCanvas.width = canvas.width; sliceCanvas.height = srcH;
         sliceCanvas.getContext('2d').drawImage(canvas, 0, srcY, canvas.width, srcH, 0, 0, canvas.width, srcH);
         pdf.addImage(sliceCanvas.toDataURL('image/jpeg', 0.95), 'JPEG', 0, 0, imgW, sliceH);
-        remaining -= pageH;
-        pageNum++;
+        remaining -= pageH; pageNum++;
       }
     }
-
     return pdf;
-  } finally {
-    document.body.removeChild(wrapper);
-  }
+  } finally { document.body.removeChild(wrapper); }
 }
 
 async function doPDF() {
   const btn = document.getElementById('printBtn');
-  btn.textContent = '⏳ PDF ban rahi hai...';
-  btn.disabled = true;
-  try {
-    const pdf = await _buildPDFBlob();
-    const now = new Date().toISOString().slice(0,10);
-    pdf.save(`FGI-Salary-${now}.pdf`);
-    showToast('✅ PDF download ho gayi! Downloads folder mein check karo.');
-  } catch(e) {
-    showToast('⚠️ PDF error: ' + e.message);
-  } finally {
-    btn.textContent = '📄 Save PDF';
-    btn.disabled = false;
-  }
+  btn.textContent = '⏳ PDF ban rahi hai...'; btn.disabled = true;
+  try { const pdf = await _buildPDFBlob(); pdf.save(`FGI-Salary-${new Date().toISOString().slice(0,10)}.pdf`); showToast('✅ PDF download ho gayi!'); }
+  catch(e) { showToast('⚠️ PDF error: ' + e.message); }
+  finally { btn.textContent = '📄 Save PDF'; btn.disabled = false; }
 }
 
 async function doSharePDF() {
   const btn = document.getElementById('shareBtn');
-  btn.textContent = '⏳ PDF ban rahi hai...';
-  btn.disabled = true;
+  btn.textContent = '⏳ PDF ban rahi hai...'; btn.disabled = true;
   try {
     const pdf = await _buildPDFBlob();
-    const now = new Date().toISOString().slice(0,10);
-    const filename = `FGI-Salary-${now}.pdf`;
+    const filename = `FGI-Salary-${new Date().toISOString().slice(0,10)}.pdf`;
     const blob = pdf.output('blob');
     const file = new File([blob], filename, { type: 'application/pdf' });
-
-    if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-      await navigator.share({ files: [file], title: 'FGI Salary Slip', text: 'FGI Salary Report — ' + now });
-      showToast('✅ PDF share ho gayi!');
-    } else {
-      // Fallback: download
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = filename;
-      a.click();
-      showToast('⬇️ PDF download ho gayi (share supported nahi tha).');
-    }
-  } catch(e) {
-    showToast('⚠️ Share error: ' + e.message);
-  } finally {
-    btn.textContent = '📤 WhatsApp / Share';
-    btn.disabled = false;
-  }
+    if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) { await navigator.share({ files: [file], title: 'FGI Salary Slip' }); showToast('✅ PDF share ho gayi!'); }
+    else { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = filename; a.click(); showToast('⬇️ PDF download ho gayi.'); }
+  } catch(e) { showToast('⚠️ Share error: ' + e.message); }
+  finally { btn.textContent = '📤 WhatsApp / Share'; btn.disabled = false; }
 }
-
 
 function printSingle(id) {
   const e = DB.entries.find(x => x.id === id);
@@ -2264,12 +1379,8 @@ function printSingle(id) {
 
 function printAllWorkers() {
   const month = document.getElementById('rpt_month').value;
-  // Sirf active workers ki entries — deleted workers filter out
   const activeCodes = DB.workers.map(w => w.code).filter(Boolean);
-  const hasDupNames = new Set(
-    DB.workers.map(w => w.name.trim().toLowerCase())
-      .filter((n, i, arr) => arr.indexOf(n) !== i)
-  );
+  const hasDupNames = new Set(DB.workers.map(w => w.name.trim().toLowerCase()).filter((n, i, arr) => arr.indexOf(n) !== i));
   let entries = DB.entries.filter(e => {
     if (e.workerCode) return activeCodes.includes(e.workerCode);
     if (hasDupNames.has(e.name.trim().toLowerCase())) return false;
@@ -2277,194 +1388,20 @@ function printAllWorkers() {
   });
   if (month) entries = entries.filter(e => e.month === month);
   if (!entries.length) { showToast('⚠️ Koi data nahi!'); return; }
-
-  // Workers ko DB.workers ki order mein sort karo (same sequence har mahine)
   const workerOrder = DB.workers.map(w => w.code);
-  entries.sort((a, b) => {
-    const ai = workerOrder.indexOf(a.workerCode);
-    const bi = workerOrder.indexOf(b.workerCode);
-    if (ai === -1 && bi === -1) return 0;
-    if (ai === -1) return 1;
-    if (bi === -1) return -1;
-    return ai - bi;
-  });
-  // Sr numbers update karo sequence ke mutabiq
+  entries.sort((a, b) => { const ai = workerOrder.indexOf(a.workerCode), bi = workerOrder.indexOf(b.workerCode); if (ai === -1 && bi === -1) return 0; if (ai === -1) return 1; if (bi === -1) return -1; return ai - bi; });
   entries = entries.map((e, i) => ({ ...e, sr: i + 1 }));
-
   const now = new Date().toLocaleDateString('en-PK');
   const r = (v) => Math.round(v||0).toLocaleString();
-
-  // Total row
-  const totals = entries.reduce((acc, e) => {
-    acc.basic      += e.basic||0;
-    acc.ot         += e.ot||0;
-    acc.overDays   += e.overDays||0;
-    acc.oh         += e.oh||0;
-    acc.ohp        += e.ohp||0;
-    acc.days       += e.days||0;
-    acc.totalDays  += e.totalDays||0;
-    acc.mSalary    += e.mSalary||0;
-    acc.midMonth   += e.midMonth||0;
-    acc.remSalary  += e.remSalary||0;
-    acc.totalAdv   += e.totalAdv||0;
-    acc.deductAdv  += e.deductAdv||0;
-    acc.remAdv     += e.remAdv||0;
-    acc.totalRemSalary += e.totalRemSalary||0;
-    return acc;
-  }, {basic:0,ot:0,overDays:0,oh:0,ohp:0,days:0,totalDays:0,mSalary:0,midMonth:0,remSalary:0,totalAdv:0,deductAdv:0,remAdv:0,totalRemSalary:0});
-
-  const rows = entries.map((e, i) => `
-    <tr style="font-size:8pt;background:#fff;color:#000;">
-      <td style="text-align:center;font-weight:700;padding:4px 2px;border:1px solid #888;">${e.sr||i+1}</td>
-      <td style="font-weight:600;padding:4px 3px;border:1px solid #888;overflow:hidden;word-break:break-word;">${e.name}</td>
-      <td style="text-align:center;padding:4px 3px;border:1px solid #888;">${r(e.basic)}</td>
-      <td style="text-align:center;padding:4px 2px;border:1px solid #888;">${e.ot||0}</td>
-      <td style="text-align:center;padding:4px 2px;border:1px solid #888;">${e.overDays||0}</td>
-      <td style="text-align:center;padding:4px 2px;border:1px solid #888;">${e.oh||0}</td>
-      <td style="text-align:center;padding:4px 3px;border:1px solid #888;">${r(e.ohp)}</td>
-      <td style="text-align:center;padding:4px 2px;border:1px solid #888;">${e.days||0}</td>
-      <td style="text-align:center;font-weight:700;padding:4px 2px;border:1px solid #888;">${e.totalDays||0}</td>
-      <td style="text-align:center;padding:4px 3px;border:1px solid #888;">${r(e.mSalary)}</td>
-      <td style="text-align:center;padding:4px 3px;border:1px solid #888;">${r(e.midMonth)}</td>
-      <td style="text-align:center;font-weight:700;padding:4px 3px;border:1px solid #888;">${r(e.remSalary)}</td>
-      <td style="text-align:center;padding:4px 3px;border:1px solid #888;">${r(e.totalAdv)}</td>
-      <td style="text-align:center;padding:4px 3px;border:1px solid #888;">${r(e.deductAdv)}</td>
-      <td style="text-align:center;padding:4px 3px;border:1px solid #888;">${r(e.remAdv)}</td>
-      <td style="text-align:center;font-weight:800;padding:4px 3px;border:1px solid #888;">${r(e.totalRemSalary)}</td>
-    </tr>`).join('');
-
+  const totals = entries.reduce((acc, e) => { acc.basic+=e.basic||0;acc.ot+=e.ot||0;acc.overDays+=e.overDays||0;acc.oh+=e.oh||0;acc.ohp+=e.ohp||0;acc.days+=e.days||0;acc.totalDays+=e.totalDays||0;acc.mSalary+=e.mSalary||0;acc.midMonth+=e.midMonth||0;acc.remSalary+=e.remSalary||0;acc.totalAdv+=e.totalAdv||0;acc.deductAdv+=e.deductAdv||0;acc.remAdv+=e.remAdv||0;acc.totalRemSalary+=e.totalRemSalary||0;return acc;}, {basic:0,ot:0,overDays:0,oh:0,ohp:0,days:0,totalDays:0,mSalary:0,midMonth:0,remSalary:0,totalAdv:0,deductAdv:0,remAdv:0,totalRemSalary:0});
+  const rows = entries.map((e, i) => `<tr style="font-size:8pt;background:#fff;color:#000;"><td style="text-align:center;font-weight:700;padding:4px 2px;border:1px solid #888;">${e.sr||i+1}</td><td style="font-weight:600;padding:4px 3px;border:1px solid #888;overflow:hidden;word-break:break-word;">${e.name}</td><td style="text-align:center;padding:4px 3px;border:1px solid #888;">${r(e.basic)}</td><td style="text-align:center;padding:4px 2px;border:1px solid #888;">${e.ot||0}</td><td style="text-align:center;padding:4px 2px;border:1px solid #888;">${e.overDays||0}</td><td style="text-align:center;padding:4px 2px;border:1px solid #888;">${e.oh||0}</td><td style="text-align:center;padding:4px 3px;border:1px solid #888;">${r(e.ohp)}</td><td style="text-align:center;padding:4px 2px;border:1px solid #888;">${e.days||0}</td><td style="text-align:center;font-weight:700;padding:4px 2px;border:1px solid #888;">${e.totalDays||0}</td><td style="text-align:center;padding:4px 3px;border:1px solid #888;">${r(e.mSalary)}</td><td style="text-align:center;padding:4px 3px;border:1px solid #888;">${r(e.midMonth)}</td><td style="text-align:center;font-weight:700;padding:4px 3px;border:1px solid #888;">${r(e.remSalary)}</td><td style="text-align:center;padding:4px 3px;border:1px solid #888;">${r(e.totalAdv)}</td><td style="text-align:center;padding:4px 3px;border:1px solid #888;">${r(e.deductAdv)}</td><td style="text-align:center;padding:4px 3px;border:1px solid #888;">${r(e.remAdv)}</td><td style="text-align:center;font-weight:800;padding:4px 3px;border:1px solid #888;">${r(e.totalRemSalary)}</td></tr>`).join('');
   const backleEntries = DB.backleEntries.filter(e => !month || e.month === month);
-  const backleTotal   = backleEntries.reduce((s,e) => s + (e.total||0), 0);
+  const backleTotal = backleEntries.reduce((s,e) => s + (e.total||0), 0);
   const totalRemSalSum = Math.round(totals.totalRemSalary);
-  const grandTotal    = totalRemSalSum + backleTotal;
-
-  // Backle section (sirf agar koi entry ho)
-  const backleSection = backleEntries.length > 0 ? `
-    <div style="margin-top:16px;">
-      <div style="background:#7a5a00;color:#ffe090;font-size:8pt;font-weight:800;letter-spacing:1px;padding:6px 10px;border-radius:4px 4px 0 0;text-transform:uppercase;">
-        🧱 Backle / Production — ${backleEntries.length} Entr${backleEntries.length > 1 ? 'ies' : 'y'}
-      </div>
-      <table class="print-table" style="font-size:8pt;">
-        <thead>
-          <tr>
-            <th style="text-align:center;width:5%;background:#000;color:#fff;">Sr</th>
-            <th style="width:15%;background:#000;color:#fff;">Date</th>
-            <th style="width:30%;background:#000;color:#fff;">Note / Description</th>
-            <th style="text-align:center;background:#000;color:#fff;">Backle Qty</th>
-            <th style="background:#000;color:#fff;">Price / Backle</th>
-            <th style="background:#000;color:#fff;">Backle Total</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${backleEntries.map((e,i) => `
-          <tr style="background:#fff;color:#000;">
-            <td style="text-align:center;">${i+1}</td>
-            <td>${e.date||''}</td>
-            <td style="color:#000;">${e.note||'—'}</td>
-            <td style="text-align:center;">${(e.qty||0).toLocaleString()}</td>
-            <td>Rs. ${e.price||0}</td>
-            <td style="font-weight:800;">Rs. ${(e.total||0).toLocaleString()}</td>
-          </tr>`).join('')}
-          <tr style="background:#000;color:#fff;font-weight:800;">
-            <td colspan="5">Kul Backle Total</td>
-            <td>Rs. ${backleTotal.toLocaleString()}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>` : '';
-
-  // Grand Total bar
-  const grandTotalBar = `
-    <div style="margin-top:14px;background:#000;color:#fff;border-radius:6px;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;">
-      <div style="font-size:8pt;color:#ccc;">
-        T.Rem.Salary: <strong style="color:#fff;">Rs. ${totalRemSalSum.toLocaleString()}</strong>
-        ${backleTotal > 0 ? ` &nbsp;+&nbsp; Backle: <strong style="color:#fff;">Rs. ${backleTotal.toLocaleString()}</strong>` : ''}
-      </div>
-      <div style="font-size:11pt;font-weight:900;color:#fff;font-family:'Playfair Display',serif;">
-        🏆 Grand Total: Rs. ${grandTotal.toLocaleString()}
-      </div>
-    </div>`;
-
-  const html = `
-  <div class="print-page" style="width:277mm;min-height:190mm;padding:8mm 10mm;">
-    <div class="print-header">
-      <h1 style="font-size:16pt;">FAISAL GORAYA INDUSTRY</h1>
-      <p>ALL WORKERS SALARY REPORT &nbsp;·&nbsp; ${month || 'All Months'} &nbsp;·&nbsp; Printed: ${now}</p>
-    </div>
-
-    <table class="print-table" style="font-size:8pt;margin-top:8px;table-layout:fixed;width:100%;border:1.5px solid #333;">
-      <colgroup>
-        <col style="width:2.8%">   <!-- Sr -->
-        <col style="width:9.5%">   <!-- Name -->
-        <col style="width:6%">     <!-- Salary -->
-        <col style="width:3.5%">   <!-- OT -->
-        <col style="width:4%">     <!-- OvHr -->
-        <col style="width:4%">     <!-- OvDay -->
-        <col style="width:5%">     <!-- OvPay -->
-        <col style="width:3.8%">   <!-- Day -->
-        <col style="width:4.2%">   <!-- T.Days -->
-        <col style="width:6.5%">   <!-- M.Salary -->
-        <col style="width:7%">     <!-- M.Adv/Exp -->
-        <col style="width:6.7%">   <!-- MT.Salary -->
-        <col style="width:6%">     <!-- T.Adv -->
-        <col style="width:5.5%">   <!-- Dec.Adv -->
-        <col style="width:6%">     <!-- Rem.Adv -->
-        <col style="width:6.5%">   <!-- TR.Salary -->
-      </colgroup>
-      <thead>
-        <tr style="background:#000;color:#fff;font-size:7.8pt;font-weight:700;">
-          <th style="text-align:center;padding:5px 2px;border:1px solid #555;">Sr</th>
-          <th style="text-align:center;padding:5px 3px;border:1px solid #555;">Name</th>
-          <th style="text-align:center;padding:5px 2px;border:1px solid #555;">Salary</th>
-          <th style="text-align:center;padding:5px 2px;border:1px solid #555;">OT</th>
-          <th style="text-align:center;padding:5px 2px;border:1px solid #555;">OvDay</th>
-          <th style="text-align:center;padding:5px 2px;border:1px solid #555;">OvHr</th>
-          <th style="text-align:center;padding:5px 2px;border:1px solid #555;">OvPay</th>
-          <th style="text-align:center;padding:5px 2px;border:1px solid #555;">Day</th>
-          <th style="text-align:center;padding:5px 2px;border:1px solid #555;">T.Days</th>
-          <th style="text-align:center;padding:5px 2px;border:1px solid #555;">M.Salary</th>
-          <th style="text-align:center;padding:5px 2px;border:1px solid #555;">M.Adv/Exp</th>
-          <th style="text-align:center;padding:5px 2px;border:1px solid #555;">MT.Salary</th>
-          <th style="text-align:center;padding:5px 2px;border:1px solid #555;">T.Adv</th>
-          <th style="text-align:center;padding:5px 2px;border:1px solid #555;">Dec.Adv</th>
-          <th style="text-align:center;padding:5px 2px;border:1px solid #555;">Rem.Adv</th>
-          <th style="text-align:center;padding:5px 2px;border:1px solid #555;">TR.Salary</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${rows}
-        <tr style="background:#000!important;color:#fff!important;font-weight:800;font-size:8pt;">
-          <td colspan="2" style="text-align:center;padding:5px 2px;border:1px solid #555;background:#000!important;color:#fff!important;">TOTAL (${entries.length} Workers)</td>
-          <td style="text-align:center;padding:5px 3px;border:1px solid #555;background:#000!important;color:#fff!important;">${r(totals.basic)}</td>
-          <td style="text-align:center;padding:5px 2px;border:1px solid #555;background:#000!important;color:#fff!important;">${r(totals.ot)}</td>
-          <td style="text-align:center;padding:5px 2px;border:1px solid #555;background:#000!important;color:#fff!important;">${r(totals.overDays)}</td>
-          <td style="text-align:center;padding:5px 2px;border:1px solid #555;background:#000!important;color:#fff!important;">${r(totals.oh)}</td>
-          <td style="text-align:center;padding:5px 3px;border:1px solid #555;background:#000!important;color:#fff!important;">${r(totals.ohp)}</td>
-          <td style="text-align:center;padding:5px 2px;border:1px solid #555;background:#000!important;color:#fff!important;">${r(totals.days)}</td>
-          <td style="text-align:center;padding:5px 2px;border:1px solid #555;background:#000!important;color:#fff!important;">${r(totals.totalDays)}</td>
-          <td style="text-align:center;padding:5px 3px;border:1px solid #555;background:#000!important;color:#fff!important;">${r(totals.mSalary)}</td>
-          <td style="text-align:center;padding:5px 3px;border:1px solid #555;background:#000!important;color:#fff!important;">${r(totals.midMonth)}</td>
-          <td style="text-align:center;padding:5px 3px;border:1px solid #555;background:#000!important;color:#fff!important;">${r(totals.remSalary)}</td>
-          <td style="text-align:center;padding:5px 3px;border:1px solid #555;background:#000!important;color:#fff!important;">${r(totals.totalAdv)}</td>
-          <td style="text-align:center;padding:5px 3px;border:1px solid #555;background:#000!important;color:#fff!important;">${r(totals.deductAdv)}</td>
-          <td style="text-align:center;padding:5px 3px;border:1px solid #555;background:#000!important;color:#fff!important;">${r(totals.remAdv)}</td>
-          <td style="text-align:center;padding:5px 3px;border:1px solid #555;background:#000!important;color:#fff!important;">${r(totals.totalRemSalary)}</td>
-        </tr>
-      </tbody>
-    </table>
-
-    ${backleSection}
-    ${grandTotalBar}
-
-    <div class="print-footer" style="margin-top:14px;">
-      <div><div class="sig-line">Prepared By</div></div>
-      <div style="text-align:center;font-size:7pt;color:#555;align-self:flex-end;">
-        <em>Faisal Goraya Industry (FGI) — Official Salary Record</em>
-      </div>
-      <div><div class="sig-line">Manager / Owner</div></div>
-    </div>
-  </div>`;
-
+  const grandTotal = totalRemSalSum + backleTotal;
+  const backleSection = backleEntries.length > 0 ? `<div style="margin-top:16px;"><div style="background:#7a5a00;color:#ffe090;font-size:8pt;font-weight:800;letter-spacing:1px;padding:6px 10px;border-radius:4px 4px 0 0;text-transform:uppercase;">🧱 Backle / Production — ${backleEntries.length} Entr${backleEntries.length > 1 ? 'ies' : 'y'}</div><table class="print-table" style="font-size:8pt;"><thead><tr><th style="text-align:center;width:5%;background:#000;color:#fff;">Sr</th><th style="width:15%;background:#000;color:#fff;">Date</th><th style="width:30%;background:#000;color:#fff;">Note</th><th style="text-align:center;background:#000;color:#fff;">Qty</th><th style="background:#000;color:#fff;">Price</th><th style="background:#000;color:#fff;">Total</th></tr></thead><tbody>${backleEntries.map((e,i)=>`<tr style="background:#fff;color:#000;"><td style="text-align:center;">${i+1}</td><td>${e.date||''}</td><td>${e.note||'—'}</td><td style="text-align:center;">${(e.qty||0).toLocaleString()}</td><td>Rs. ${e.price||0}</td><td style="font-weight:800;">Rs. ${(e.total||0).toLocaleString()}</td></tr>`).join('')}<tr style="background:#000;color:#fff;font-weight:800;"><td colspan="5">Kul Backle Total</td><td>Rs. ${backleTotal.toLocaleString()}</td></tr></tbody></table></div>` : '';
+  const grandTotalBar = `<div style="margin-top:14px;background:#000;color:#fff;border-radius:6px;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;"><div style="font-size:8pt;color:#ccc;">T.Rem.Salary: <strong>Rs. ${totalRemSalSum.toLocaleString()}</strong>${backleTotal > 0 ? ` &nbsp;+&nbsp; Backle: <strong>Rs. ${backleTotal.toLocaleString()}</strong>` : ''}</div><div style="font-size:11pt;font-weight:900;font-family:'Playfair Display',serif;">🏆 Grand Total: Rs. ${grandTotal.toLocaleString()}</div></div>`;
+  const html = `<div class="print-page" style="width:277mm;min-height:190mm;padding:8mm 10mm;"><div class="print-header"><h1 style="font-size:16pt;">FAISAL GORAYA INDUSTRY</h1><p>ALL WORKERS SALARY REPORT &nbsp;·&nbsp; ${month || 'All Months'} &nbsp;·&nbsp; Printed: ${now}</p></div><table class="print-table" style="font-size:8pt;margin-top:8px;table-layout:fixed;width:100%;border:1.5px solid #333;"><colgroup><col style="width:2.8%"><col style="width:9.5%"><col style="width:6%"><col style="width:3.5%"><col style="width:4%"><col style="width:4%"><col style="width:5%"><col style="width:3.8%"><col style="width:4.2%"><col style="width:6.5%"><col style="width:7%"><col style="width:6.7%"><col style="width:6%"><col style="width:5.5%"><col style="width:6%"><col style="width:6.5%"></colgroup><thead><tr style="background:#000;color:#fff;font-size:7.8pt;font-weight:700;"><th style="text-align:center;padding:5px 2px;border:1px solid #555;">Sr</th><th style="text-align:center;padding:5px 3px;border:1px solid #555;">Name</th><th style="text-align:center;padding:5px 2px;border:1px solid #555;">Salary</th><th style="text-align:center;padding:5px 2px;border:1px solid #555;">OT</th><th style="text-align:center;padding:5px 2px;border:1px solid #555;">OvDay</th><th style="text-align:center;padding:5px 2px;border:1px solid #555;">OvHr</th><th style="text-align:center;padding:5px 2px;border:1px solid #555;">OvPay</th><th style="text-align:center;padding:5px 2px;border:1px solid #555;">Day</th><th style="text-align:center;padding:5px 2px;border:1px solid #555;">T.Days</th><th style="text-align:center;padding:5px 2px;border:1px solid #555;">M.Salary</th><th style="text-align:center;padding:5px 2px;border:1px solid #555;">M.Adv/Exp</th><th style="text-align:center;padding:5px 2px;border:1px solid #555;">MT.Salary</th><th style="text-align:center;padding:5px 2px;border:1px solid #555;">T.Adv</th><th style="text-align:center;padding:5px 2px;border:1px solid #555;">Dec.Adv</th><th style="text-align:center;padding:5px 2px;border:1px solid #555;">Rem.Adv</th><th style="text-align:center;padding:5px 2px;border:1px solid #555;">TR.Salary</th></tr></thead><tbody>${rows}<tr style="background:#000!important;color:#fff!important;font-weight:800;font-size:8pt;"><td colspan="2" style="text-align:center;padding:5px 2px;border:1px solid #555;background:#000!important;color:#fff!important;">TOTAL (${entries.length} Workers)</td><td style="text-align:center;padding:5px 3px;border:1px solid #555;background:#000!important;color:#fff!important;">${r(totals.basic)}</td><td style="text-align:center;padding:5px 2px;border:1px solid #555;background:#000!important;color:#fff!important;">${r(totals.ot)}</td><td style="text-align:center;padding:5px 2px;border:1px solid #555;background:#000!important;color:#fff!important;">${r(totals.overDays)}</td><td style="text-align:center;padding:5px 2px;border:1px solid #555;background:#000!important;color:#fff!important;">${r(totals.oh)}</td><td style="text-align:center;padding:5px 3px;border:1px solid #555;background:#000!important;color:#fff!important;">${r(totals.ohp)}</td><td style="text-align:center;padding:5px 2px;border:1px solid #555;background:#000!important;color:#fff!important;">${r(totals.days)}</td><td style="text-align:center;padding:5px 2px;border:1px solid #555;background:#000!important;color:#fff!important;">${r(totals.totalDays)}</td><td style="text-align:center;padding:5px 3px;border:1px solid #555;background:#000!important;color:#fff!important;">${r(totals.mSalary)}</td><td style="text-align:center;padding:5px 3px;border:1px solid #555;background:#000!important;color:#fff!important;">${r(totals.midMonth)}</td><td style="text-align:center;padding:5px 3px;border:1px solid #555;background:#000!important;color:#fff!important;">${r(totals.remSalary)}</td><td style="text-align:center;padding:5px 3px;border:1px solid #555;background:#000!important;color:#fff!important;">${r(totals.totalAdv)}</td><td style="text-align:center;padding:5px 3px;border:1px solid #555;background:#000!important;color:#fff!important;">${r(totals.deductAdv)}</td><td style="text-align:center;padding:5px 3px;border:1px solid #555;background:#000!important;color:#fff!important;">${r(totals.remAdv)}</td><td style="text-align:center;padding:5px 3px;border:1px solid #555;background:#000!important;color:#fff!important;">${r(totals.totalRemSalary)}</td></tr></tbody></table>${backleSection}${grandTotalBar}<div class="print-footer" style="margin-top:14px;"><div><div class="sig-line">Prepared By</div></div><div style="text-align:center;font-size:7pt;color:#555;align-self:flex-end;"><em>Faisal Goraya Industry (FGI) — Official Salary Record</em></div><div><div class="sig-line">Manager / Owner</div></div></div></div>`;
   openPrintModal(html);
 }
 
@@ -2475,7 +1412,7 @@ function exportData() {
   const blob = new Blob([JSON.stringify(DB, null, 2)], { type: 'application/json' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = `FGI_Backup_${new Date().toISOString().slice(0,10)}.json`;
+  a.download = `FGI_Salary_Backup_${new Date().toISOString().slice(0,10)}.json`;
   a.click();
   showToast('✅ Backup exported!');
 }
@@ -2489,32 +1426,18 @@ function importData(event) {
       const data = JSON.parse(e.target.result);
       if (data.entries !== undefined) {
         DB = data;
-        // Safety checks for new fields
         if (!Array.isArray(DB.backleEntries)) DB.backleEntries = [];
         if (!DB.nextBackleId) DB.nextBackleId = 1;
         if (DB.lastBacklePrice === undefined) DB.lastBacklePrice = '';
         if (!DB.nextWorkerCode) DB.nextWorkerCode = 1;
         if (!Array.isArray(DB.midMonthRecords)) DB.midMonthRecords = [];
         if (!DB.nextMidMonthId) DB.nextMidMonthId = 1;
-        saveDB();
-        initApp();
-        renderWorkerDatalist();
+        saveDB(); initApp(); renderWorkerDatalist();
         const msg = document.getElementById('importMsg');
-        if (msg) {
-          msg.style.color = 'var(--green)';
-          msg.textContent = `✅ Import successful! ${DB.workers.length} workers, ${DB.entries.length} entries load ho gayi.`;
-        }
-        showToast('✅ Data import ho gaya! ' + DB.workers.length + ' workers, ' + DB.entries.length + ' entries.');
-      } else {
-        showToast('❌ Invalid backup file!');
-        const msg = document.getElementById('importMsg');
-        if (msg) { msg.style.color = 'var(--red)'; msg.textContent = '❌ Yeh valid FGI backup file nahi hai.'; }
-      }
-    } catch {
-      showToast('❌ File read error!');
-      const msg = document.getElementById('importMsg');
-      if (msg) { msg.style.color = 'var(--red)'; msg.textContent = '❌ File corrupt ya invalid hai.'; }
-    }
+        if (msg) { msg.style.color = 'var(--green)'; msg.textContent = `✅ Import successful! ${DB.workers.length} workers, ${DB.entries.length} entries.`; }
+        showToast('✅ Data import ho gaya!');
+      } else { showToast('❌ Invalid backup file!'); }
+    } catch { showToast('❌ File read error!'); }
   };
   reader.readAsText(file);
   event.target.value = '';
@@ -2526,8 +1449,7 @@ function importData(event) {
 let toastTimer;
 function showToast(msg) {
   const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
+  t.textContent = msg; t.classList.add('show');
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
 }
@@ -2539,10 +1461,8 @@ function initBackle() {
   const today = new Date();
   document.getElementById('b_date').value = today.toISOString().slice(0,10);
   document.getElementById('b_month').value = today.toISOString().slice(0,7);
-  // Auto-load last saved price
   if (DB.lastBacklePrice) document.getElementById('b_price').value = DB.lastBacklePrice;
-  populateBackleEditSelect();
-  renderBackleTable();
+  populateBackleEditSelect(); renderBackleTable();
 }
 
 function calcBackle() {
@@ -2555,30 +1475,15 @@ function saveBackleEntry() {
   const qty = parseFloat(document.getElementById('b_qty').value) || 0;
   const price = parseFloat(document.getElementById('b_price').value) || 0;
   if (!qty || !price) { showToast('⚠️ Qty aur Price daalna zaroori hai!'); return; }
-
-  const entry = {
-    id: DB.nextBackleId,
-    date: document.getElementById('b_date').value,
-    month: document.getElementById('b_month').value,
-    note: document.getElementById('b_note').value.trim(),
-    qty, price,
-    total: Math.round(qty * price)
-  };
-
+  const entry = { id: DB.nextBackleId, date: document.getElementById('b_date').value, month: document.getElementById('b_month').value, note: document.getElementById('b_note').value.trim(), qty, price, total: Math.round(qty * price) };
   const mode = document.getElementById('backleMode').value;
   if (mode === 'edit') {
     const selId = parseInt(document.getElementById('backleEditSelect').value);
     const idx = DB.backleEntries.findIndex(e => e.id === selId);
     if (idx > -1) { entry.id = selId; DB.backleEntries[idx] = entry; }
-  } else {
-    DB.backleEntries.push(entry);
-    DB.nextBackleId++;
-  }
-
+  } else { DB.backleEntries.push(entry); DB.nextBackleId++; }
   DB.lastBacklePrice = price;
-  saveDB();
-  renderBackleTable();
-  populateBackleEditSelect();
+  saveDB(); renderBackleTable(); populateBackleEditSelect();
   if (mode === 'new') clearBackleForm();
   showToast('✅ Backle entry saved!');
   document.getElementById('backleSaveMsg').textContent = `✅ Entry saved! Total: Rs. ${entry.total.toLocaleString()}`;
@@ -2586,9 +1491,7 @@ function saveBackleEntry() {
 }
 
 function clearBackleForm() {
-  document.getElementById('b_qty').value = '';
-  document.getElementById('b_total').value = '';
-  document.getElementById('b_note').value = '';
+  document.getElementById('b_qty').value = ''; document.getElementById('b_total').value = ''; document.getElementById('b_note').value = '';
   const today = new Date();
   document.getElementById('b_date').value = today.toISOString().slice(0,10);
   document.getElementById('b_month').value = today.toISOString().slice(0,7);
@@ -2598,8 +1501,7 @@ function clearBackleForm() {
 function toggleBackleMode() {
   const mode = document.getElementById('backleMode').value;
   const sel = document.getElementById('backleEditSelect');
-  if (mode === 'edit') { sel.style.display = ''; populateBackleEditSelect(); }
-  else { sel.style.display = 'none'; clearBackleForm(); }
+  if (mode === 'edit') { sel.style.display = ''; populateBackleEditSelect(); } else { sel.style.display = 'none'; clearBackleForm(); }
 }
 
 function populateBackleEditSelect() {
@@ -2607,8 +1509,7 @@ function populateBackleEditSelect() {
   sel.innerHTML = '<option value="">-- Select Entry --</option>';
   [...DB.backleEntries].reverse().forEach(e => {
     const opt = document.createElement('option');
-    opt.value = e.id;
-    opt.textContent = `#${e.id} | ${e.month} | Qty:${e.qty} | Rs.${e.total.toLocaleString()}`;
+    opt.value = e.id; opt.textContent = `#${e.id} | ${e.month} | Qty:${e.qty} | Rs.${e.total.toLocaleString()}`;
     sel.appendChild(opt);
   });
 }
@@ -2618,67 +1519,40 @@ function loadBackleEdit() {
   if (!id) return;
   const e = DB.backleEntries.find(x => x.id === id);
   if (!e) return;
-  document.getElementById('b_date').value = e.date || '';
-  document.getElementById('b_month').value = e.month || '';
-  document.getElementById('b_note').value = e.note || '';
-  document.getElementById('b_qty').value = e.qty;
-  document.getElementById('b_price').value = e.price;
-  document.getElementById('b_total').value = e.total;
+  document.getElementById('b_date').value = e.date || ''; document.getElementById('b_month').value = e.month || '';
+  document.getElementById('b_note').value = e.note || ''; document.getElementById('b_qty').value = e.qty;
+  document.getElementById('b_price').value = e.price; document.getElementById('b_total').value = e.total;
 }
 
 function renderBackleTable() {
   const tbody = document.getElementById('backleTbody');
   tbody.innerHTML = '';
-  if (!DB.backleEntries.length) {
-    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--slate);">Koi backle entry nahi...</td></tr>';
-    return;
-  }
+  if (!DB.backleEntries.length) { tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--slate);">Koi backle entry nahi...</td></tr>'; return; }
   let grandTotal = 0;
   [...DB.backleEntries].reverse().forEach((e, i) => {
     grandTotal += e.total;
     const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td>${DB.backleEntries.length - i}</td>
-      <td>${fmtDate(e.date)||''}</td>
-      <td><span class="month-badge">${e.month}</span></td>
-      <td style="color:var(--slate);">${e.note||'—'}</td>
-      <td style="text-align:center;font-weight:700;">${e.qty.toLocaleString()}</td>
-      <td>Rs. ${e.price}</td>
-      <td style="font-weight:800;color:#8a6010;">Rs. ${e.total.toLocaleString()}</td>
-      <td>
-        <button class="btn btn-danger btn-sm" onclick="deleteBackleEntry(${e.id})">🗑️</button>
-      </td>
-    `;
+    tr.innerHTML = `<td>${DB.backleEntries.length - i}</td><td>${fmtDate(e.date)||''}</td><td><span class="month-badge">${e.month}</span></td><td style="color:var(--slate);">${e.note||'—'}</td><td style="text-align:center;font-weight:700;">${e.qty.toLocaleString()}</td><td>Rs. ${e.price}</td><td style="font-weight:800;color:#8a6010;">Rs. ${e.total.toLocaleString()}</td><td><button class="btn btn-danger btn-sm" onclick="deleteBackleEntry(${e.id})">🗑️</button></td>`;
     tbody.appendChild(tr);
   });
-  // Total row
   const tr = document.createElement('tr');
-  tr.style.background = '#0f2744';
-  tr.style.color = '#c9a84c';
-  tr.innerHTML = `
-    <td colspan="6" style="font-weight:800;text-align:right;padding:10px 12px;">Kul Total:</td>
-    <td style="font-weight:900;font-size:15px;padding:10px 12px;">Rs. ${grandTotal.toLocaleString()}</td>
-    <td></td>
-  `;
+  tr.style.background = '#0f2744'; tr.style.color = '#c9a84c';
+  tr.innerHTML = `<td colspan="6" style="font-weight:800;text-align:right;padding:10px 12px;">Kul Total:</td><td style="font-weight:900;font-size:15px;padding:10px 12px;">Rs. ${grandTotal.toLocaleString()}</td><td></td>`;
   tbody.appendChild(tr);
 }
 
 function deleteBackleEntry(id) {
   if (!confirm('Yeh backle entry delete karni hai?')) return;
   DB.backleEntries = DB.backleEntries.filter(e => e.id !== id);
-  saveDB();
-  renderBackleTable();
-  populateBackleEditSelect();
-  showToast('🗑️ Entry deleted!');
+  saveDB(); renderBackleTable(); populateBackleEditSelect(); showToast('🗑️ Entry deleted!');
 }
 
 // ===========================
 // SALARY CALCULATOR
 // ===========================
-let calcRows = []; // {name, basic, perDay, perHour}
+let calcRows = [];
 
 function initCalculator() {
-  // Worker datalist
   const dl = document.getElementById('calcWorkerList');
   dl.innerHTML = '';
   DB.workers.forEach(w => {
@@ -2693,18 +1567,14 @@ function initCalculator() {
 function calcAutoLoad() {
   const name = document.getElementById('calc_name').value.trim();
   const worker = DB.workers.find(w => w.name.toLowerCase() === name.toLowerCase());
-  if (worker && worker.basic) {
-    document.getElementById('calc_basic').value = worker.basic;
-  }
+  if (worker && worker.basic) document.getElementById('calc_basic').value = worker.basic;
   calcPreview();
 }
 
 function calcPreview() {
   const basic = parseFloat(document.getElementById('calc_basic').value) || 0;
-  const perDay = basic > 0 ? Math.round(basic / 30) : '';
-  const perHour = basic > 0 ? Math.round(basic / 30 / 8) : '';
-  document.getElementById('calc_perDay').value = perDay;
-  document.getElementById('calc_perHour').value = perHour;
+  document.getElementById('calc_perDay').value = basic > 0 ? Math.round(basic / 30) : '';
+  document.getElementById('calc_perHour').value = basic > 0 ? Math.round(basic / 30 / 8) : '';
 }
 
 function addCalcRow() {
@@ -2712,167 +1582,59 @@ function addCalcRow() {
   const basic = parseFloat(document.getElementById('calc_basic').value) || 0;
   if (!name) { showToast('⚠️ Worker ka naam daalen!'); return; }
   if (!basic) { showToast('⚠️ Basic salary daalen!'); return; }
-  // Duplicate check
-  if (calcRows.find(r => r.name.toLowerCase() === name.toLowerCase())) {
-    showToast('⚠️ Yeh worker already list mein hai!'); return;
-  }
-  calcRows.push({
-    name,
-    basic,
-    perDay: Math.round(basic / 30),
-    perHour: Math.round(basic / 30 / 8)
-  });
-  renderCalcTable();
-  clearCalcInput();
-  showToast(`✅ ${name} add ho gaya!`);
+  if (calcRows.find(r => r.name.toLowerCase() === name.toLowerCase())) { showToast('⚠️ Yeh worker already list mein hai!'); return; }
+  calcRows.push({ name, basic, perDay: Math.round(basic / 30), perHour: Math.round(basic / 30 / 8) });
+  renderCalcTable(); clearCalcInput(); showToast(`✅ ${name} add ho gaya!`);
 }
 
-function removeCalcRow(idx) {
-  calcRows.splice(idx, 1);
-  renderCalcTable();
-}
+function removeCalcRow(idx) { calcRows.splice(idx, 1); renderCalcTable(); }
 
 function clearCalcInput() {
-  document.getElementById('calc_name').value = '';
-  document.getElementById('calc_basic').value = '';
-  document.getElementById('calc_perDay').value = '';
-  document.getElementById('calc_perHour').value = '';
+  document.getElementById('calc_name').value = ''; document.getElementById('calc_basic').value = '';
+  document.getElementById('calc_perDay').value = ''; document.getElementById('calc_perHour').value = '';
 }
 
 function renderCalcTable() {
   const card = document.getElementById('calcListCard');
   const tbody = document.getElementById('calcTbody');
   const summary = document.getElementById('calcSummary');
-
   if (!calcRows.length) { card.style.display = 'none'; return; }
-  card.style.display = '';
-  tbody.innerHTML = '';
-
+  card.style.display = ''; tbody.innerHTML = '';
   let totalBasic = 0, totalPerDay = 0, totalPerHour = 0;
-
   calcRows.forEach((r, i) => {
-    totalBasic   += r.basic;
-    totalPerDay  += r.perDay;
-    totalPerHour += r.perHour;
-
+    totalBasic += r.basic; totalPerDay += r.perDay; totalPerHour += r.perHour;
     const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td style="text-align:center;font-weight:700;">${i+1}</td>
-      <td><strong>${r.name}</strong></td>
-      <td>Rs. ${r.basic.toLocaleString()}</td>
-      <td style="font-weight:800;color:var(--navy);">Rs. ${r.perDay.toLocaleString()}</td>
-      <td style="font-weight:800;color:var(--slate);">Rs. ${r.perHour.toLocaleString()}</td>
-      <td><button class="btn btn-danger btn-sm" onclick="removeCalcRow(${i})">🗑️</button></td>
-    `;
+    tr.innerHTML = `<td style="text-align:center;font-weight:700;">${i+1}</td><td><strong>${r.name}</strong></td><td>Rs. ${r.basic.toLocaleString()}</td><td style="font-weight:800;color:var(--navy);">Rs. ${r.perDay.toLocaleString()}</td><td style="font-weight:800;color:var(--slate);">Rs. ${r.perHour.toLocaleString()}</td><td><button class="btn btn-danger btn-sm" onclick="removeCalcRow(${i})">🗑️</button></td>`;
     tbody.appendChild(tr);
   });
-
-  // Total row
   const tr = document.createElement('tr');
-  tr.style.background = '#0f2744';
-  tr.style.color = '#c9a84c';
-  tr.innerHTML = `
-    <td colspan="2" style="font-weight:800;text-align:center;padding:10px;">TOTAL (${calcRows.length} Workers)</td>
-    <td style="font-weight:800;">Rs. ${totalBasic.toLocaleString()}</td>
-    <td style="font-weight:900;font-size:15px;">Rs. ${totalPerDay.toLocaleString()}</td>
-    <td style="font-weight:900;font-size:15px;">Rs. ${totalPerHour.toLocaleString()}</td>
-    <td></td>
-  `;
+  tr.style.background = '#0f2744'; tr.style.color = '#c9a84c';
+  tr.innerHTML = `<td colspan="2" style="font-weight:800;text-align:center;padding:10px;">TOTAL (${calcRows.length} Workers)</td><td style="font-weight:800;">Rs. ${totalBasic.toLocaleString()}</td><td style="font-weight:900;font-size:15px;">Rs. ${totalPerDay.toLocaleString()}</td><td style="font-weight:900;font-size:15px;">Rs. ${totalPerHour.toLocaleString()}</td><td></td>`;
   tbody.appendChild(tr);
-
-  // Summary cards
-  summary.innerHTML = `
-    <div style="background:var(--white);border-radius:12px;padding:16px;box-shadow:var(--shadow);border-left:4px solid var(--navy);">
-      <div style="font-size:11px;color:var(--slate);font-weight:700;text-transform:uppercase;letter-spacing:1px;">Total Workers</div>
-      <div style="font-size:28px;font-weight:900;color:var(--navy);margin-top:4px;">${calcRows.length}</div>
-    </div>
-    <div style="background:var(--white);border-radius:12px;padding:16px;box-shadow:var(--shadow);border-left:4px solid var(--gold);">
-      <div style="font-size:11px;color:var(--slate);font-weight:700;text-transform:uppercase;letter-spacing:1px;">Kul Per Day</div>
-      <div style="font-size:28px;font-weight:900;color:var(--navy);margin-top:4px;">Rs. ${totalPerDay.toLocaleString()}</div>
-    </div>
-    <div style="background:var(--white);border-radius:12px;padding:16px;box-shadow:var(--shadow);border-left:4px solid var(--green);">
-      <div style="font-size:11px;color:var(--slate);font-weight:700;text-transform:uppercase;letter-spacing:1px;">Kul Per Hour</div>
-      <div style="font-size:28px;font-weight:900;color:var(--navy);margin-top:4px;">Rs. ${totalPerHour.toLocaleString()}</div>
-    </div>
-    <div style="background:var(--white);border-radius:12px;padding:16px;box-shadow:var(--shadow);border-left:4px solid var(--slate);">
-      <div style="font-size:11px;color:var(--slate);font-weight:700;text-transform:uppercase;letter-spacing:1px;">Kul Basic Salary</div>
-      <div style="font-size:22px;font-weight:900;color:var(--navy);margin-top:4px;">Rs. ${totalBasic.toLocaleString()}</div>
-    </div>
-  `;
+  summary.innerHTML = `<div style="background:var(--white);border-radius:12px;padding:16px;box-shadow:var(--shadow);border-left:4px solid var(--navy);"><div style="font-size:11px;color:var(--slate);font-weight:700;text-transform:uppercase;letter-spacing:1px;">Total Workers</div><div style="font-size:28px;font-weight:900;color:var(--navy);margin-top:4px;">${calcRows.length}</div></div><div style="background:var(--white);border-radius:12px;padding:16px;box-shadow:var(--shadow);border-left:4px solid var(--gold);"><div style="font-size:11px;color:var(--slate);font-weight:700;text-transform:uppercase;letter-spacing:1px;">Kul Per Day</div><div style="font-size:28px;font-weight:900;color:var(--navy);margin-top:4px;">Rs. ${totalPerDay.toLocaleString()}</div></div><div style="background:var(--white);border-radius:12px;padding:16px;box-shadow:var(--shadow);border-left:4px solid var(--green);"><div style="font-size:11px;color:var(--slate);font-weight:700;text-transform:uppercase;letter-spacing:1px;">Kul Per Hour</div><div style="font-size:28px;font-weight:900;color:var(--navy);margin-top:4px;">Rs. ${totalPerHour.toLocaleString()}</div></div>`;
 }
 
 function printCalcReport() {
   if (!calcRows.length) { showToast('⚠️ Pehle workers add karo!'); return; }
   const now = new Date().toLocaleDateString('en-PK');
-  const rows = calcRows.map((r, i) => `
-    <tr>
-      <td style="text-align:center;">${i+1}</td>
-      <td style="font-weight:700;">${r.name}</td>
-      <td>Rs. ${r.basic.toLocaleString()}</td>
-      <td style="font-weight:800;">Rs. ${r.perDay.toLocaleString()}</td>
-      <td style="font-weight:800;">Rs. ${r.perHour.toLocaleString()}</td>
-    </tr>`).join('');
-
-  const totalBasic   = calcRows.reduce((s,r) => s+r.basic, 0);
-  const totalPerDay  = calcRows.reduce((s,r) => s+r.perDay, 0);
-  const totalPerHour = calcRows.reduce((s,r) => s+r.perHour, 0);
-
-  const html = `
-  <div class="print-page">
-    <div class="print-header">
-      <h1>FAISAL GORAYA INDUSTRY</h1>
-      <p>PER DAY / PER HOUR SALARY CALCULATOR &nbsp;·&nbsp; Printed: ${now}</p>
-    </div>
-    <table class="print-table" style="font-size:10pt;margin-top:14px;">
-      <thead>
-        <tr>
-          <th style="text-align:center;width:5%">#</th>
-          <th style="width:30%">Worker Name</th>
-          <th>Basic Salary</th>
-          <th>Per Day</th>
-          <th>Per Hour</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${rows}
-        <tr style="background:#0f2744;color:#c9a84c;font-weight:900;font-size:11pt;">
-          <td colspan="2" style="text-align:center;">TOTAL (${calcRows.length} Workers)</td>
-          <td>Rs. ${totalBasic.toLocaleString()}</td>
-          <td>Rs. ${totalPerDay.toLocaleString()}</td>
-          <td>Rs. ${totalPerHour.toLocaleString()}</td>
-        </tr>
-      </tbody>
-    </table>
-    <div class="print-footer" style="margin-top:20px;">
-      <div><div class="sig-line">Prepared By</div></div>
-      <div style="text-align:center;font-size:8pt;color:#555;align-self:flex-end;">
-        <em>Faisal Goraya Industry (FGI)</em>
-      </div>
-      <div><div class="sig-line">Manager / Owner</div></div>
-    </div>
-  </div>`;
-
+  const rows = calcRows.map((r, i) => `<tr><td style="text-align:center;">${i+1}</td><td style="font-weight:700;">${r.name}</td><td>Rs. ${r.basic.toLocaleString()}</td><td style="font-weight:800;">Rs. ${r.perDay.toLocaleString()}</td><td style="font-weight:800;">Rs. ${r.perHour.toLocaleString()}</td></tr>`).join('');
+  const totalBasic = calcRows.reduce((s,r)=>s+r.basic,0), totalPerDay = calcRows.reduce((s,r)=>s+r.perDay,0), totalPerHour = calcRows.reduce((s,r)=>s+r.perHour,0);
+  const html = `<div class="print-page"><div class="print-header"><h1>FAISAL GORAYA INDUSTRY</h1><p>PER DAY / PER HOUR SALARY CALCULATOR &nbsp;·&nbsp; Printed: ${now}</p></div><table class="print-table" style="font-size:10pt;margin-top:14px;"><thead><tr><th style="text-align:center;width:5%">#</th><th style="width:30%">Worker Name</th><th>Basic Salary</th><th>Per Day</th><th>Per Hour</th></tr></thead><tbody>${rows}<tr style="background:#0f2744;color:#c9a84c;font-weight:900;font-size:11pt;"><td colspan="2" style="text-align:center;">TOTAL (${calcRows.length} Workers)</td><td>Rs. ${totalBasic.toLocaleString()}</td><td>Rs. ${totalPerDay.toLocaleString()}</td><td>Rs. ${totalPerHour.toLocaleString()}</td></tr></tbody></table><div class="print-footer" style="margin-top:20px;"><div><div class="sig-line">Prepared By</div></div><div style="text-align:center;font-size:8pt;color:#555;align-self:flex-end;"><em>Faisal Goraya Industry (FGI)</em></div><div><div class="sig-line">Manager / Owner</div></div></div></div>`;
   openPrintModal(html);
 }
 
 // ===========================
-// DATE FORMAT HELPER (DD-MM-YYYY)
+// HELPERS
 // ===========================
 function fmtDate(str) {
   if (!str) return '—';
-  if (/^\d{4}-\d{2}-\d{2}$/.test(str)) {
-    const [y, m, d] = str.split('-');
-    return `${d}-${m}-${y}`;
-  }
+  if (/^\d{4}-\d{2}-\d{2}$/.test(str)) { const [y, m, d] = str.split('-'); return `${d}-${m}-${y}`; }
   return str;
 }
 
-// ===========================
-// MANUAL SAVE
-// ===========================
 function manualSaveDB() {
   localStorage.setItem(APP_VERSION, JSON.stringify(DB));
-  pushToCloud();
+  autoSyncToDrive();
   showToast('✅ Data save ho gaya!');
 }
 
@@ -2883,69 +1645,31 @@ let _reportMode = 'monthly';
 function switchReportMode(mode) {
   _reportMode = mode;
   document.getElementById('rptSectionMonthly').style.display = mode === 'monthly' ? '' : 'none';
-  document.getElementById('rptSectionRemAdv').style.display  = mode === 'remadv'  ? '' : 'none';
+  document.getElementById('rptSectionRemAdv').style.display = mode === 'remadv' ? '' : 'none';
   document.getElementById('rptModeBtn1').className = mode === 'monthly' ? 'btn btn-save' : 'btn btn-clear';
-  document.getElementById('rptModeBtn2').className = mode === 'remadv'  ? 'btn btn-save' : 'btn btn-clear';
+  document.getElementById('rptModeBtn2').className = mode === 'remadv' ? 'btn btn-save' : 'btn btn-clear';
   document.getElementById('rptModeBtn1').style.opacity = mode === 'monthly' ? '1' : '0.7';
-  document.getElementById('rptModeBtn2').style.opacity = mode === 'remadv'  ? '1' : '0.7';
+  document.getElementById('rptModeBtn2').style.opacity = mode === 'remadv' ? '1' : '0.7';
   if (mode === 'remadv') renderRemAdvOverview();
 }
 
-// ===========================
-// REM ADV OVERVIEW
-// ===========================
 function renderRemAdvOverview() {
   const search = (document.getElementById('rptRemAdvSearch')?.value || '').toLowerCase();
   const container = document.getElementById('remAdvCards');
   container.innerHTML = '';
-
   const workers = DB.workers.filter(w => !search || w.name.toLowerCase().includes(search));
-
-  if (!workers.length) {
-    container.innerHTML = '<div style="color:var(--slate);padding:20px;">Koi worker nahi mila.</div>';
-    return;
-  }
-
+  if (!workers.length) { container.innerHTML = '<div style="color:var(--slate);padding:20px;">Koi worker nahi mila.</div>'; return; }
   let totalRemAdv = 0;
   workers.forEach(w => {
-    const remAdv = w.remAdv || 0;
-    totalRemAdv += remAdv;
+    const remAdv = w.remAdv || 0; totalRemAdv += remAdv;
     const card = document.createElement('div');
     card.className = 'report-worker-card';
-    card.innerHTML = `
-      <div class="worker-name">👷 ${w.name}</div>
-      <div class="worker-date">
-        <span style="background:var(--navy);color:var(--gold);padding:2px 8px;border-radius:5px;font-size:11px;font-weight:800;">${w.code||'—'}</span>
-      </div>
-      <div style="margin-top:10px;">
-        <div style="font-size:10px;color:var(--slate);font-weight:700;text-transform:uppercase;letter-spacing:1px;">Basic Salary</div>
-        <div style="font-size:16px;font-weight:800;color:var(--navy);">Rs. ${(w.basic||0).toLocaleString()}</div>
-      </div>
-      <div style="margin-top:10px;">
-        <div style="font-size:10px;color:var(--slate);font-weight:700;text-transform:uppercase;letter-spacing:1px;">Rem. Total Advance</div>
-        <div style="font-size:22px;font-weight:900;color:${remAdv > 0 ? 'var(--red)' : 'var(--green)'};">
-          Rs. ${remAdv.toLocaleString()}
-        </div>
-      </div>
-    `;
+    card.innerHTML = `<div class="worker-name">👷 ${w.name}</div><div class="worker-date"><span style="background:var(--navy);color:var(--gold);padding:2px 8px;border-radius:5px;font-size:11px;font-weight:800;">${w.code||'—'}</span></div><div style="margin-top:10px;"><div style="font-size:10px;color:var(--slate);font-weight:700;text-transform:uppercase;letter-spacing:1px;">Basic Salary</div><div style="font-size:16px;font-weight:800;color:var(--navy);">Rs. ${(w.basic||0).toLocaleString()}</div></div><div style="margin-top:10px;"><div style="font-size:10px;color:var(--slate);font-weight:700;text-transform:uppercase;letter-spacing:1px;">Rem. Total Advance</div><div style="font-size:22px;font-weight:900;color:${remAdv > 0 ? 'var(--red)' : 'var(--green)'};">Rs. ${remAdv.toLocaleString()}</div></div>`;
     container.appendChild(card);
   });
-
-  // Total summary
   const totalCard = document.createElement('div');
   totalCard.style.cssText = 'grid-column:1/-1;';
-  totalCard.innerHTML = `
-    <div style="background:linear-gradient(135deg,var(--navy),#1a3a60);border-radius:14px;padding:22px 28px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;box-shadow:0 6px 24px rgba(0,0,0,0.18);">
-      <div>
-        <div style="color:#adc4e0;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;">Kul Workers: ${workers.length}</div>
-        <div style="color:#adc4e0;font-size:12px;margin-top:4px;">Jin par advance baqi hai</div>
-      </div>
-      <div style="text-align:right;">
-        <div style="color:#adc4e0;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;">💳 Total Rem. Advance</div>
-        <div style="color:var(--gold);font-family:'Playfair Display',serif;font-size:30px;font-weight:900;">Rs. ${totalRemAdv.toLocaleString()}</div>
-      </div>
-    </div>
-  `;
+  totalCard.innerHTML = `<div style="background:linear-gradient(135deg,var(--navy),#1a3a60);border-radius:14px;padding:22px 28px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;box-shadow:0 6px 24px rgba(0,0,0,0.18);"><div><div style="color:#adc4e0;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;">Kul Workers: ${workers.length}</div></div><div style="text-align:right;"><div style="color:#adc4e0;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;">💳 Total Rem. Advance</div><div style="color:var(--gold);font-family:'Playfair Display',serif;font-size:30px;font-weight:900;">Rs. ${totalRemAdv.toLocaleString()}</div></div></div>`;
   container.appendChild(totalCard);
 }
 
@@ -2956,45 +1680,25 @@ function initMidMonth() {
   const today = new Date();
   document.getElementById('mm_date').value = today.toISOString().slice(0,10);
   document.getElementById('mm_month').value = today.toISOString().slice(0,7);
-
-  // Worker datalist
   const dl = document.getElementById('mmWorkerList');
   dl.innerHTML = '';
-  DB.workers.forEach(w => {
-    const opt = document.createElement('option');
-    opt.value = w.name;
-    dl.appendChild(opt);
-  });
-
-  // Month filter dropdown refresh
+  DB.workers.forEach(w => { const opt = document.createElement('option'); opt.value = w.name; dl.appendChild(opt); });
   const months = [...new Set(DB.midMonthRecords.map(r => r.month))].sort().reverse();
   const sel = document.getElementById('mmTableMonth');
   const cur = sel.value;
   sel.innerHTML = '<option value="">Sab months</option>';
-  months.forEach(m => {
-    const o = document.createElement('option');
-    o.value = m; o.textContent = m;
-    if (m === cur) o.selected = true;
-    sel.appendChild(o);
-  });
-
+  months.forEach(m => { const o = document.createElement('option'); o.value = m; o.textContent = m; if (m === cur) o.selected = true; sel.appendChild(o); });
   renderMidMonthTable();
 }
 
 function onMidMonthWorkerSelect() {
   const name = document.getElementById('mm_workerName').value.trim();
   const worker = DB.workers.find(w => w.name.toLowerCase() === name.toLowerCase());
-
   if (worker) {
     document.getElementById('mm_basicDisplay').textContent = 'Rs. ' + (worker.basic||0).toLocaleString();
     document.getElementById('mm_remAdvDisplay').textContent = 'Rs. ' + (worker.remAdv||0).toLocaleString();
-
-    // Last mid month kharcha for this worker
-    const lastMid = [...DB.midMonthRecords]
-      .filter(r => r.workerCode === worker.code)
-      .sort((a,b) => b.id - a.id)[0];
-    document.getElementById('mm_lastMidDisplay').textContent =
-      lastMid ? 'Rs. ' + (lastMid.midKharcha||0).toLocaleString() : '(koi nahi)';
+    const lastMid = [...DB.midMonthRecords].filter(r => r.workerCode === worker.code).sort((a,b) => b.id - a.id)[0];
+    document.getElementById('mm_lastMidDisplay').textContent = lastMid ? 'Rs. ' + (lastMid.midKharcha||0).toLocaleString() : '(koi nahi)';
   } else {
     document.getElementById('mm_basicDisplay').textContent = '—';
     document.getElementById('mm_lastMidDisplay').textContent = '—';
@@ -3007,37 +1711,17 @@ function saveMidMonthRecord() {
   if (!name) { showToast('⚠️ Worker ka naam daalen!'); return; }
   const worker = DB.workers.find(w => w.name.toLowerCase() === name.toLowerCase());
   if (!worker) { showToast('⚠️ Yeh worker system mein nahi hai!'); return; }
-
-  const rec = {
-    id: DB.nextMidMonthId++,
-    date: document.getElementById('mm_date').value,
-    month: document.getElementById('mm_month').value,
-    workerCode: worker.code,
-    workerName: worker.name,
-    salary: worker.basic || 0,
-    remAdv: worker.remAdv || 0,
-    midKharcha: parseFloat(document.getElementById('mm_kharcha').value) || 0,
-    note: document.getElementById('mm_note').value.trim()
-  };
-
-  DB.midMonthRecords.push(rec);
-  saveDB();
-
+  const rec = { id: DB.nextMidMonthId++, date: document.getElementById('mm_date').value, month: document.getElementById('mm_month').value, workerCode: worker.code, workerName: worker.name, salary: worker.basic || 0, remAdv: worker.remAdv || 0, midKharcha: parseFloat(document.getElementById('mm_kharcha').value) || 0, note: document.getElementById('mm_note').value.trim() };
+  DB.midMonthRecords.push(rec); saveDB();
   document.getElementById('mmSaveMsg').textContent = `✅ ${worker.name} ka mid month record save ho gaya!`;
   setTimeout(() => document.getElementById('mmSaveMsg').textContent = '', 3500);
   showToast('✅ Mid Month record saved!');
-
-  initMidMonth();
-  onMidMonthWorkerSelect(); // refresh displayed info
+  initMidMonth(); onMidMonthWorkerSelect();
 }
 
 function clearMidMonthForm() {
-  document.getElementById('mm_workerName').value = '';
-  document.getElementById('mm_kharcha').value = '';
-  document.getElementById('mm_note').value = '';
-  document.getElementById('mm_basicDisplay').textContent = '—';
-  document.getElementById('mm_lastMidDisplay').textContent = '—';
-  document.getElementById('mm_remAdvDisplay').textContent = '—';
+  document.getElementById('mm_workerName').value = ''; document.getElementById('mm_kharcha').value = ''; document.getElementById('mm_note').value = '';
+  document.getElementById('mm_basicDisplay').textContent = '—'; document.getElementById('mm_lastMidDisplay').textContent = '—'; document.getElementById('mm_remAdvDisplay').textContent = '—';
 }
 
 function renderMidMonthTable() {
@@ -3045,34 +1729,12 @@ function renderMidMonthTable() {
   if (!tbody) return;
   const search = (document.getElementById('mmTableSearch')?.value || '').toLowerCase();
   const monthFilter = document.getElementById('mmTableMonth')?.value || '';
-
-  const records = [...DB.midMonthRecords]
-    .filter(r => {
-      const nm = !search || r.workerName.toLowerCase().includes(search);
-      const mm = !monthFilter || r.month === monthFilter;
-      return nm && mm;
-    })
-    .sort((a,b) => b.id - a.id);
-
+  const records = [...DB.midMonthRecords].filter(r => { const nm = !search || r.workerName.toLowerCase().includes(search); const mm = !monthFilter || r.month === monthFilter; return nm && mm; }).sort((a,b) => b.id - a.id);
   tbody.innerHTML = '';
-  if (!records.length) {
-    tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:22px;color:var(--slate);">Koi record nahi mila...</td></tr>';
-    return;
-  }
-
+  if (!records.length) { tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:22px;color:var(--slate);">Koi record nahi mila...</td></tr>'; return; }
   records.forEach((r, i) => {
     const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td style="font-weight:700;text-align:center;">${records.length - i}</td>
-      <td style="white-space:nowrap;">${fmtDate(r.date)}</td>
-      <td><span class="month-badge">${r.month}</span></td>
-      <td><strong>${r.workerName}</strong></td>
-      <td>Rs. ${(r.salary||0).toLocaleString()}</td>
-      <td style="color:#8a6010;font-weight:800;">Rs. ${(r.midKharcha||0).toLocaleString()}</td>
-      <td style="color:var(--red);font-weight:700;">Rs. ${(r.remAdv||0).toLocaleString()}</td>
-      <td style="color:var(--slate);font-size:12px;">${r.note||'—'}</td>
-      <td><button class="btn btn-danger btn-sm" onclick="deleteMidMonthRecord(${r.id})">🗑️</button></td>
-    `;
+    tr.innerHTML = `<td style="font-weight:700;text-align:center;">${records.length - i}</td><td style="white-space:nowrap;">${fmtDate(r.date)}</td><td><span class="month-badge">${r.month}</span></td><td><strong>${r.workerName}</strong></td><td>Rs. ${(r.salary||0).toLocaleString()}</td><td style="color:#8a6010;font-weight:800;">Rs. ${(r.midKharcha||0).toLocaleString()}</td><td style="color:var(--red);font-weight:700;">Rs. ${(r.remAdv||0).toLocaleString()}</td><td style="color:var(--slate);font-size:12px;">${r.note||'—'}</td><td><button class="btn btn-danger btn-sm" onclick="deleteMidMonthRecord(${r.id})">🗑️</button></td>`;
     tbody.appendChild(tr);
   });
 }
@@ -3080,15 +1742,11 @@ function renderMidMonthTable() {
 function deleteMidMonthRecord(id) {
   if (!confirm('Yeh record delete karni hai?')) return;
   DB.midMonthRecords = DB.midMonthRecords.filter(r => r.id !== id);
-  saveDB();
-  renderMidMonthTable();
-  showToast('🗑️ Record deleted!');
+  saveDB(); renderMidMonthTable(); showToast('🗑️ Record deleted!');
 }
 
 // Modal click outside
-document.getElementById('workerModal').addEventListener('click', function(e) {
-  if (e.target === this) closeWorkerModal();
-});
+document.getElementById('workerModal').addEventListener('click', function(e) { if (e.target === this) closeWorkerModal(); });
 </script>
 </body>
 </html>
