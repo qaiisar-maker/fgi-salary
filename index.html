@@ -477,7 +477,7 @@ tbody td{padding:9px 10px;vertical-align:middle;}
         <div class="field" style="min-width:180px;"><label>Mid Month Kharcha</label><input type="number" id="mm_kharcha" placeholder="e.g. 8500"></div>
         <div class="field" style="min-width:180px;"><label>Note (optional)</label><input type="text" id="mm_note" placeholder="..."></div>
         <div style="display:flex;gap:8px;">
-          <button class="btn btn-save" onclick="saveMidMonthRecord()">💾 Save</button>
+          <button class="btn btn-save" id="mm-save-btn" onclick="saveMidMonthRecord()">💾 Save</button>
           <button class="btn btn-clear" onclick="clearMidMonthForm()">🗑️</button>
         </div>
       </div>
@@ -492,7 +492,7 @@ tbody td{padding:9px 10px;vertical-align:middle;}
         </div>
       </div>
       <div class="table-wrap">
-        <table><thead><tr><th>#</th><th>Date</th><th>Month</th><th>Worker</th><th>Basic</th><th>Mid Kharcha</th><th>Rem. Adv</th><th>Note</th><th>Action</th></tr></thead>
+        <table><thead><tr><th>#</th><th>Date</th><th>Month</th><th>Worker</th><th>Basic</th><th>Mid Kharcha</th><th>Rem. Adv</th><th>Note</th><th>Edit</th><th>Del</th></tr></thead>
         <tbody id="mmTableBody"></tbody></table>
       </div>
     </div>
@@ -1523,21 +1523,53 @@ function onMidMonthWorkerSelect(){
     document.getElementById('mm_remAdvDisplay').textContent='—';
   }
 }
+let _mmEditId=null;
 async function saveMidMonthRecord(){
   const name=document.getElementById('mm_workerName').value.trim();
   if(!name){showToast('⚠️ Worker ka naam daalen!');return;}
   const worker=DB.workers.find(w=>w.name.toLowerCase()===name.toLowerCase());
   if(!worker){showToast('⚠️ Yeh worker system mein nahi hai!');return;}
-  const rec={id:DB.nextMidMonthId++,date:document.getElementById('mm_date').value,month:document.getElementById('mm_month').value,workerCode:worker.code,workerName:worker.name,salary:worker.basic||0,remAdv:worker.remAdv||0,midKharcha:parseFloat(document.getElementById('mm_kharcha').value)||0,note:document.getElementById('mm_note').value.trim()};
-  DB.midMonthRecords.push(rec);await saveDB();
-  document.getElementById('mmSaveMsg').textContent=`✅ ${worker.name} ka mid month record saved!`;
+  const kharcha=parseFloat(document.getElementById('mm_kharcha').value)||0;
+  const note=document.getElementById('mm_note').value.trim();
+  const date=document.getElementById('mm_date').value;
+  const month=document.getElementById('mm_month').value;
+  if(_mmEditId!==null){
+    const idx=DB.midMonthRecords.findIndex(r=>r.id===_mmEditId);
+    if(idx>-1){DB.midMonthRecords[idx]={...DB.midMonthRecords[idx],date,month,workerCode:worker.code,workerName:worker.name,salary:worker.basic||0,remAdv:worker.remAdv||0,midKharcha:kharcha,note};}
+    _mmEditId=null;
+    const btn=document.getElementById('mm-save-btn');
+    btn.textContent='💾 Save';btn.style.background='var(--navy)';
+    document.getElementById('mmSaveMsg').textContent='✅ Record update ho gaya!';
+  }else{
+    const rec={id:DB.nextMidMonthId++,date,month,workerCode:worker.code,workerName:worker.name,salary:worker.basic||0,remAdv:worker.remAdv||0,midKharcha:kharcha,note};
+    DB.midMonthRecords.push(rec);
+    document.getElementById('mmSaveMsg').textContent=`✅ ${worker.name} ka mid month record saved!`;
+  }
+  await saveDB();
   setTimeout(()=>document.getElementById('mmSaveMsg').textContent='',3500);
   showToast('✅ Mid Month record saved!');
   initMidMonth();onMidMonthWorkerSelect();
 }
+function editMidMonthRecord(id){
+  const r=DB.midMonthRecords.find(x=>x.id===id);if(!r)return;
+  _mmEditId=id;
+  document.getElementById('mm_workerName').value=r.workerName||'';
+  document.getElementById('mm_date').value=r.date||'';
+  document.getElementById('mm_month').value=r.month||'';
+  document.getElementById('mm_kharcha').value=r.midKharcha||'';
+  document.getElementById('mm_note').value=r.note||'';
+  onMidMonthWorkerSelect();
+  const btn=document.getElementById('mm-save-btn');
+  btn.textContent='✏️ Update';btn.style.background='var(--green)';
+  showToast('✏️ Edit mode — data load ho gaya!');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
 function clearMidMonthForm(){
+  _mmEditId=null;
   document.getElementById('mm_workerName').value='';document.getElementById('mm_kharcha').value='';document.getElementById('mm_note').value='';
   document.getElementById('mm_basicDisplay').textContent='—';document.getElementById('mm_lastMidDisplay').textContent='—';document.getElementById('mm_remAdvDisplay').textContent='—';
+  const btn=document.getElementById('mm-save-btn');
+  if(btn){btn.textContent='💾 Save';btn.style.background='var(--navy)';}
 }
 function renderMidMonthTable(){
   const tbody=document.getElementById('mmTableBody');if(!tbody)return;
@@ -1545,16 +1577,17 @@ function renderMidMonthTable(){
   const monthFilter=document.getElementById('mmTableMonth')?.value||'';
   const records=[...DB.midMonthRecords].filter(r=>{const nm=!search||r.workerName.toLowerCase().includes(search);const mm=!monthFilter||r.month===monthFilter;return nm&&mm;}).sort((a,b)=>b.id-a.id);
   tbody.innerHTML='';
-  if(!records.length){tbody.innerHTML='<tr><td colspan="9" style="text-align:center;padding:20px;color:var(--slate);">Koi record nahi mila...</td></tr>';return;}
+  if(!records.length){tbody.innerHTML='<tr><td colspan="10" style="text-align:center;padding:20px;color:var(--slate);">Koi record nahi mila...</td></tr>';return;}
   records.forEach((r,i)=>{
     const tr=document.createElement('tr');
-    tr.innerHTML=`<td style="font-weight:700;text-align:center;">${records.length-i}</td><td style="white-space:nowrap;">${fmtDate(r.date)}</td><td><span class="month-badge">${r.month}</span></td><td><strong>${r.workerName}</strong></td><td>Rs. ${(r.salary||0).toLocaleString()}</td><td style="color:#8a6010;font-weight:800;">Rs. ${(r.midKharcha||0).toLocaleString()}</td><td style="color:var(--red);font-weight:700;">Rs. ${(r.remAdv||0).toLocaleString()}</td><td style="color:var(--slate);font-size:12px;">${r.note||'—'}</td><td><button class="btn btn-danger btn-sm" onclick="deleteMidMonthRecord(${r.id})">🗑️</button></td>`;
+    tr.innerHTML=`<td style="font-weight:700;text-align:center;">${records.length-i}</td><td style="white-space:nowrap;">${fmtDate(r.date)}</td><td><span class="month-badge">${r.month}</span></td><td><strong>${r.workerName}</strong></td><td>Rs. ${(r.salary||0).toLocaleString()}</td><td style="color:#8a6010;font-weight:800;">Rs. ${(r.midKharcha||0).toLocaleString()}</td><td style="color:var(--red);font-weight:700;">Rs. ${(r.remAdv||0).toLocaleString()}</td><td style="color:var(--slate);font-size:12px;">${r.note||'—'}</td><td><button class="btn btn-gold btn-sm" onclick="editMidMonthRecord(${r.id})">✏️</button></td><td><button class="btn btn-danger btn-sm" onclick="deleteMidMonthRecord(${r.id})">🗑️</button></td>`;
     tbody.appendChild(tr);
   });
 }
 async function deleteMidMonthRecord(id){
   if(!confirm('Yeh record delete karni hai?'))return;
   DB.midMonthRecords=DB.midMonthRecords.filter(r=>r.id!==id);
+  if(_mmEditId===id){clearMidMonthForm();}
   await saveDB();renderMidMonthTable();showToast('🗑️ Record deleted!');
 }
 
