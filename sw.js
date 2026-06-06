@@ -1,4 +1,4 @@
-const CACHE = 'fgi-salary-v15';
+const CACHE = 'fgi-salary-v16';
 const ASSETS = [
   './',
   './index.html',
