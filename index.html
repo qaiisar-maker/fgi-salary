@@ -75,7 +75,7 @@ body{font-family:'Nunito',sans-serif;background:var(--cream);color:var(--navy);m
 /* ============ MAIN APP ============ */
 #app{display:none;min-height:100vh;}
 
-/* NAV — 2 rows mobile friendly */
+/* NAV */
 .topbar{background:var(--navy);color:var(--white);padding:6px 14px;display:flex;flex-direction:column;gap:5px;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.2);border-bottom:2px solid var(--gold);}
 .topbar-row1{display:flex;align-items:center;gap:8px;}
 .topbar-brand{font-family:'Playfair Display',serif;font-size:18px;font-weight:900;color:var(--gold);letter-spacing:1px;flex:1;}
@@ -130,18 +130,20 @@ tbody td{padding:9px 10px;vertical-align:middle;}
 .report-worker-card .worker-name{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--navy);margin-bottom:4px;}
 .report-worker-card .worker-amount{font-size:18px;font-weight:800;color:var(--green);}
 
-/* PRINT MODAL */
+/* PRINT MODAL — FIXED: overflow-x:auto added, scroll-x wrapper for wide tables */
 #printModal{display:none;position:fixed;inset:0;background:rgba(10,20,40,.85);z-index:500;flex-direction:column;}
 #printModal.open{display:flex;}
 .print-modal-bar{background:var(--navy);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-shrink:0;box-shadow:0 2px 12px rgba(0,0,0,.3);flex-wrap:wrap;}
 .print-modal-bar .bar-title{font-family:'Playfair Display',serif;font-size:16px;color:var(--gold);font-weight:700;}
 .print-modal-bar .bar-btns{display:flex;gap:8px;flex-wrap:wrap;}
-.print-modal-body{flex:1;overflow-y:auto;padding:24px 0;display:flex;flex-direction:column;align-items:center;background:#2a3a50;}
-.print-page{width:210mm;min-height:270mm;padding:14mm 16mm;background:#fff;box-shadow:0 8px 40px rgba(0,0,0,.4);margin-bottom:24px;box-sizing:border-box;font-family:'Nunito',sans-serif;color:#000;}
+/* FIX: overflow-x:auto so landscape/wide print pages can scroll horizontally */
+.print-modal-body{flex:1;overflow-y:auto;overflow-x:auto;padding:24px 0;display:flex;flex-direction:column;align-items:flex-start;background:#2a3a50;}
+.print-page{width:210mm;min-height:270mm;padding:14mm 16mm;background:#fff;box-shadow:0 8px 40px rgba(0,0,0,.4);margin:0 auto 24px auto;box-sizing:border-box;font-family:'Nunito',sans-serif;color:#000;}
 .print-header{text-align:center;border-bottom:3px double #000;padding-bottom:10px;margin-bottom:14px;}
 .print-header h1{font-family:'Playfair Display',serif;font-size:22pt;font-weight:900;letter-spacing:2px;margin:0;}
 .print-header p{font-size:9pt;letter-spacing:2px;color:#333;margin:4px 0 0;}
-.print-info{display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px;font-size:9pt;margin-bottom:14px;background:#f5f5f5;padding:8px 12px;border-radius:6px;}
+/* FIX: flex-wrap so worker name doesn't get clipped */
+.print-info{display:flex;justify-content:flex-start;flex-wrap:wrap;gap:6px 16px;font-size:9pt;margin-bottom:14px;background:#f5f5f5;padding:8px 12px;border-radius:6px;}
 .print-table{width:100%;border-collapse:collapse;font-size:9pt;}
 .print-table th{background:#1a1a1a;color:#fff;padding:7px 8px;text-align:left;font-size:8pt;}
 .print-table td{padding:6px 8px;border-bottom:1px solid #ddd;}
@@ -502,7 +504,6 @@ tbody td{padding:9px 10px;vertical-align:middle;}
       <div class="page-title">Settings<span>System configuration</span></div>
     </div>
 
-    <!-- DATA BACKUP -->
     <div class="settings-card">
       <div class="card-title">💾 Data Backup & Restore</div>
       <p style="font-size:13px;color:var(--slate);margin-bottom:14px;">Data export karo taake kabhi bhi restore kar sako — koi data loss nahi</p>
@@ -514,14 +515,12 @@ tbody td{padding:9px 10px;vertical-align:middle;}
       <div id="importMsg" style="font-size:12px;font-weight:700;margin-top:8px;min-height:16px;"></div>
     </div>
 
-    <!-- PIN SETTINGS -->
     <div class="settings-card">
       <div class="card-title">🔐 PIN Settings</div>
       <p style="font-size:13px;color:var(--slate);margin-bottom:12px;">4-digit PIN — IndexedDB mein safely stored</p>
       <button class="btn btn-save" onclick="startChangePin();document.getElementById('lock-screen').style.display='flex';">🔑 PIN Change Karein</button>
     </div>
 
-    <!-- SECRET QUESTION -->
     <div class="settings-card">
       <div class="card-title">🔓 Secret Question (PIN Recovery)</div>
       <div id="sq-current-status" style="font-size:12px;font-weight:700;color:var(--slate);margin-bottom:12px;">Loading...</div>
@@ -547,7 +546,6 @@ tbody td{padding:9px 10px;vertical-align:middle;}
       <div id="sq-error" style="color:var(--red);font-size:12px;margin-top:8px;min-height:16px;"></div>
     </div>
 
-    <!-- STORAGE INFO -->
     <div class="settings-card">
       <div class="card-title">🗄️ Storage Info</div>
       <div id="db-status" style="font-size:12px;color:var(--slate);font-weight:700;">Loading...</div>
@@ -558,7 +556,6 @@ tbody td{padding:9px 10px;vertical-align:middle;}
       </div>
     </div>
 
-    <!-- INSTALL -->
     <div class="settings-card">
       <div class="card-title">📱 Home Screen Install</div>
       <div style="font-size:12px;color:var(--slate);line-height:1.8;">
@@ -631,7 +628,7 @@ async function idbLoad(key){
 }
 
 // ============================================================
-//  PIN — IndexedDB
+//  PIN
 // ============================================================
 async function getPin(){
   const p=await idbLoad('pin');
@@ -643,7 +640,7 @@ async function savePin(pin){
 }
 
 // ============================================================
-//  SECRET QUESTION — IndexedDB
+//  SECRET QUESTION
 // ============================================================
 async function saveSecretQData(q,a){
   const data=JSON.stringify({q,a:a.toLowerCase().trim()});
@@ -654,9 +651,6 @@ async function loadSecretQData(){
   const raw=await idbLoad('secret_q')||localStorage.getItem('fgi_sal_secret_q');
   if(!raw)return null;
   try{return JSON.parse(raw);}catch(e){return null;}
-}
-function openSecretQSetup(){
-  // handled inline in settings
 }
 async function saveSecretQ(){
   const selVal=document.getElementById('sq-question-sel').value;
@@ -827,7 +821,7 @@ function folderPickerAction(action){
 }
 
 // ============================================================
-//  DATABASE — IndexedDB based
+//  DATABASE
 // ============================================================
 const APP_KEY='fgi_salary_db_v15';
 
@@ -1003,6 +997,7 @@ async function saveEntry(){
     const selId=parseInt(document.getElementById('editSelect').value);
     const idx=DB.entries.findIndex(e=>e.id===selId);
     if(idx>-1){entry.id=selId;DB.entries[idx]=entry;}
+    if(entry.workerCode&&entry.month){DB.entries=DB.entries.filter(e=>e.id===entry.id||(e.workerCode!==entry.workerCode||e.month!==entry.month));}
   }else{DB.entries.push(entry);DB.nextEntryId++;}
   const wCode=document.getElementById('f_workerCode').value;
   let worker=wCode?DB.workers.find(w=>w.code===wCode):DB.workers.find(w=>w.name.trim()===name.trim());
@@ -1135,6 +1130,13 @@ function loadReport(){
     else isActive=DB.workers.some(w=>w.name.trim()===e.name.trim());
     return mMatch&&wMatch&&isActive;
   });
+  // DEDUP FIX: same workerCode + same month ka sirf latest entry rakhein
+  const dedupMap2=new Map();
+  entries.forEach(e=>{
+    const key=(e.workerCode||e.name.trim())+'|'+(e.month||'');
+    if(!dedupMap2.has(key)||e.id>dedupMap2.get(key).id)dedupMap2.set(key,e);
+  });
+  entries=[...dedupMap2.values()];
   const cards=document.getElementById('reportCards');
   const tableWrap=document.getElementById('reportTable');
   const tbody=document.getElementById('reportTbody');
@@ -1152,7 +1154,6 @@ function loadReport(){
     tr.innerHTML=`<td>${e.sr}</td><td><strong>${e.name}</strong></td><td>${e.month}</td><td>${(e.basic||0).toLocaleString()}</td><td>${e.ot||0}</td><td>${e.overDays||0}</td><td>${e.oh||0}</td><td>${Math.round(e.ohp||0).toLocaleString()}</td><td>${e.days||0}</td><td>${e.totalDays||0}</td><td>${Math.round(e.mSalary||0).toLocaleString()}</td><td>${(e.midMonth||0).toLocaleString()}</td><td>${Math.round(e.remSalary||0).toLocaleString()}</td><td>${(e.prevAdv||0).toLocaleString()}</td><td>${(e.newAdv||0).toLocaleString()}</td><td>${(e.totalAdv||0).toLocaleString()}</td><td>${(e.deductAdv||0).toLocaleString()}</td><td>${Math.round(e.remAdv||0).toLocaleString()}</td><td style="font-weight:800;color:var(--green);">${Math.round(e.totalRemSalary||0).toLocaleString()}</td><td><button class="btn btn-gold btn-sm" onclick="printSingle(${e.id})">🖨️</button></td>`;
     tbody.appendChild(tr);
   });
-  // Backle section
   const backleEntries=DB.backleEntries.filter(e=>!month||e.month===month);
   const backleSum=backleEntries.reduce((s,e)=>s+(e.total||0),0);
   const grandSum=totalRemSalSum+backleSum;
@@ -1217,7 +1218,7 @@ async function _buildPDFBlob(){
   const wrapper=document.createElement('div');
   wrapper.style.cssText='position:fixed;left:-9999px;top:0;background:#fff;z-index:-1;';
   wrapper.style.width=isLandscape?'1060px':'794px';
-  wrapper.innerHTML=`<style>*{box-sizing:border-box;margin:0;padding:0;}body{font-family:'Nunito',sans-serif;}.print-page{width:100%;padding:28px 34px;background:#fff;}.print-header{text-align:center;border-bottom:3px double #000;padding-bottom:10px;margin-bottom:14px;}.print-header h1{font-family:'Playfair Display',serif;font-size:22pt;font-weight:900;letter-spacing:2px;margin:0;}.print-header p{font-size:9pt;letter-spacing:2px;color:#333;margin:4px 0 0;}.print-info{display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px;font-size:9pt;margin-bottom:14px;background:#f5f5f5;padding:8px 12px;border-radius:6px;}.print-table{width:100%;border-collapse:collapse;font-size:8pt;table-layout:fixed;border:1.5px solid #333;}.print-table th{background:#2a2a2a;color:#fff;padding:5px 2px;text-align:center;font-size:7.8pt;border:1px solid #555;}.print-table td{padding:4px 3px;border:1px solid #bbb;}.print-table tr:nth-child(even) td{background:#f9f9f9;}.print-grand td{background:#c9a84c!important;color:#000!important;font-weight:900!important;}.print-footer{margin-top:16px;border-top:1px solid #000;padding-top:10px;display:flex;justify-content:space-between;font-size:8pt;}.sig-line{border-top:1px solid #000;padding-top:4px;width:120px;text-align:center;font-size:8pt;margin-top:20px;}</style>${_currentPrintHTML}`;
+  wrapper.innerHTML=`<style>*{box-sizing:border-box;margin:0;padding:0;}body{font-family:'Nunito',sans-serif;}.print-page{width:100%;padding:28px 34px;background:#fff;}.print-header{text-align:center;border-bottom:3px double #000;padding-bottom:10px;margin-bottom:14px;}.print-header h1{font-family:'Playfair Display',serif;font-size:22pt;font-weight:900;letter-spacing:2px;margin:0;}.print-header p{font-size:9pt;letter-spacing:2px;color:#333;margin:4px 0 0;}.print-info{display:flex;justify-content:flex-start;flex-wrap:wrap;gap:6px 16px;font-size:9pt;margin-bottom:14px;background:#f5f5f5;padding:8px 12px;border-radius:6px;}.print-table{width:100%;border-collapse:collapse;font-size:8pt;table-layout:fixed;border:1.5px solid #333;}.print-table th{background:#2a2a2a;color:#fff;padding:5px 2px;text-align:center;font-size:7.8pt;border:1px solid #555;}.print-table td{padding:4px 3px;border:1px solid #bbb;}.print-table tr:nth-child(even) td{background:#f9f9f9;}.print-grand td{background:#c9a84c!important;color:#000!important;font-weight:900!important;}.print-footer{margin-top:16px;border-top:1px solid #000;padding-top:10px;display:flex;justify-content:space-between;font-size:8pt;}.sig-line{border-top:1px solid #000;padding-top:4px;width:120px;text-align:center;font-size:8pt;margin-top:20px;}</style>${_currentPrintHTML}`;
   document.body.appendChild(wrapper);
   try{
     const canvas=await html2canvas(wrapper,{scale:2,useCORS:true,backgroundColor:'#ffffff',logging:false});
@@ -1289,6 +1290,13 @@ function printAllWorkers(){
     return DB.workers.some(w=>w.name.trim()===e.name.trim());
   });
   if(month)entries=entries.filter(e=>e.month===month);
+  // DEDUP FIX: same workerCode + same month ka sirf latest (highest id) entry rakhein
+  const dedupMap=new Map();
+  entries.forEach(e=>{
+    const key=(e.workerCode||e.name.trim())+'|'+(e.month||'');
+    if(!dedupMap.has(key)||e.id>dedupMap.get(key).id)dedupMap.set(key,e);
+  });
+  entries=[...dedupMap.values()];
   if(!entries.length){showToast('⚠️ Koi data nahi!');return;}
   const workerOrder=DB.workers.map(w=>w.code);
   entries.sort((a,b)=>{const ai=workerOrder.indexOf(a.workerCode),bi=workerOrder.indexOf(b.workerCode);if(ai===-1&&bi===-1)return 0;if(ai===-1)return 1;if(bi===-1)return -1;return ai-bi;});
@@ -1308,7 +1316,7 @@ function printAllWorkers(){
 }
 
 // ============================================================
-//  EXPORT / IMPORT — Folder Picker
+//  EXPORT / IMPORT
 // ============================================================
 function exportData(){
   const blob=new Blob([JSON.stringify(DB,null,2)],{type:'application/json'});
