@@ -8,28 +8,14 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="FGI Salary">
-<link rel="manifest" id="fgi-salary-manifest">
-<link rel="apple-touch-icon" id="fgi-salary-icon">
-<title>FGI Salary System v15</title>
-<script>
-(function(){
-  var svg='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="80" fill="#0f2744"/><rect x="0" y="400" width="512" height="20" fill="#c9a84c"/><text x="256" y="310" font-family="Arial Black,sans-serif" font-weight="900" font-size="220" fill="#c9a84c" text-anchor="middle">FGI</text><text x="256" y="385" font-family="Arial,sans-serif" font-size="55" fill="#f0d080" text-anchor="middle" opacity="0.9">SALARY</text></svg>';
-  var url='data:image/svg+xml;base64,'+btoa(svg);
-  var al=document.getElementById('fgi-salary-icon');
-  if(al){al.href=url;al.setAttribute('sizes','512x512');}
-  var m={name:'FGI Salary System',short_name:'FGI Salary',description:'Faisal Goraya Industry - Salary Management',start_url:'.',display:'standalone',orientation:'portrait',background_color:'#0f2744',theme_color:'#0f2744',icons:[{src:url,sizes:'192x192',type:'image/svg+xml'},{src:url,sizes:'512x512',type:'image/svg+xml'}]};
-  var ml=document.getElementById('fgi-salary-manifest');
-  if(ml){try{var b=new Blob([JSON.stringify(m)],{type:'application/json'});ml.href=URL.createObjectURL(b);}catch(e){}}
-  if('serviceWorker' in navigator){
-    navigator.serviceWorker.register('./sw.js', {scope: './'})
-      .then(function(reg){ console.log('FGI Salary SW registered', reg.scope); })
-      .catch(function(e){ console.warn('SW reg failed:', e.message); });
-  }
-})();
-</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<title>FGI Salary System v18</title>
+<link rel="stylesheet" href="fonts/fonts.css">
+<script src="lib/jspdf.umd.min.js"></script>
+<script src="lib/jspdf.plugin.autotable.min.js"></script>
+<script src="lib/html2canvas.min.js"></script>
 <style>
 :root{
   --navy:#0f2744;--gold:#c9a84c;--gold-light:#f0d080;
@@ -168,6 +154,42 @@ tbody td{padding:9px 10px;vertical-align:middle;}
 
 /* OFFLINE BAR */
 #offline-bar{display:none;position:fixed;top:0;left:0;right:0;z-index:300;background:#c0392b;color:#fff;text-align:center;padding:6px 12px;font-size:12px;font-weight:700;}
+/* ===== v18 ===== */
+.code-badge{display:inline-block;background:var(--navy);color:var(--gold);padding:2px 7px;border-radius:6px;font-size:11px;font-weight:800;white-space:nowrap;}
+.kind{display:inline-block;background:#eef2f8;color:var(--slate);font-size:10px;font-weight:700;padding:1px 6px;border-radius:5px;margin-left:4px;}
+.mode-lbl{background:#e8f6ee;color:var(--green);border:1.5px solid #b8dfc8;border-radius:9px;padding:7px 12px;font-size:13px;}
+.mode-lbl.edit{background:#fff6dd;color:#8a6010;border-color:var(--gold);}
+.notice{margin-top:12px;background:#eef4ff;border:1.5px solid #b8ccee;border-radius:9px;padding:10px 12px;font-size:12px;color:var(--navy);}
+.warn{margin-top:12px;background:#fde8e8;border:1.5px solid #f2b0b0;border-radius:9px;padding:10px 12px;font-size:13px;font-weight:800;color:var(--red);}
+.chip{display:inline-block;background:#fff6dd;border:1px solid var(--gold);color:var(--navy);border-radius:14px;padding:1px 9px;margin:1px;cursor:pointer;font-weight:700;white-space:nowrap;}
+.mini-in{padding:8px 10px;border:2px solid #dde4ef;border-radius:9px;font-family:'Nunito',sans-serif;font-size:13px;outline:none;background:#f8faff;color:var(--navy);max-width:100%;}
+.mini-stat{background:var(--white);border-radius:10px;padding:12px 14px;box-shadow:var(--shadow);border-left:4px solid var(--gold);}
+.mini-stat div{font-size:10px;color:var(--slate);font-weight:700;text-transform:uppercase;}
+.mini-stat b{display:block;font-size:19px;font-weight:900;color:var(--navy);margin-top:4px;}
+.field select{min-width:0;width:100%;}
+.wr-item{background:var(--white);border-radius:10px;box-shadow:var(--shadow);padding:12px 14px;margin-bottom:8px;cursor:pointer;display:flex;align-items:center;gap:8px;flex-wrap:wrap;border:2px solid transparent;}
+.wr-item:hover{border-color:var(--gold);}
+.wr-bal{margin-left:auto;font-weight:900;font-size:14px;}
+button:disabled{opacity:.5;cursor:not-allowed;}
+/* black & white friendly worker report (screen + HD image) */
+.bw-rep{background:#fff;color:#000;font-family:'Nunito',Arial,sans-serif;padding:18px;width:100%;max-width:820px;}
+.bw-h{text-align:center;border-bottom:3px double #000;padding-bottom:8px;margin-bottom:10px;}
+.bw-co{font-family:'Playfair Display',serif;font-size:24px;font-weight:900;letter-spacing:2px;}
+.bw-sub{font-size:12px;font-weight:700;letter-spacing:1px;margin-top:3px;}
+.bw-info,.bw-sum,.bw-tbl{width:100%;border-collapse:collapse;margin-bottom:10px;}
+.bw-info td{border:1px solid #000;padding:6px 8px;font-size:13px;}
+.bw-sum td{border:2px solid #000;padding:8px;font-size:11px;font-weight:700;text-align:center;width:25%;}
+.bw-sum td b{display:block;font-size:17px;font-weight:900;margin-top:2px;}
+.bw-t{font-weight:900;font-size:14px;margin:12px 0 5px;letter-spacing:.5px;}
+.bw-tbl th{border:1.5px solid #000;background:#fff;color:#000;padding:6px 5px;font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:.3px;}
+.bw-tbl td{border:1px solid #000;padding:5px 6px;font-size:13px;font-weight:600;color:#000;}
+.bw-tbl tr.tot td{border-top:2px solid #000;font-weight:900;}
+.bw-tbl tbody tr:hover{background:none;}
+.bw-sig{display:flex;justify-content:space-between;margin-top:30px;font-size:12px;font-weight:700;}
+.bw-sig span{border-top:1px solid #000;padding-top:4px;min-width:150px;text-align:center;}
+.wr-box{flex:1;min-width:120px;}
+@media(max-width:520px){.field[style*="span 2"]{grid-column:1/-1!important;}}
+
 </style>
 </head>
 <body>
@@ -230,123 +252,201 @@ tbody td{padding:9px 10px;vertical-align:middle;}
 
 <div id="offline-bar">📵 Offline — Data safe hai</div>
 <div id="toast"></div>
-
 <!-- ============ MAIN APP ============ -->
 <div id="app">
   <div class="topbar">
     <div class="topbar-row1">
-      <div class="topbar-brand">FGI<span>Faisal Goraya Industry · Salary System v15</span></div>
+      <div class="topbar-brand">FGI<span>Faisal Goraya Industry · Salary System v18</span></div>
       <button class="logout-btn" onclick="lockApp()">🔒 Lock</button>
     </div>
     <div class="topbar-row2">
-      <button class="nav-tab active" onclick="showPage('dataEntry',this)">📝 Entry</button>
-      <button class="nav-tab" onclick="showPage('midmonth',this)">💰 Mid Month</button>
-      <button class="nav-tab" onclick="showPage('backle',this)">🧱 Backle</button>
-      <button class="nav-tab" onclick="showPage('calculator',this)">🧮 Calc</button>
-      <button class="nav-tab" onclick="showPage('workers',this)">👷 Workers</button>
-      <button class="nav-tab" onclick="showPage('report',this)">📊 Reports</button>
-      <button class="nav-tab" onclick="showPage('settings',this)">⚙️ Settings</button>
+      <button class="nav-tab active" data-p="dataEntry" onclick="showPage('dataEntry',this)">📝 Entry</button>
+      <button class="nav-tab" data-p="advance" onclick="showPage('advance',this)">💳 Advance</button>
+      <button class="nav-tab" data-p="midmonth" onclick="showPage('midmonth',this)">💰 Mid Month</button>
+      <button class="nav-tab" data-p="workers" onclick="showPage('workers',this)">👷 Workers</button>
+      <button class="nav-tab" data-p="report" onclick="showPage('report',this)">📊 Reports</button>
+      <button class="nav-tab" data-p="backle" onclick="showPage('backle',this)">🧱 Backle</button>
+      <button class="nav-tab" data-p="calculator" onclick="showPage('calculator',this)">🧮 Calc</button>
+      <button class="nav-tab" data-p="settings" onclick="showPage('settings',this)">⚙️ Settings</button>
     </div>
   </div>
 
-  <!-- DATA ENTRY PAGE -->
+  <!-- DATA ENTRY -->
   <div class="page active" id="page-dataEntry">
     <div class="page-header">
-      <div class="page-title">Data Entry<span>Salary / Payment Entry Form</span></div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;">
-        <select class="field" id="entryMode" onchange="toggleEditMode()" style="padding:8px 12px;border:2px solid #dde4ef;border-radius:9px;font-family:'Nunito',sans-serif;font-size:13px;color:var(--navy);background:#f8faff;outline:none;">
-          <option value="new">+ New Entry</option>
-          <option value="edit">✏️ Edit Entry</option>
-        </select>
-        <select id="editSelect" style="display:none;padding:8px 12px;border:2px solid #dde4ef;border-radius:9px;font-family:'Nunito',sans-serif;font-size:13px;color:var(--navy);background:#f8faff;outline:none;" onchange="loadEditEntry()">
-          <option value="">-- Select Entry --</option>
-        </select>
-      </div>
+      <div class="page-title">Data Entry<span>Salary Entry Form — advance &amp; mid month khud aate hain</span></div>
+      <div id="entryModeLbl" class="mode-lbl">➕ <b>Nayi entry</b></div>
     </div>
-
     <div class="card">
       <div class="card-title">📋 Basic Information</div>
       <div class="form-grid">
+        <div class="field"><label>Month / Year (salary ka mahina)</label><input type="month" id="f_month" onchange="onEntryWorkerOrMonth();renderMonthEntries()"></div>
+        <div class="field" style="grid-column:span 2;min-width:0;"><label>Worker (Code — Naam)</label><select id="f_worker" onchange="onEntryWorkerOrMonth()"></select></div>
         <div class="field"><label>Date</label><input type="date" id="f_date"></div>
-        <div class="field"><label>Month / Year</label><input type="month" id="f_month" onchange="onMonthChange()"></div>
-        <div class="field"><label>Sr. No <label style="font-weight:400;text-transform:none;font-size:11px;"><input type="checkbox" id="srAuto" checked onchange="toggleSrAuto()"> Auto</label></label><input type="number" id="f_sr" placeholder="Auto..." readonly></div>
-        <div class="field"><label>Worker Name</label><input type="text" id="f_name" list="workerList" placeholder="Worker name..." oninput="onWorkerSelect()"><input type="hidden" id="f_workerCode"><datalist id="workerList"></datalist></div>
-        <div class="field"><label>Basic Salary (Rs.)</label><input type="number" id="f_basic" placeholder="e.g. 15000" oninput="calcAll()"></div>
+        <div class="field"><label>Sr. No</label><input type="number" id="f_sr" placeholder="Auto"></div>
+        <div class="field"><label>Basic Salary (Rs.)</label><input type="number" id="f_basic" inputmode="numeric" oninput="calcAll()"></div>
       </div>
+      <div id="entryNotice" class="notice" style="display:none;"></div>
     </div>
-
     <div class="card">
       <div class="card-title">⏱️ Overtime</div>
       <div class="form-grid">
-        <div class="field"><label>OT Hours</label><input type="number" id="f_ot" placeholder="e.g. 60" oninput="calcAll()"><span class="field-note">Total OT hours</span></div>
+        <div class="field"><label>OT Hours</label><input type="number" id="f_ot" inputmode="decimal" placeholder="e.g. 60" oninput="calcAll()"><span class="field-note">Total OT hours</span></div>
         <div class="field"><label>Over Days (auto)</label><input type="number" id="f_overDays" class="auto-calc" readonly></div>
         <div class="field"><label>OH Hours (auto)</label><input type="number" id="f_oh" class="auto-calc" readonly></div>
         <div class="field"><label>OHP (auto)</label><input type="number" id="f_ohp" class="auto-calc" readonly></div>
       </div>
     </div>
-
     <div class="card">
-      <div class="card-title">📅 Days & Monthly Salary</div>
+      <div class="card-title">📅 Days &amp; Monthly Salary</div>
       <div class="form-grid">
-        <div class="field"><label>Days Worked</label><input type="number" id="f_days" placeholder="e.g. 28" oninput="calcAll()"></div>
+        <div class="field"><label>Days Worked</label><input type="number" id="f_days" inputmode="numeric" placeholder="e.g. 28" oninput="calcAll()"></div>
         <div class="field"><label>Total Days (auto)</label><input type="number" id="f_totalDays" class="auto-calc" readonly></div>
         <div class="field"><label>Monthly Salary (auto)</label><input type="number" id="f_mSalary" class="auto-calc" readonly></div>
       </div>
     </div>
-
     <div class="card">
-      <div class="card-title">💳 Advances & Deductions</div>
+      <div class="card-title">💳 Advances &amp; Deductions</div>
       <div class="form-grid">
-        <div class="field"><label>Mid Month Kharcha</label><input type="number" id="f_midMonth" placeholder="e.g. 8500" oninput="calcAll()"></div>
+        <div class="field"><label>Mid Month Kharcha (auto)</label><input type="number" id="f_midMonth" class="auto-calc" readonly><span class="field-note">Is mahine ke saare kharchon ka jod</span></div>
         <div class="field"><label>Rem. Salary (auto)</label><input type="number" id="f_remSalary" class="auto-calc" readonly></div>
         <div class="field"><label>Previous Adv. (auto)</label><input type="number" id="f_prevAdv" class="auto-calc" readonly></div>
-        <div class="field"><label>New Advance</label><input type="number" id="f_newAdv" placeholder="e.g. 2000" oninput="calcAll()"></div>
+        <div class="field"><label>New Advance (auto)</label><input type="number" id="f_newAdv" class="auto-calc" readonly><span class="field-note">Is mahine ke saare advance ka jod</span></div>
         <div class="field"><label>Total Advance (auto)</label><input type="number" id="f_totalAdv" class="auto-calc" readonly></div>
-        <div class="field"><label>Deduction from Adv.</label><input type="number" id="f_deductAdv" placeholder="e.g. 5000" oninput="calcAll()"></div>
+        <div class="field"><label>Deduction from Adv.</label><input type="number" id="f_deductAdv" inputmode="numeric" placeholder="e.g. 5000" oninput="calcAll()"><span class="field-note">Optional — salary se kitna katna hai</span></div>
         <div class="field"><label>Rem. Advance (auto)</label><input type="number" id="f_remAdv" class="auto-calc" readonly></div>
         <div class="field"><label>Total Rem. Salary (auto)</label><input type="number" id="f_totalRemSalary" class="auto-calc" readonly></div>
       </div>
+      <div id="dedWarn" class="warn" style="display:none;"></div>
     </div>
-
     <div class="btn-row">
-      <button class="btn btn-save" onclick="saveEntry()">💾 Save Entry</button>
+      <button class="btn btn-save" id="btnSaveEntry" onclick="saveEntry()">💾 Save Entry</button>
       <button class="btn btn-clear" onclick="clearForm()">🗑️ Clear</button>
+      <button class="btn btn-danger" id="btnDelEntry" style="display:none;" onclick="deleteCurrentEntry()">🗑️ Delete Entry</button>
     </div>
     <div id="saveMsg" style="margin-top:10px;font-size:14px;font-weight:700;color:var(--green);min-height:20px;"></div>
+    <div class="card" style="margin-top:12px;">
+      <div class="card-title" id="monthEntriesTitle">📋 Entries</div>
+      <div id="monthPending" style="font-size:12px;margin-bottom:10px;line-height:2;"></div>
+      <div class="table-wrap"><table><thead><tr><th>#</th><th>Code</th><th>Worker</th><th>M.Sal</th><th>Dec.Adv</th><th>T.Rem.Sal</th><th></th></tr></thead><tbody id="monthEntriesBody"></tbody></table></div>
+    </div>
   </div>
 
-  <!-- WORKERS PAGE -->
-  <div class="page" id="page-workers">
-    <div class="page-header">
-      <div class="page-title">Workers<span>Worker profiles manage karein</span></div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;">
-        <input type="text" id="workerSearch" placeholder="Search..." style="padding:8px 12px;border:2px solid #dde4ef;border-radius:9px;font-family:'Nunito',sans-serif;font-size:13px;outline:none;" oninput="renderWorkerTable()">
-        <button class="btn btn-save btn-sm" onclick="openAddWorker()">+ Add Worker</button>
+  <!-- ADVANCE -->
+  <div class="page" id="page-advance">
+    <div class="page-header"><div class="page-title">💳 Workers Advance<span>Kaam ke dauran kabhi bhi liya gaya advance</span></div></div>
+    <div class="card" style="border:2px solid var(--red);">
+      <div class="card-title" style="color:var(--red);">➕ Advance Darj Karein</div>
+      <div class="form-grid">
+        <div class="field"><label>Date</label><input type="date" id="adv_date"></div>
+        <div class="field" style="grid-column:span 2;min-width:0;"><label>Worker (Code — Naam)</label><select id="adv_worker" onchange="advWorkerInfo()"></select></div>
+        <div class="field"><label>Advance Amount (Rs.)</label><input type="number" id="adv_amount" inputmode="numeric" placeholder="e.g. 5000"></div>
+        <div class="field" style="grid-column:span 2;min-width:0;"><label>Wajah / Tafseel (optional)</label><input type="text" id="adv_reason" placeholder="e.g. Ghar ki marammat..."></div>
       </div>
+      <div id="adv_info" style="font-size:13px;margin-top:10px;"></div>
+      <div class="btn-row"><button class="btn btn-save" id="adv_save" onclick="saveAdvance()">💾 Save Advance</button><button class="btn btn-clear" onclick="clearAdvForm()">🗑️ Clear</button></div>
     </div>
     <div class="card">
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>#</th><th>Code</th><th>Worker Name</th><th>Basic Salary</th><th>Rem. Advance</th><th>Last Entry</th><th>Actions</th></tr></thead>
-          <tbody id="workerTbody"></tbody>
-        </table>
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
+        <div class="card-title" style="margin:0;padding:0;border:none;">📋 Advance Records</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;"><select id="adv_filter" class="mini-in" onchange="renderAdvTable()"></select><input type="month" id="adv_month" class="mini-in" onchange="renderAdvTable()"></div>
       </div>
-    </div>
-    <!-- Worker Modal -->
-    <div id="workerModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:center;justify-content:center;">
-      <div style="background:white;border-radius:18px;padding:28px;width:400px;max-width:95vw;box-shadow:0 20px 60px rgba(0,0,0,.3);">
-        <h3 style="font-family:'Playfair Display',serif;font-size:20px;margin-bottom:18px;color:var(--navy);">Worker Profile</h3>
-        <input type="hidden" id="wm_id">
-        <div class="field" style="margin-bottom:12px;"><label>Worker Name</label><input type="text" id="wm_name" placeholder="Full name..."></div>
-        <div class="field" style="margin-bottom:12px;"><label>Basic Salary (Rs.)</label><input type="number" id="wm_basic" placeholder="e.g. 15000"></div>
-        <div class="field" style="margin-bottom:18px;"><label>Remaining Advance (Rs.)</label><input type="number" id="wm_remAdv" placeholder="Carry-forward..."></div>
-        <div style="display:flex;gap:10px;">
-          <button class="btn btn-save" onclick="saveWorker()">Save</button>
-          <button class="btn btn-clear" onclick="closeWorkerModal()">Cancel</button>
-        </div>
-      </div>
+      <div class="table-wrap"><table><thead><tr><th>#</th><th>Date</th><th>Worker</th><th>Amount</th><th>Wajah</th><th></th></tr></thead><tbody id="adv_tbody"></tbody></table></div>
     </div>
   </div>
+
+  <!-- MID MONTH -->
+  <div class="page" id="page-midmonth">
+    <div class="page-header"><div class="page-title">💰 Mid Month<span>Kharcha — mahine mein jitni dafa bhi liya jaye, sab jud jata hai</span></div></div>
+    <div class="card" style="border:2px solid var(--gold);background:linear-gradient(135deg,#fffef5,#fff8e8);">
+      <div class="card-title" style="color:#8a6010;">➕ Kharcha Darj Karein</div>
+      <div class="form-grid">
+        <div class="field"><label>Date</label><input type="date" id="mm_date"></div>
+        <div class="field"><label>Kis mahine ka kharcha</label><input type="month" id="mm_month" onchange="onMidMonthWorkerSelect()"></div>
+        <div class="field" style="grid-column:span 2;min-width:0;"><label>Worker (Code — Naam)</label><select id="mm_worker" onchange="onMidMonthWorkerSelect()"></select></div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin-top:14px;">
+        <div class="mini-stat" style="border-left-color:var(--navy);"><div>Basic Salary</div><b id="mm_basicDisplay">—</b></div>
+        <div class="mini-stat" style="border-left-color:var(--gold);"><div>Is mahine ka kul kharcha</div><b id="mm_lastMidDisplay" style="color:#8a6010;">—</b></div>
+        <div class="mini-stat" style="border-left-color:var(--red);"><div>Baqi Advance</div><b id="mm_remAdvDisplay" style="color:var(--red);">—</b></div>
+      </div>
+      <div style="margin-top:16px;display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;">
+        <div class="field" style="min-width:160px;"><label>Kharcha Amount</label><input type="number" id="mm_kharcha" inputmode="numeric" placeholder="e.g. 5000"></div>
+        <div class="field" style="min-width:160px;"><label>Note (optional)</label><input type="text" id="mm_note" placeholder="..."></div>
+        <div style="display:flex;gap:8px;"><button class="btn btn-save" id="mm-save-btn" onclick="saveMidMonthRecord()">💾 Save</button><button class="btn btn-clear" onclick="clearMidMonthForm()">🗑️</button></div>
+      </div>
+      <div id="mmSaveMsg" style="margin-top:8px;font-size:13px;font-weight:700;color:var(--green);min-height:18px;"></div>
+    </div>
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;">
+        <div class="card-title" style="margin:0;padding:0;border:none;">📋 Mid Month Records</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;"><input type="text" id="mmTableSearch" class="mini-in" placeholder="Worker / code..." oninput="renderMidMonthTable()"><select id="mmTableMonth" class="mini-in" onchange="renderMidMonthTable()"><option value="">Sab months</option></select></div>
+      </div>
+      <div class="table-wrap"><table><thead><tr><th>#</th><th>Date</th><th>Month</th><th>Worker</th><th>Kharcha</th><th>Note</th><th>Edit</th><th>Del</th></tr></thead><tbody id="mmTableBody"></tbody></table></div>
+    </div>
+  </div>
+
+  <!-- WORKERS -->
+  <div class="page" id="page-workers">
+    <div class="page-header">
+      <div class="page-title">Workers<span>Join, code, advance aur chhorne ki date</span></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;"><input type="text" id="workerSearch" class="mini-in" placeholder="Search naam / code..." oninput="renderWorkerTable()"><button class="btn btn-save btn-sm" onclick="openAddWorker()">+ Add Worker</button></div>
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:12px;"><button id="wTabA" class="btn btn-sm btn-save" onclick="setWorkerTab('active')">✅ Active</button><button id="wTabL" class="btn btn-sm btn-clear" onclick="setWorkerTab('left')">🚪 Chhor gaye</button></div>
+    <div class="card"><div class="table-wrap"><table><thead><tr><th>#</th><th>Code</th><th>Worker Name</th><th>Basic</th><th>Join</th><th>Baqi Advance</th><th>Actions</th></tr></thead><tbody id="workerTbody"></tbody></table></div></div>
+  </div>
+
+  <!-- REPORTS -->
+  <div class="page" id="page-report">
+    <div class="page-header">
+      <div class="page-title">Reports<span>Salary, worker khata aur advance</span></div>
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
+      <button id="rptModeBtn1" class="btn btn-save btn-sm" onclick="switchReportMode('monthly')">📅 Monthly</button>
+      <button id="rptModeBtn2" class="btn btn-clear btn-sm" onclick="switchReportMode('worker')">👷 Worker Report</button>
+      <button id="rptModeBtn3" class="btn btn-clear btn-sm" onclick="switchReportMode('remadv')">💳 Rem. Advance</button>
+    </div>
+    <div id="rptSec_monthly">
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;margin-bottom:14px;">
+        <div class="field"><label>Month</label><input type="month" id="rpt_month" onchange="loadReport()"></div>
+        <div class="field"><label>Worker (blank = all)</label><input type="text" id="rpt_worker" placeholder="Naam / code..." oninput="loadReport()"></div>
+        <button class="btn btn-gold btn-sm" onclick="printAllWorkers()">📄 All Workers PDF</button>
+      </div>
+      <div id="reportCards" class="report-cards"></div>
+      <div id="reportTable" class="card" style="display:none;"><div class="table-wrap"><table><thead><tr><th>Sr</th><th>Worker</th><th>Month</th><th>Basic</th><th>OT</th><th>OvDay</th><th>OH</th><th>OHP</th><th>Days</th><th>T.Days</th><th>M.Sal</th><th>Mid</th><th>Rem.Sal</th><th>Prev.Adv</th><th>New Adv</th><th>T.Adv</th><th>Dec.Adv</th><th>Rem.Adv</th><th>T.Rem.Sal</th><th>Slip</th></tr></thead><tbody id="reportTbody"></tbody></table></div></div>
+    </div>
+    <div id="rptSec_worker" style="display:none;">
+      <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;"><button id="wrTabA" class="btn btn-sm btn-save" onclick="setWrTab('active')">✅ Kaam kar rahe</button><button id="wrTabL" class="btn btn-sm btn-clear" onclick="setWrTab('left')">🚪 Chhor gaye</button><input type="text" id="wrSearch" class="mini-in" placeholder="Naam / code..." oninput="renderWorkerReportList()"></div>
+      <div id="wrList"></div><div id="wrDetail"></div>
+    </div>
+    <div id="rptSec_remadv" style="display:none;">
+      <input type="text" id="rptRemAdvSearch" class="mini-in" placeholder="🔍 Worker search..." style="margin-bottom:14px;" oninput="renderRemAdvOverview()">
+      <div id="remAdvCards" class="report-cards"></div>
+    </div>
+  </div>
+
+  <!-- WORKER MODAL (outside pages so it opens from anywhere) -->
+    <div id="workerModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:center;justify-content:center;padding:12px;">
+      <div style="background:white;border-radius:18px;padding:22px;width:440px;max-width:96vw;max-height:92vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.3);">
+        <h3 id="wm_title" style="font-family:'Playfair Display',serif;font-size:20px;margin-bottom:14px;color:var(--navy);">Worker</h3>
+        <input type="hidden" id="wm_id">
+        <div class="form-grid" style="grid-template-columns:1fr 1fr;">
+          <div class="field"><label>Worker Code</label><input type="text" id="wm_code" readonly></div>
+          <div class="field"><label>Join Date</label><input type="date" id="wm_join"></div>
+          <div class="field" style="grid-column:1/-1;"><label>Worker Name</label><input type="text" id="wm_name" placeholder="Full name..." oninput="wmNameCheck()"><span id="wm_dupNote" class="field-note" style="color:#8a6010;"></span></div>
+          <div class="field" style="grid-column:1/-1;"><label>Basic Salary (Rs.)</label><input type="number" id="wm_basic" inputmode="numeric" placeholder="e.g. 15000"></div>
+        </div>
+        <div id="wm_advRow" class="form-grid" style="grid-template-columns:1fr 1fr;margin-top:12px;background:#fff6f6;border:1.5px dashed var(--red);border-radius:10px;padding:10px;">
+          <div class="field"><label>Joining Advance (optional)</label><input type="number" id="wm_adv" inputmode="numeric" placeholder="0"></div>
+          <div class="field"><label>Wajah (optional)</label><input type="text" id="wm_reason" placeholder="e.g. Pichhli factory ka hisaab"></div>
+        </div>
+        <div style="margin-top:12px;background:#f4f6fa;border-radius:10px;padding:10px;">
+          <label style="display:flex;gap:8px;align-items:center;font-weight:800;color:var(--navy);cursor:pointer;"><input type="checkbox" id="wm_left" onchange="wmLeftToggle()" style="width:20px;height:20px;"> 🚪 Worker kaam chhor gaya</label>
+          <div class="field" id="wm_leaveRow" style="display:none;margin-top:8px;"><label>Chhorne ki Date</label><input type="date" id="wm_leave"><span class="field-note">List se hat jaye ga, record aur baqi advance mehfooz rahe ga</span></div>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:16px;"><button class="btn btn-save" onclick="saveWorker()">💾 Save</button><button class="btn btn-clear" onclick="closeWorkerModal()">Cancel</button></div>
+      </div>
+    </div>
 
   <!-- BACKLE PAGE -->
   <div class="page" id="page-backle">
@@ -383,12 +483,11 @@ tbody td{padding:9px 10px;vertical-align:middle;}
       </div>
     </div>
   </div>
-
   <!-- CALCULATOR PAGE -->
   <div class="page" id="page-calculator">
     <div class="page-header">
       <div class="page-title">🧮 Salary Calculator<span>Per Day / Per Hour</span></div>
-      <button class="btn btn-gold" onclick="printCalcReport()">🖨️ Print</button>
+      <div style="display:flex;gap:8px;"><button class="btn btn-clear btn-sm" onclick="addAllToCalc()">➕ Sab Active</button><button class="btn btn-gold btn-sm" onclick="printCalcReport()">📄 PDF</button></div>
     </div>
     <div class="card">
       <div class="card-title">➕ Worker Add Karo</div>
@@ -412,92 +511,6 @@ tbody td{padding:9px 10px;vertical-align:middle;}
       <div id="calcSummary" style="margin-top:16px;display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;"></div>
     </div>
   </div>
-
-  <!-- REPORT PAGE -->
-  <div class="page" id="page-report">
-    <div class="page-header">
-      <div class="page-title">Reports<span>Salary slips dekhein aur print karein</span></div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;">
-        <button class="btn btn-clear btn-sm" onclick="loadReport()">🔄 Refresh</button>
-        <button class="btn btn-danger btn-sm" onclick="cleanOrphanEntries()">🧹 Clean</button>
-        <button class="btn btn-gold btn-sm" onclick="printAllWorkers()">🖨️ Print All</button>
-      </div>
-    </div>
-    <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
-      <button id="rptModeBtn1" class="btn btn-save btn-sm" onclick="switchReportMode('monthly')">📅 Monthly</button>
-      <button id="rptModeBtn2" class="btn btn-clear btn-sm" onclick="switchReportMode('remadv')">💳 Rem. Advance</button>
-    </div>
-    <div id="rptSectionMonthly">
-      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;margin-bottom:14px;">
-        <div class="field"><label>Month</label><input type="month" id="rpt_month" onchange="loadReport()"></div>
-        <div class="field"><label>Worker (blank=all)</label><input type="text" id="rpt_worker" list="rptWorkerList" placeholder="All..." oninput="loadReport()"><datalist id="rptWorkerList"></datalist></div>
-        <button class="btn btn-green btn-sm" onclick="loadReport()">🔍 Search</button>
-      </div>
-      <div id="reportCards" class="report-cards"></div>
-      <div id="reportTable" class="card" style="display:none;">
-        <div class="table-wrap">
-          <table><thead><tr><th>Sr</th><th>Worker</th><th>Month</th><th>Basic</th><th>OT</th><th>OvDay</th><th>OH</th><th>OHP</th><th>Days</th><th>T.Days</th><th>M.Sal</th><th>Mid</th><th>Rem.Sal</th><th>Prev.Adv</th><th>New Adv</th><th>T.Adv</th><th>Dec.Adv</th><th>Rem.Adv</th><th>T.Rem.Sal</th><th>Print</th></tr></thead>
-          <tbody id="reportTbody"></tbody></table>
-        </div>
-      </div>
-    </div>
-    <div id="rptSectionRemAdv" style="display:none;">
-      <input type="text" id="rptRemAdvSearch" placeholder="🔍 Worker search..." style="padding:10px 14px;border:2px solid #dde4ef;border-radius:9px;font-family:'Nunito',sans-serif;font-size:14px;width:280px;outline:none;margin-bottom:14px;" oninput="renderRemAdvOverview()">
-      <div id="remAdvCards" class="report-cards"></div>
-    </div>
-  </div>
-
-  <!-- MID MONTH PAGE -->
-  <div class="page" id="page-midmonth">
-    <div class="page-header">
-      <div class="page-title">💰 Mid Month<span>Mid Month Kharcha tracker</span></div>
-    </div>
-    <div class="card" style="border:2px solid var(--gold);background:linear-gradient(135deg,#fffef5,#fff8e8);">
-      <div class="card-title" style="color:#8a6010;">🔍 Worker Select karo</div>
-      <div class="form-grid">
-        <div class="field"><label>Worker Name</label><input type="text" id="mm_workerName" list="mmWorkerList" placeholder="Naam likhein..." oninput="onMidMonthWorkerSelect()"><datalist id="mmWorkerList"></datalist></div>
-        <div class="field"><label>Date</label><input type="date" id="mm_date"></div>
-        <div class="field"><label>Month</label><input type="month" id="mm_month"></div>
-      </div>
-      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-top:14px;">
-        <div style="background:var(--white);border-radius:10px;padding:14px;box-shadow:var(--shadow);border-left:4px solid var(--navy);">
-          <div style="font-size:10px;color:var(--slate);font-weight:700;text-transform:uppercase;">Basic Salary</div>
-          <div style="font-size:20px;font-weight:900;color:var(--navy);margin-top:4px;" id="mm_basicDisplay">—</div>
-        </div>
-        <div style="background:var(--white);border-radius:10px;padding:14px;box-shadow:var(--shadow);border-left:4px solid var(--gold);">
-          <div style="font-size:10px;color:var(--slate);font-weight:700;text-transform:uppercase;">Last Mid Kharcha</div>
-          <div style="font-size:20px;font-weight:900;color:#8a6010;margin-top:4px;" id="mm_lastMidDisplay">—</div>
-        </div>
-        <div style="background:var(--white);border-radius:10px;padding:14px;box-shadow:var(--shadow);border-left:4px solid var(--red);">
-          <div style="font-size:10px;color:var(--slate);font-weight:700;text-transform:uppercase;">Rem. Advance</div>
-          <div style="font-size:20px;font-weight:900;color:var(--red);margin-top:4px;" id="mm_remAdvDisplay">—</div>
-        </div>
-      </div>
-      <div style="margin-top:16px;display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;">
-        <div class="field" style="min-width:180px;"><label>Mid Month Kharcha</label><input type="number" id="mm_kharcha" placeholder="e.g. 8500"></div>
-        <div class="field" style="min-width:180px;"><label>Note (optional)</label><input type="text" id="mm_note" placeholder="..."></div>
-        <div style="display:flex;gap:8px;">
-          <button class="btn btn-save" id="mm-save-btn" onclick="saveMidMonthRecord()">💾 Save</button>
-          <button class="btn btn-clear" onclick="clearMidMonthForm()">🗑️</button>
-        </div>
-      </div>
-      <div id="mmSaveMsg" style="margin-top:8px;font-size:13px;font-weight:700;color:var(--green);min-height:18px;"></div>
-    </div>
-    <div class="card">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;">
-        <div class="card-title" style="margin:0;padding:0;border:none;">📋 Mid Month Records</div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;">
-          <input type="text" id="mmTableSearch" placeholder="Worker filter..." style="padding:7px 10px;border:2px solid #dde4ef;border-radius:8px;font-family:'Nunito',sans-serif;font-size:13px;outline:none;width:140px;" oninput="renderMidMonthTable()">
-          <select id="mmTableMonth" onchange="renderMidMonthTable()" style="padding:7px 10px;border:2px solid #dde4ef;border-radius:8px;font-family:'Nunito',sans-serif;font-size:13px;outline:none;background:#f8faff;"><option value="">Sab months</option></select>
-        </div>
-      </div>
-      <div class="table-wrap">
-        <table><thead><tr><th>#</th><th>Date</th><th>Month</th><th>Worker</th><th>Basic</th><th>Mid Kharcha</th><th>Rem. Adv</th><th>Note</th><th>Edit</th><th>Del</th></tr></thead>
-        <tbody id="mmTableBody"></tbody></table>
-      </div>
-    </div>
-  </div>
-
   <!-- SETTINGS PAGE -->
   <div class="page" id="page-settings">
     <div class="page-header">
@@ -513,6 +526,16 @@ tbody td{padding:9px 10px;vertical-align:middle;}
       </div>
       <input type="file" id="importFile" accept=".json" style="display:none;" onchange="importData(event)">
       <div id="importMsg" style="font-size:12px;font-weight:700;margin-top:8px;min-height:16px;"></div>
+    </div>
+
+    <div class="settings-card">
+      <div class="card-title">🗄️ Archive &amp; Purane Backup</div>
+      <div id="archiveInfo" style="font-size:12px;color:var(--slate);margin-bottom:10px;"></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn btn-clear btn-sm" onclick="downloadArchive()">🗄️ Archive Download</button>
+        <button class="btn btn-clear btn-sm" onclick="downloadStored('backup_pre_v18','FGI_Salary_before_v18.json','v18 se pehle ka data')">⏪ v18 se pehle ka data</button>
+        <button class="btn btn-clear btn-sm" onclick="downloadStored('backup_before_import','FGI_Salary_before_import.json','Import se pehle ka data')">⏪ Import se pehle ka data</button>
+      </div>
     </div>
 
     <div class="settings-card">
@@ -552,7 +575,7 @@ tbody td{padding:9px 10px;vertical-align:middle;}
       <div style="font-size:11px;color:var(--slate);margin-top:8px;line-height:1.7;">
         ✅ <b>IndexedDB</b> — Permanent storage<br>
         ✅ <b>localStorage</b> — Backup layer<br>
-        ✅ <b>No Google, No Cloud</b> — 100% offline
+        ✅ <b>No Google, No Cloud, No CDN</b> — 100% offline (libraries + fonts app ke andar)<br>ℹ️ FGI Salary System <b>v18</b>
       </div>
     </div>
 
@@ -570,1071 +593,815 @@ tbody td{padding:9px 10px;vertical-align:middle;}
     </div>
   </div>
 </div>
-
-<!-- PRINT MODAL -->
-<div id="printModal">
-  <div class="print-modal-bar">
-    <div class="bar-title">🖨️ Print Preview — FGI Salary Slip</div>
-    <div class="bar-btns">
-      <button class="btn btn-gold btn-sm" onclick="doPDF()" id="printBtn">📄 Save PDF</button>
-      <button class="btn btn-green btn-sm" onclick="doSharePDF()" id="shareBtn">📤 Share</button>
-      <button class="btn btn-danger btn-sm" onclick="closePrintModal()">✕ Close</button>
-    </div>
-  </div>
-  <div class="print-modal-body" id="printModalBody"></div>
-</div>
-
-<div id="printDirectArea" style="display:none;"></div>
-
 <script>
 // ============================================================
-//  IndexedDB — CORE STORAGE
+//  FGI SALARY SYSTEM v18 — core: storage, PIN, migration, ledger
+//  Salary formula is UNCHANGED (see calcAll). Advance & Mid Month
+//  amounts are now computed from their own records.
 // ============================================================
-const IDB_NAME='FGI_SalarySystem';
-const IDB_STORE='appdata';
+const APP_VER='v18';
+const IDB_NAME='FGI_SalarySystem', IDB_STORE='appdata', APP_KEY='fgi_salary_db_v15';
+// Qaisar's current workers, in his order (20-11-2026). Anyone not here = "Left".
+const WORKER_ORDER=['Hafiz Hafeez','Arshad Goraya','M Taqi','Ayyaz Pappu','M Murtaza','Rana Qasim','Hafiz Farooq','Rana Faisal','Uzair Goraya','M Ahmad','Ali Hamza','Basharat Ali','Bilal Bawala','Usman','Ali Haider'];
 
-function idbOpen(){
-  return new Promise((res,rej)=>{
-    const req=indexedDB.open(IDB_NAME,1);
-    req.onupgradeneeded=e=>e.target.result.createObjectStore(IDB_STORE);
-    req.onsuccess=e=>res(e.target.result);
-    req.onerror=()=>rej(req.error);
-  });
-}
+// ---------- helpers ----------
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function r0(x){return Math.round(+x||0);}
+function r2(x){return Math.round((+x||0)*100)/100;}
+function fmt(x){return r0(x).toLocaleString('en-US');}
+function rs(x){return 'Rs. '+fmt(x);}
+function todayStr(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function thisMonth(){return todayStr().slice(0,7);}
+function prevMonth(m){let [y,mo]=m.split('-').map(Number);mo--;if(mo<1){mo=12;y--;}return y+'-'+String(mo).padStart(2,'0');}
+function monthName(m){if(!m)return'—';const [y,mo]=m.split('-');return ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][+mo-1]+' '+y;}
+function fmtDate(str){if(!str)return'—';if(/^\d{4}-\d{2}-\d{2}$/.test(str)){const[y,m,d]=str.split('-');return`${d}-${m}-${y}`;}return str;}
+function normName(n){return String(n||'').trim().replace(/\s+/g,' ').toLowerCase();}
+function codeStr(n){return 'FGI-'+String(n).padStart(2,'0');}
+function el(id){return document.getElementById(id);}
+let toastTimer;
+function showToast(msg,ms){const t=el('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),ms||3000);}
+
+// ---------- IndexedDB ----------
+function idbOpen(){return new Promise((res,rej)=>{const req=indexedDB.open(IDB_NAME,1);req.onupgradeneeded=e=>e.target.result.createObjectStore(IDB_STORE);req.onsuccess=e=>res(e.target.result);req.onerror=()=>rej(req.error);});}
 async function idbSave(key,value){
-  try{
-    const idb=await idbOpen();
-    return new Promise(res=>{
-      const tx=idb.transaction(IDB_STORE,'readwrite');
-      tx.objectStore(IDB_STORE).put(value,key);
-      tx.oncomplete=()=>res(true);
-      tx.onerror=()=>res(false);
-    });
-  }catch(e){try{localStorage.setItem('fgi_sal_'+key,value);}catch(e2){}return false;}
+  try{const idb=await idbOpen();return await new Promise(res=>{const tx=idb.transaction(IDB_STORE,'readwrite');tx.objectStore(IDB_STORE).put(value,key);tx.oncomplete=()=>res(true);tx.onerror=()=>res(false);});}
+  catch(e){try{localStorage.setItem('fgi_sal_'+key,value);}catch(e2){}return false;}
 }
 async function idbLoad(key){
-  try{
-    const idb=await idbOpen();
-    return new Promise(res=>{
-      const tx=idb.transaction(IDB_STORE,'readonly');
-      const req=tx.objectStore(IDB_STORE).get(key);
-      req.onsuccess=()=>{
-        if(req.result!==undefined)res(req.result);
-        else res(localStorage.getItem('fgi_sal_'+key)||localStorage.getItem('fgi_salary_'+key)||null);
-      };
-      req.onerror=()=>res(null);
-    });
-  }catch(e){return localStorage.getItem('fgi_sal_'+key)||null;}
+  try{const idb=await idbOpen();return await new Promise(res=>{const tx=idb.transaction(IDB_STORE,'readonly');const req=tx.objectStore(IDB_STORE).get(key);
+    req.onsuccess=()=>{if(req.result!==undefined)res(req.result);else res(localStorage.getItem('fgi_sal_'+key)||localStorage.getItem('fgi_salary_'+key)||null);};req.onerror=()=>res(null);});}
+  catch(e){return localStorage.getItem('fgi_sal_'+key)||null;}
 }
 
-// ============================================================
-//  PIN
-// ============================================================
-async function getPin(){
-  const p=await idbLoad('pin');
-  return p||localStorage.getItem('fgi_sal_pin')||'1234';
-}
-async function savePin(pin){
-  await idbSave('pin',pin);
-  try{localStorage.setItem('fgi_sal_pin',pin);}catch(e){}
-}
-
-// ============================================================
-//  SECRET QUESTION
-// ============================================================
-async function saveSecretQData(q,a){
-  const data=JSON.stringify({q,a:a.toLowerCase().trim()});
-  await idbSave('secret_q',data);
-  try{localStorage.setItem('fgi_sal_secret_q',data);}catch(e){}
-}
-async function loadSecretQData(){
-  const raw=await idbLoad('secret_q')||localStorage.getItem('fgi_sal_secret_q');
-  if(!raw)return null;
-  try{return JSON.parse(raw);}catch(e){return null;}
-}
+// ---------- PIN / secret question ----------
+async function getPin(){const p=await idbLoad('pin');return p||localStorage.getItem('fgi_sal_pin')||'1234';}
+async function savePin(pin){await idbSave('pin',pin);try{localStorage.setItem('fgi_sal_pin',pin);}catch(e){}}
+function normAns(s){return String(s||'').toLowerCase().replace(/\s+/g,' ').trim();}
+async function saveSecretQData(q,a){const data=JSON.stringify({q,a:normAns(a)});await idbSave('secret_q',data);try{localStorage.setItem('fgi_sal_secret_q',data);}catch(e){}}
+async function loadSecretQData(){const raw=await idbLoad('secret_q')||localStorage.getItem('fgi_sal_secret_q');if(!raw)return null;try{return JSON.parse(raw);}catch(e){return null;}}
 async function saveSecretQ(){
-  const selVal=document.getElementById('sq-question-sel').value;
-  let question='';
-  if(!selVal){document.getElementById('sq-error').textContent='⚠️ Question zaroor choose karein!';return;}
-  if(selVal==='custom'){
-    question=document.getElementById('sq-custom-q').value.trim();
-    if(!question){document.getElementById('sq-error').textContent='⚠️ Custom question likhein!';return;}
-  }else{
-    const qMap={apki_company:'Apki company ka naam kya hai?',apka_sheher:'Ap kahan rehte hain? (city)',apka_mobile:'Apka mobile number? (last 4 digits)'};
-    question=qMap[selVal]||selVal;
-  }
-  const answer=document.getElementById('sq-answer-inp').value.trim();
-  if(!answer){document.getElementById('sq-error').textContent='⚠️ Jawab likhein!';return;}
-  await saveSecretQData(question,answer);
-  document.getElementById('sq-answer-inp').value='';
-  document.getElementById('sq-error').textContent='';
-  showToast('✅ Secret question save ho gaya!');
-  updateSQStatus();
+  const selVal=el('sq-question-sel').value;let question='';
+  if(!selVal){el('sq-error').textContent='⚠️ Question zaroor choose karein!';return;}
+  if(selVal==='custom'){question=el('sq-custom-q').value.trim();if(!question){el('sq-error').textContent='⚠️ Custom question likhein!';return;}}
+  else question={apki_company:'Apki company ka naam kya hai?',apka_sheher:'Ap kahan rehte hain? (city)',apka_mobile:'Apka mobile number? (last 4 digits)'}[selVal]||selVal;
+  const answer=el('sq-answer-inp').value.trim();if(!answer){el('sq-error').textContent='⚠️ Jawab likhein!';return;}
+  await saveSecretQData(question,answer);el('sq-answer-inp').value='';el('sq-error').textContent='';showToast('✅ Secret question save ho gaya!');updateSQStatus();
 }
-async function updateSQStatus(){
-  const d=await loadSecretQData();
-  const el=document.getElementById('sq-current-status');
-  if(!el)return;
-  if(d)el.innerHTML='✅ Set hai: <b style="color:var(--gold);">'+d.q+'</b>';
-  else el.innerHTML='⚠️ Abhi tak set nahi — please set karein!';
-}
-document.getElementById('sq-question-sel').onchange=function(){
-  document.getElementById('sq-custom-row').style.display=this.value==='custom'?'block':'none';
-};
-
-// ============================================================
-//  FORGOT PIN
-// ============================================================
+async function updateSQStatus(){const d=await loadSecretQData();const e=el('sq-current-status');if(!e)return;e.innerHTML=d?'✅ Set hai: <b style="color:var(--gold);">'+esc(d.q)+'</b>':'⚠️ Abhi tak set nahi — please set karein!';}
 async function showForgotPin(){
-  const d=await loadSecretQData();
-  if(!d){showToast('⚠️ Pehle secret question set karein!',3500);return;}
-  document.getElementById('pin-entry-ui').style.display='none';
-  document.getElementById('forgot-pin-section').style.display='block';
-  document.getElementById('fp-question-display').textContent='❓ '+d.q;
-  document.getElementById('fp-answer').value='';
-  document.getElementById('fp-error').textContent='';
+  const d=await loadSecretQData();if(!d){showToast('⚠️ Pehle secret question set karein!',3500);return;}
+  el('pin-entry-ui').style.display='none';el('forgot-pin-section').style.display='block';
+  el('fp-question-display').textContent='❓ '+d.q;el('fp-answer').value='';el('fp-error').textContent='';
 }
-function hideForgotPin(){
-  document.getElementById('forgot-pin-section').style.display='none';
-  document.getElementById('pin-entry-ui').style.display='flex';
-}
+function hideForgotPin(){el('forgot-pin-section').style.display='none';el('pin-entry-ui').style.display='flex';}
 async function verifyForgotPin(){
-  const d=await loadSecretQData();
-  const ans=document.getElementById('fp-answer').value.trim().toLowerCase();
-  const errEl=document.getElementById('fp-error');
+  const d=await loadSecretQData();const ans=normAns(el('fp-answer').value);const errEl=el('fp-error');
   if(!ans){errEl.textContent='⚠️ Jawab likhein!';return;}
   if(!d){errEl.textContent='❌ Secret question nahi mila!';return;}
-  if(ans===d.a||d.a.includes(ans)||ans.includes(d.a)){
+  if(ans===normAns(d.a)){   // exact answer only (old app accepted one letter)
     errEl.style.color='#7dffbc';errEl.textContent='✅ Sahi! Naya PIN set karein:';
-    setTimeout(()=>{
-      hideForgotPin();
-      setTimeout(()=>{
-        document.getElementById('pin-mode-label').textContent='SET NEW PIN';
-        document.getElementById('pin-error').style.color='#2ecc71';
-        document.getElementById('pin-error').textContent='🔓 Verified! Naya PIN set karein';
-        pinMode='set-new';pinBuf='';newPinTmp='';updDots();
-      },200);
-    },600);
-  }else{
-    errEl.style.color='#ff8080';errEl.textContent='❌ Jawab galat! Dobara koshish karein.';
-  }
+    setTimeout(()=>{hideForgotPin();setTimeout(()=>{el('pin-mode-label').textContent='SET NEW PIN';el('pin-error').style.color='#2ecc71';el('pin-error').textContent='🔓 Verified! Naya PIN set karein';pinMode='set-new';pinBuf='';newPinTmp='';updDots();},200);},600);
+  }else{errEl.style.color='#ff8080';errEl.textContent='❌ Jawab galat! Dobara koshish karein.';}
 }
-
-// ============================================================
-//  PIN LOGIC
-// ============================================================
 let pinBuf='',pinMode='enter',newPinTmp='';
-
 async function pinPress(k){
-  if(k==='C')pinBuf='';
-  else if(k==='DEL')pinBuf=pinBuf.slice(0,-1);
-  else if(pinBuf.length<4)pinBuf+=k;
-  updDots();
-  document.getElementById('pin-error').textContent='';
+  if(k==='C')pinBuf='';else if(k==='DEL')pinBuf=pinBuf.slice(0,-1);else if(pinBuf.length<4)pinBuf+=k;
+  updDots();el('pin-error').textContent='';
   if(pinBuf.length===4){
     const currentPin=await getPin();
     setTimeout(async()=>{
       if(pinMode==='enter'){
-        if(pinBuf===currentPin){
-          document.getElementById('lock-screen').style.display='none';
-          document.getElementById('app').style.display='block';
-          initApp();
-        }else{
-          document.getElementById('pin-error').textContent='❌ Wrong PIN. Try again.';
-          pinBuf='';updDots();
-        }
-      }else if(pinMode==='set-new'){
-        newPinTmp=pinBuf;pinBuf='';pinMode='confirm-new';
-        document.getElementById('pin-mode-label').textContent='CONFIRM NEW PIN';updDots();
-      }else if(pinMode==='confirm-new'){
-        if(pinBuf===newPinTmp){
-          await savePin(pinBuf);
-          const e=document.getElementById('pin-error');
-          e.style.color='#2ecc71';e.textContent='✅ PIN saved!';
-          setTimeout(()=>{
-            pinMode='enter';pinBuf='';
-            document.getElementById('pin-mode-label').textContent='ENTER PIN';
-            e.style.color='#e74c3c';e.textContent='';updDots();
-            if(document.getElementById('app').style.display==='block'){
-              document.getElementById('lock-screen').style.display='none';
-            }
-          },1200);
-        }else{
-          document.getElementById('pin-error').textContent='❌ PINs match nahi hue!';
-          pinMode='set-new';pinBuf='';
-          document.getElementById('pin-mode-label').textContent='SET NEW PIN';updDots();
-        }
+        if(pinBuf===currentPin){el('lock-screen').style.display='none';el('app').style.display='block';initApp();}
+        else{el('pin-error').textContent='❌ Wrong PIN. Try again.';pinBuf='';updDots();}
+      }else if(pinMode==='set-new'){newPinTmp=pinBuf;pinBuf='';pinMode='confirm-new';el('pin-mode-label').textContent='CONFIRM NEW PIN';updDots();}
+      else if(pinMode==='confirm-new'){
+        if(pinBuf===newPinTmp){await savePin(pinBuf);const e=el('pin-error');e.style.color='#2ecc71';e.textContent='✅ PIN saved!';
+          setTimeout(()=>{pinMode='enter';pinBuf='';el('pin-mode-label').textContent='ENTER PIN';e.style.color='#e74c3c';e.textContent='';updDots();if(el('app').style.display==='block')el('lock-screen').style.display='none';},1200);}
+        else{el('pin-error').textContent='❌ PINs match nahi hue!';pinMode='set-new';pinBuf='';el('pin-mode-label').textContent='SET NEW PIN';updDots();}
       }
     },150);
   }
 }
-function updDots(){for(let i=0;i<4;i++)document.getElementById('dot'+i).classList.toggle('filled',i<pinBuf.length);}
-function startChangePin(){pinMode='set-new';pinBuf='';newPinTmp='';document.getElementById('pin-mode-label').textContent='SET NEW PIN';document.getElementById('pin-error').textContent='';updDots();}
-function lockApp(){
-  pinMode='enter';pinBuf='';
-  document.getElementById('pin-mode-label').textContent='ENTER PIN';
-  document.getElementById('pin-error').textContent='';
-  document.getElementById('pin-error').style.color='#e74c3c';
-  updDots();
-  document.getElementById('lock-screen').style.display='flex';
-  document.getElementById('app').style.display='none';
-  document.getElementById('forgot-pin-section').style.display='none';
-  document.getElementById('pin-entry-ui').style.display='flex';
-}
+function updDots(){for(let i=0;i<4;i++)el('dot'+i).classList.toggle('filled',i<pinBuf.length);}
+function startChangePin(){pinMode='set-new';pinBuf='';newPinTmp='';el('pin-mode-label').textContent='SET NEW PIN';el('pin-error').textContent='';updDots();}
+function lockApp(){pinMode='enter';pinBuf='';el('pin-mode-label').textContent='ENTER PIN';el('pin-error').textContent='';el('pin-error').style.color='#e74c3c';updDots();
+  el('lock-screen').style.display='flex';el('app').style.display='none';el('forgot-pin-section').style.display='none';el('pin-entry-ui').style.display='flex';}
 
-// ============================================================
-//  FOLDER PICKER
-// ============================================================
+// ---------- file save / share ----------
 let _fpBlob=null,_fpFilename=null;
-function openFolderPicker(title,sub,blob,filename){
-  _fpBlob=blob;_fpFilename=filename;
-  document.getElementById('fp-modal-title').textContent=title||'📁 Kahan Save Karein?';
-  document.getElementById('fp-modal-sub').textContent=sub||'File save karne ki jagah choose karein';
-  document.getElementById('folder-picker-modal').classList.add('open');
-}
-function closeFolderPicker(){
-  document.getElementById('folder-picker-modal').classList.remove('open');
-  _fpBlob=null;_fpFilename=null;
-}
+function openFolderPicker(title,sub,blob,filename){_fpBlob=blob;_fpFilename=filename;el('fp-modal-title').textContent=title||'📁 Kahan Save Karein?';el('fp-modal-sub').textContent=sub||'';el('folder-picker-modal').classList.add('open');}
+function closeFolderPicker(){el('folder-picker-modal').classList.remove('open');_fpBlob=null;_fpFilename=null;}
+function _dl(blob,fname){const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=fname;document.body.appendChild(a);a.click();setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(url);},2000);}
 function folderPickerAction(action){
-  const blob=_fpBlob;const fname=_fpFilename;
-  closeFolderPicker();
-  if(!blob){showToast('❌ File nahi mili');return;}
-  if(action==='download'){
-    const url=URL.createObjectURL(blob);
-    const a=document.createElement('a');a.href=url;a.download=fname;
-    document.body.appendChild(a);a.click();
-    setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(url);},2000);
-    showToast('✅ '+fname+' — Downloads mein save!');
-  }else if(action==='share'){
-    const file=new File([blob],fname,{type:blob.type});
-    if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){
-      navigator.share({files:[file],title:'FGI — '+fname}).then(()=>showToast('✅ Share complete!')).catch(e=>{if(e.name!=='AbortError')showToast('⚠️ Share error: '+e.message);});
-    }else{
-      const url=URL.createObjectURL(blob);
-      const a=document.createElement('a');a.href=url;a.download=fname;
-      document.body.appendChild(a);a.click();
-      setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(url);},2000);
-      showToast('✅ Downloads mein save kar diya');
-    }
-  }
+  const blob=_fpBlob,fname=_fpFilename;closeFolderPicker();if(!blob){showToast('❌ File nahi mili');return;}
+  if(action==='download'){_dl(blob,fname);showToast('✅ '+fname+' — Downloads mein save!');return;}
+  const file=new File([blob],fname,{type:blob.type});
+  if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]}))navigator.share({files:[file],title:'FGI — '+fname}).then(()=>showToast('✅ Share complete!')).catch(e=>{if(e.name!=='AbortError')showToast('⚠️ Share error: '+e.message);});
+  else{_dl(blob,fname);showToast('✅ Downloads mein save kar diya');}
 }
 
 // ============================================================
-//  DATABASE
+//  DATABASE + MIGRATION (old v15/v17 data → v18)
 // ============================================================
-const APP_KEY='fgi_salary_db_v15';
+function emptyDB(){return {schema:2,workers:[],entries:[],archivedEntries:[],advances:[],midMonthRecords:[],backleEntries:[],usedCodes:[],codeMap:{},
+  nextEntryId:1,nextWorkerId:1,nextBackleId:1,nextMidMonthId:1,nextAdvanceId:1,nextWorkerCode:1,lastBacklePrice:''};}
+let DB=emptyDB();
 
-let DB={
-  workers:[],entries:[],backleEntries:[],midMonthRecords:[],
-  nextEntryId:1,nextWorkerId:1,nextBackleId:1,nextMidMonthId:1,nextWorkerCode:1,
-  lastBacklePrice:''
-};
-
-async function loadDBFromIDB(){
+function migrateToV18(old){
+  const d=JSON.parse(JSON.stringify(old||{}));
+  const out=emptyDB();
+  Object.keys(d).forEach(k=>{if(!(k in out))out[k]=d[k];});           // keep unknown keys (e.g. password)
+  const oldW=(d.workers||[]).slice();
+  const ent=(d.entries||[]).slice(), mids=(d.midMonthRecords||[]).slice();
+  out.backleEntries=(d.backleEntries||[]).slice();
+  out.nextBackleId=d.nextBackleId||(Math.max(0,...out.backleEntries.map(b=>b.id||0))+1);
+  out.lastBacklePrice=d.lastBacklePrice===undefined?'':d.lastBacklePrice;
+  out.migratedAt=new Date().toISOString();
+  const report=[];
+  // 1) order workers: Qaisar's list first, then the rest (=left)
+  const byName={};oldW.forEach(w=>{const k=normName(w.name);(byName[k]=byName[k]||[]).push(w);});
+  const ordered=[],seen=new Set();
+  WORKER_ORDER.forEach(n=>{const list=byName[normName(n)]||[];const w=list.find(x=>!seen.has(x));if(w){ordered.push({w,active:true});seen.add(w);}});
+  oldW.forEach(w=>{if(!seen.has(w)){ordered.push({w,active:false});seen.add(w);}});
+  // entries/mids per old code → first month seen (join date guess)
+  const firstMonth={},lastMonth={};
+  ent.forEach(e=>{const c=e.workerCode;if(!c)return;if(!firstMonth[c]||e.month<firstMonth[c])firstMonth[c]=e.month;if(!lastMonth[c]||e.month>lastMonth[c])lastMonth[c]=e.month;});
+  let n=1;const map={};
+  ordered.forEach(({w,active})=>{
+    const code=codeStr(n++);map[w.code]=code;
+    out.workers.push({id:out.nextWorkerId++,code,name:String(w.name||'').trim(),basic:+w.basic||0,
+      joinDate:firstMonth[w.code]?firstMonth[w.code]+'-01':'',leaveDate:'',left:!active,remAdv:+w.remAdv||0,oldCode:w.code||''});
+    out.usedCodes.push(code);
+  });
+  out.nextWorkerCode=n;
+  const wByNewCode=c=>out.workers.find(w=>w.code===c);
+  const wByName=nm=>{const l=out.workers.filter(w=>normName(w.name)===normName(nm));return l.length===1?l[0]:null;};
+  // codes of workers that were re-added (e.g. M Taqi FGI-006 → FGI-019): map by name
+  const resolve=(oldCode,name)=>{
+    const viaCode=map[oldCode]?wByNewCode(map[oldCode]):null;
+    const viaName=wByName(name);
+    if(viaCode&&normName(viaCode.name)===normName(name))return viaCode;
+    if(viaName)return viaName;               // old bug saved entry under another worker's code
+    return viaCode;
+  };
+  // 2) salary entries: fix codes, keep only the latest per worker+month
+  let fixed=0;
+  ent.forEach(e=>{const w=resolve(e.workerCode,e.name);const before=e.workerCode;
+    if(w){e.workerCode=w.code;if(map[before]!==w.code)fixed++;}else e.workerCode=map[before]||'';});
+  const groups={};
+  ent.forEach(e=>{const k=e.workerCode+'|'+e.month;(groups[k]=groups[k]||[]).push(e);});
+  Object.values(groups).forEach(g=>{g.sort((a,b)=>b.id-a.id);out.entries.push(g[0]);g.slice(1).forEach(x=>out.archivedEntries.push(Object.assign({},x,{archivedReason:'Duplicate (same worker + month) — latest entry kept'})));});
+  out.entries.sort((a,b)=>a.id-b.id);
+  out.nextEntryId=Math.max(d.nextEntryId||1,...ent.map(e=>e.id+1),1);
+  // 3) mid month records
+  mids.forEach(r=>{const w=resolve(r.workerCode,r.workerName);r.workerCode=w?w.code:(map[r.workerCode]||r.workerCode);if(w)r.workerName=w.name;out.midMonthRecords.push(r);});
+  out.nextMidMonthId=Math.max(d.nextMidMonthId||1,...mids.map(r=>(r.id||0)+1),1);
+  // 4) advance khata from history, reconciled to current Rem. Advance
+  out.workers.forEach(w=>{
+    const seq=out.entries.filter(e=>e.workerCode===w.code).sort((a,b)=>a.month<b.month?-1:a.month>b.month?1:a.id-b.id);
+    const add=(month,amount,kind,reason,date)=>{amount=r2(amount);if(Math.abs(amount)<0.5)return;out.advances.push({id:out.nextAdvanceId++,date:date||month+'-01',month,workerCode:w.code,amount,reason,kind});};
+    let bal=0;
+    seq.forEach((e,i)=>{
+      const pm=i?seq[i-1].month:prevMonth(e.month);
+      const diff=r2((+e.prevAdv||0)-bal);
+      if(Math.abs(diff)>=0.5)add(pm,diff,i?'adjust':'opening',i?'Purane record ka farq (auto adjustment)':'Opening balance (record shuru hone se pehle ka advance)',pm+'-01');
+      if(+e.newAdv)add(e.month,e.newAdv,'history','Salary entry mein darj advance (purana record)',e.date||e.month+'-01');
+      bal=r2((+e.prevAdv||0)+(+e.newAdv||0)-(+e.deductAdv||0));
+    });
+    // reconcile to the worker's current Rem. Advance (Qaisar: opening = current Rem. Adv)
+    const cur=+w.remAdv||0;const lastM=seq.length?seq[seq.length-1].month:prevMonth(thisMonth());
+    if(Math.abs(cur-bal)>=0.5)add(lastM,cur-bal,seq.length?'adjust':'opening',seq.length?'Worker profile ke Rem. Advance se milaya (auto)':'Opening balance (worker profile)',lastM+'-01');
+  });
+  out.migrationReport={fixedEntryCodes:fixed,archived:out.archivedEntries.length,workers:out.workers.length,left:out.workers.filter(w=>w.left).length};
+  return out;
+}
+function normalizeDB(d){
+  ['workers','entries','archivedEntries','advances','midMonthRecords','backleEntries','usedCodes'].forEach(k=>{if(!Array.isArray(d[k]))d[k]=[];});
+  if(!d.codeMap)d.codeMap={};
+  ['nextEntryId','nextWorkerId','nextBackleId','nextMidMonthId','nextAdvanceId','nextWorkerCode'].forEach(k=>{if(!d[k])d[k]=1;});
+  d.nextAdvanceId=Math.max(d.nextAdvanceId,...d.advances.map(a=>a.id+1),1);
+  d.nextMidMonthId=Math.max(d.nextMidMonthId,...d.midMonthRecords.map(a=>a.id+1),1);
+  d.nextEntryId=Math.max(d.nextEntryId,...d.entries.map(a=>a.id+1),...d.archivedEntries.map(a=>a.id+1),1);
+  d.nextBackleId=Math.max(d.nextBackleId,...d.backleEntries.map(a=>a.id+1),1);
+  d.nextWorkerId=Math.max(d.nextWorkerId,...d.workers.map(a=>a.id+1),1);
+  d.workers.forEach(w=>{if(d.usedCodes.indexOf(w.code)<0)d.usedCodes.push(w.code);});
+  const maxN=Math.max(0,...d.usedCodes.map(c=>parseInt(String(c).replace(/\D/g,''))||0));
+  if(d.nextWorkerCode<=maxN)d.nextWorkerCode=maxN+1;
+  return d;
+}
+async function loadDB(){
   const raw=await idbLoad('main_db')||localStorage.getItem(APP_KEY)||localStorage.getItem('FGI_v1');
-  if(raw){
-    try{
-      DB=JSON.parse(raw);
-      if(!Array.isArray(DB.backleEntries))DB.backleEntries=[];
-      if(!DB.nextBackleId)DB.nextBackleId=1;
-      if(DB.lastBacklePrice===undefined)DB.lastBacklePrice='';
-      if(!DB.nextWorkerCode)DB.nextWorkerCode=1;
-      if(!Array.isArray(DB.midMonthRecords))DB.midMonthRecords=[];
-      if(!DB.nextMidMonthId)DB.nextMidMonthId=1;
-      DB.workers.forEach(w=>{
-        if(!w.code){w.code='FGI-'+String(DB.nextWorkerCode).padStart(3,'0');DB.nextWorkerCode++;}
-      });
-    }catch(e){DB={workers:[],entries:[],backleEntries:[],midMonthRecords:[],nextEntryId:1,nextWorkerId:1,nextBackleId:1,nextMidMonthId:1,nextWorkerCode:1,lastBacklePrice:''};}
-  }
+  if(!raw){DB=emptyDB();return;}
+  let d;try{d=JSON.parse(raw);}catch(e){DB=emptyDB();return;}
+  if(d.schema!==2){
+    if(!(await idbLoad('backup_pre_v18')))await idbSave('backup_pre_v18',raw);     // untouched copy of old data
+    DB=normalizeDB(migrateToV18(d));await saveDB();
+    const m=DB.migrationReport;setTimeout(()=>showToast(`✅ Data v18 mein shift: ${m.workers} workers (${m.left} left), ${m.archived} duplicate entries archive`,5000),600);
+  } else DB=normalizeDB(d);
 }
-
+let _saving=false;
 async function saveDB(){
+  refreshWorkerRemAdv();
   const data=JSON.stringify(DB);
-  await idbSave('main_db',data);
+  const ok=await idbSave('main_db',data);
   try{localStorage.setItem(APP_KEY,data);}catch(e){}
+  if(!ok)showToast('⚠️ Storage warning — Backup zaroor karein!',4000);
+  return ok;
 }
 
 // ============================================================
-//  NAV
+//  LEDGER — advance khata (single source of truth)
+// ============================================================
+function workerByCode(c){return DB.workers.find(w=>w.code===c)||null;}
+function advOf(code){return DB.advances.filter(a=>a.workerCode===code);}
+function dedOf(code){return DB.entries.filter(e=>e.workerCode===code&&(+e.deductAdv||0)>0);}
+function prevAdvFor(code,month){   // balance before this salary month
+  const a=advOf(code).filter(x=>x.month<month).reduce((s,x)=>s+(+x.amount||0),0);
+  const d=DB.entries.filter(e=>e.workerCode===code&&e.month<month).reduce((s,e)=>s+(+e.deductAdv||0),0);
+  return r2(a-d);
+}
+function newAdvFor(code,month){return r2(advOf(code).filter(x=>x.month===month).reduce((s,x)=>s+(+x.amount||0),0));}
+function midFor(code,month){return r2(DB.midMonthRecords.filter(r=>r.workerCode===code&&r.month===month).reduce((s,r)=>s+(+r.midKharcha||0),0));}
+function balanceOf(code){return r2(advOf(code).reduce((s,x)=>s+(+x.amount||0),0)-dedOf(code).reduce((s,e)=>s+(+e.deductAdv||0),0));}
+function totalTaken(code){return r2(advOf(code).reduce((s,x)=>s+(+x.amount||0),0));}
+function totalReturned(code){return r2(dedOf(code).reduce((s,e)=>s+(+e.deductAdv||0),0));}
+function refreshWorkerRemAdv(){DB.workers.forEach(w=>{w.remAdv=balanceOf(w.code);});}
+function activeWorkers(){return DB.workers.filter(w=>!w.left);}
+function leftWorkers(){return DB.workers.filter(w=>w.left);}
+function workerLabel(w){return w.code+' — '+w.name+(w.left?' (Left)':'');}
+function fillWorkerSelect(id,opts){
+  const s=el(id);if(!s)return;const cur=s.value;opts=opts||{};
+  let h='<option value="">-- Worker chunein --</option>';
+  h+=activeWorkers().map(w=>'<option value="'+esc(w.code)+'">'+esc(w.code+' — '+w.name)+'</option>').join('');
+  if(opts.withLeft&&leftWorkers().length)h+='<optgroup label="Chhor gaye (Left)">'+leftWorkers().map(w=>'<option value="'+esc(w.code)+'">'+esc(workerLabel(w))+'</option>').join('')+'</optgroup>';
+  s.innerHTML=h;if(cur&&[...s.options].some(o=>o.value===cur))s.value=cur;
+}
+function fillAllWorkerSelects(){fillWorkerSelect('f_worker',{withLeft:true});fillWorkerSelect('adv_worker',{withLeft:true});fillWorkerSelect('mm_worker',{withLeft:true});fillWorkerSelect('calc_worker');
+  const dl=el('calcWorkerList');if(dl)dl.innerHTML=activeWorkers().map(w=>'<option value="'+esc(w.name)+'">').join('');}
+
+// ============================================================
+//  NAV + INIT
 // ============================================================
 function showPage(p,btn){
-  document.querySelectorAll('.page').forEach(el=>el.classList.remove('active'));
-  document.querySelectorAll('.nav-tab').forEach(el=>el.classList.remove('active'));
-  document.getElementById('page-'+p).classList.add('active');
-  if(btn)btn.classList.add('active');
+  document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(x=>x.classList.remove('active'));
+  el('page-'+p).classList.add('active');
+  if(!btn)btn=document.querySelector('.nav-tab[data-p="'+p+'"]');if(btn)btn.classList.add('active');
+  fillAllWorkerSelects();
   if(p==='workers')renderWorkerTable();
   if(p==='report')initReport();
   if(p==='dataEntry')initDataEntry();
+  if(p==='advance')initAdvance();
   if(p==='backle')initBackle();
   if(p==='calculator')initCalculator();
   if(p==='midmonth')initMidMonth();
-  if(p==='settings'){updateSQStatus();updateDbStatus();}
+  if(p==='settings'){updateSQStatus();updateDbStatus();renderArchiveInfo();}
+  window.scrollTo(0,0);
 }
+async function initApp(){await loadDB();fillAllWorkerSelects();initDataEntry();updateSQStatus();updateDbStatus();}
+function updateDbStatus(){const e=el('db-status');if(e)e.textContent=`✅ IndexedDB active — ${activeWorkers().length} active + ${leftWorkers().length} left workers, ${DB.entries.length} salary entries, ${DB.advances.length} advance, ${DB.midMonthRecords.length} mid month records`;}
 
 // ============================================================
-//  INIT
+//  SALARY ENTRY — same form & formula; advance / mid month auto
 // ============================================================
-async function initApp(){
-  await loadDBFromIDB();
-  initDataEntry();
-  renderWorkerDatalist();
-  updateSQStatus();
-  updateDbStatus();
-}
-
-function updateDbStatus(){
-  const el=document.getElementById('db-status');
-  if(el)el.textContent=`✅ IndexedDB active — ${DB.workers.length} workers, ${DB.entries.length} entries`;
-}
-
+let _editEntryId=null,_entrySaving=false;
+function v(id){return parseFloat(el(id).value)||0;}
+function set(id,val){el(id).value=val!==''?Math.round(val*100)/100:'';}
 function initDataEntry(){
-  const today=new Date();
-  document.getElementById('f_date').value=today.toISOString().slice(0,10);
-  document.getElementById('f_month').value=today.toISOString().slice(0,7);
-  autoSrNo();renderWorkerDatalist();populateEditSelect();
+  if(!el('f_date').value)el('f_date').value=todayStr();
+  if(!el('f_month').value)el('f_month').value=defaultSalaryMonth();
+  fillWorkerSelect('f_worker',{withLeft:true});
+  renderMonthEntries();
 }
-
-// ============================================================
-//  SR NO
-// ============================================================
-function toggleSrAuto(){
-  const auto=document.getElementById('srAuto').checked;
-  const sr=document.getElementById('f_sr');
-  if(auto){sr.setAttribute('readonly','');autoSrNo();}
-  else{sr.removeAttribute('readonly');sr.value='';}
-}
-function autoSrNo(){
-  if(document.getElementById('srAuto').checked)document.getElementById('f_sr').value=DB.nextEntryId;
-}
-
-// ============================================================
-//  WORKER DATALIST
-// ============================================================
-function renderWorkerDatalist(){
-  ['workerList','rptWorkerList','mmWorkerList','calcWorkerList'].forEach(id=>{
-    const dl=document.getElementById(id);
-    if(!dl)return;
-    dl.innerHTML='';
-    DB.workers.forEach(w=>{
-      const opt=document.createElement('option');
-      const hasDup=DB.workers.filter(x=>x.name.trim()===w.name.trim()).length>1;
-      opt.value=hasDup?`${w.name} [${w.code}]`:w.name;
-      dl.appendChild(opt);
-    });
-  });
-}
-
-function onWorkerSelect(){
-  const val=document.getElementById('f_name').value.trim();
-  let worker=null;
-  const codeMatch=val.match(/\[([A-Z]+-\d+)\]/);
-  if(codeMatch){worker=DB.workers.find(w=>w.code===codeMatch[1]);if(worker)document.getElementById('f_name').value=worker.name;}
-  else{worker=DB.workers.find(w=>w.name.trim()===val);}
-  if(worker){
-    document.getElementById('f_workerCode').value=worker.code||'';
-    document.getElementById('f_basic').value=worker.basic||'';
-    document.getElementById('f_prevAdv').value=worker.remAdv||'';
-    const selectedMonth=document.getElementById('f_month').value;
-    if(selectedMonth&&DB.midMonthRecords){
-      const midRec=DB.midMonthRecords.filter(r=>r.workerCode===worker.code&&r.month===selectedMonth).sort((a,b)=>b.id-a.id)[0];
-      if(midRec&&midRec.midKharcha>0){
-        if(!document.getElementById('f_midMonth').value){document.getElementById('f_midMonth').value=midRec.midKharcha;showToast('✅ Mid Month auto-fill: Rs. '+midRec.midKharcha.toLocaleString());}
-      }
-    }
-    calcAll();
-  }
-}
-function onMonthChange(){
-  const wCode=document.getElementById('f_workerCode').value;
-  if(!wCode)return;
-  const selectedMonth=document.getElementById('f_month').value;
-  if(!selectedMonth||!DB.midMonthRecords)return;
-  const midRec=DB.midMonthRecords.filter(r=>r.workerCode===wCode&&r.month===selectedMonth).sort((a,b)=>b.id-a.id)[0];
-  if(midRec&&midRec.midKharcha>0){document.getElementById('f_midMonth').value=midRec.midKharcha;showToast('✅ Mid Month auto-fill!');}
-  calcAll();
-}
-
-// ============================================================
-//  CALCULATIONS
-// ============================================================
-function v(id){return parseFloat(document.getElementById(id).value)||0;}
-function set(id,val){document.getElementById(id).value=val!==''?Math.round(val*100)/100:'';}
-
+// Old formula — unchanged
 function calcAll(){
   const basic=v('f_basic'),ot=v('f_ot'),days=v('f_days'),midMonth=v('f_midMonth'),prevAdv=v('f_prevAdv'),newAdv=v('f_newAdv'),deductAdv=v('f_deductAdv');
   const overDays=Math.floor(ot/8),oh=ot%8;
   set('f_overDays',overDays||'');set('f_oh',oh||'');
-  const ohp=(basic/30/8)*oh;
-  set('f_ohp',basic>0?Math.round(ohp):'');
+  const ohp=(basic/30/8)*oh;set('f_ohp',basic>0?Math.round(ohp):'');
   const totalDays=days+overDays;set('f_totalDays',totalDays||'');
   const mSalary=(basic/30)*totalDays+ohp;set('f_mSalary',basic>0?Math.round(mSalary):'');
   const remSalary=mSalary-midMonth;set('f_remSalary',basic>0?Math.round(remSalary):'');
   const totalAdv=prevAdv+newAdv;set('f_totalAdv',totalAdv||'');
-  const remAdv=totalAdv-deductAdv;set('f_remAdv',remAdv>=0?Math.round(remAdv):'');
+  const remAdv=totalAdv-deductAdv;set('f_remAdv',Math.round(remAdv));
   const totalRemSalary=remSalary-deductAdv;set('f_totalRemSalary',basic>0?Math.round(totalRemSalary):'');
+  const warn=el('dedWarn');
+  if(deductAdv>totalAdv+0.5){warn.style.display='block';warn.textContent='⚠️ Katauti (Rs.'+fmt(deductAdv)+') kul advance (Rs.'+fmt(totalAdv)+') se zyada hai — save nahi hogi.';}
+  else warn.style.display='none';
 }
-
-// ============================================================
-//  SAVE ENTRY
-// ============================================================
-async function saveEntry(){
-  const name=document.getElementById('f_name').value.trim();
-  if(!name){showToast('⚠️ Worker name daalna zaroori hai!');return;}
-  if(!v('f_basic')){showToast('⚠️ Basic salary daalna zaroori hai!');return;}
-  const entry={
-    id:DB.nextEntryId,date:document.getElementById('f_date').value,
-    month:document.getElementById('f_month').value,sr:v('f_sr')||DB.nextEntryId,
-    name,workerCode:document.getElementById('f_workerCode').value||'',
-    basic:v('f_basic'),ot:v('f_ot'),overDays:v('f_overDays'),oh:v('f_oh'),ohp:v('f_ohp'),
-    days:v('f_days'),totalDays:v('f_totalDays'),mSalary:v('f_mSalary'),
-    midMonth:v('f_midMonth'),remSalary:v('f_remSalary'),
-    prevAdv:v('f_prevAdv'),newAdv:v('f_newAdv'),totalAdv:v('f_totalAdv'),
-    deductAdv:v('f_deductAdv'),remAdv:v('f_remAdv'),totalRemSalary:v('f_totalRemSalary')
-  };
-  const mode=document.getElementById('entryMode').value;
-  if(mode==='edit'){
-    const selId=parseInt(document.getElementById('editSelect').value);
-    const idx=DB.entries.findIndex(e=>e.id===selId);
-    if(idx>-1){entry.id=selId;DB.entries[idx]=entry;}
-    if(entry.workerCode&&entry.month){DB.entries=DB.entries.filter(e=>e.id===entry.id||(e.workerCode!==entry.workerCode||e.month!==entry.month));}
-  }else{DB.entries.push(entry);DB.nextEntryId++;}
-  const wCode=document.getElementById('f_workerCode').value;
-  let worker=wCode?DB.workers.find(w=>w.code===wCode):DB.workers.find(w=>w.name.trim()===name.trim());
-  if(worker){worker.basic=entry.basic;worker.remAdv=entry.remAdv;}
-  else{
-    const newCode='FGI-'+String(DB.nextWorkerCode).padStart(3,'0');DB.nextWorkerCode++;
-    DB.workers.push({id:DB.nextWorkerId++,code:newCode,name,basic:entry.basic,remAdv:entry.remAdv});
-    entry.workerCode=newCode;
-  }
-  await saveDB();renderWorkerDatalist();populateEditSelect();
-  if(mode==='new'){clearForm();autoSrNo();}
-  showToast('✅ Entry save ho gayi!');
-  document.getElementById('saveMsg').textContent=`✅ ${name} ki entry saved! (ID: ${entry.id})`;
-  setTimeout(()=>document.getElementById('saveMsg').textContent='',4000);
-  updateDbStatus();
-}
-
-function clearForm(){
-  ['f_sr','f_name','f_basic','f_ot','f_overDays','f_oh','f_ohp','f_days','f_totalDays','f_mSalary','f_midMonth','f_remSalary','f_prevAdv','f_newAdv','f_totalAdv','f_deductAdv','f_remAdv','f_totalRemSalary'].forEach(id=>document.getElementById(id).value='');
-  autoSrNo();
-}
-
-function toggleEditMode(){
-  const mode=document.getElementById('entryMode').value;
-  const editSel=document.getElementById('editSelect');
-  if(mode==='edit'){editSel.style.display='';populateEditSelect();}
-  else{editSel.style.display='none';clearForm();}
-}
-
-function populateEditSelect(){
-  const sel=document.getElementById('editSelect');
-  sel.innerHTML='<option value="">-- Select Entry --</option>';
-  [...DB.entries].reverse().forEach(e=>{
-    const opt=document.createElement('option');
-    opt.value=e.id;opt.textContent=`#${e.id} | ${e.name} | ${e.month}`;
-    sel.appendChild(opt);
-  });
-}
-
-function loadEditEntry(){
-  const id=parseInt(document.getElementById('editSelect').value);
-  if(!id)return;
-  const e=DB.entries.find(x=>x.id===id);if(!e)return;
-  document.getElementById('f_date').value=e.date||'';
-  document.getElementById('f_month').value=e.month||'';
-  document.getElementById('f_sr').value=e.sr;
-  document.getElementById('f_name').value=e.name;
-  document.getElementById('f_basic').value=e.basic;
-  document.getElementById('f_ot').value=e.ot;
-  document.getElementById('f_days').value=e.days;
-  document.getElementById('f_midMonth').value=e.midMonth;
-  document.getElementById('f_prevAdv').value=e.prevAdv||'';
-  document.getElementById('f_newAdv').value=e.newAdv||'';
-  document.getElementById('f_deductAdv').value=e.deductAdv;
+function autoValues(code,month){return {prev:prevAdvFor(code,month),nw:newAdvFor(code,month),mid:midFor(code,month)};}
+function onEntryWorkerOrMonth(){
+  const code=el('f_worker').value,month=el('f_month').value;const w=workerByCode(code);
+  el('entryNotice').style.display='none';
+  if(!w||!month){_editEntryId=null;setEntryModeLabel();return;}
+  const ex=DB.entries.find(e=>e.workerCode===code&&e.month===month);
+  if(ex){loadEntryToForm(ex);return;}
+  _editEntryId=null;setEntryModeLabel();
+  ['f_ot','f_days','f_deductAdv'].forEach(i=>el(i).value='');
+  el('f_basic').value=w.basic||'';
+  const a=autoValues(code,month);
+  el('f_prevAdv').value=a.prev||'';el('f_newAdv').value=a.nw||'';el('f_midMonth').value=a.mid||'';
+  el('f_sr').value=nextSrFor(month);
   calcAll();
 }
-
-// ============================================================
-//  WORKER TABLE
-// ============================================================
-function renderWorkerTable(){
-  const search=document.getElementById('workerSearch').value.toLowerCase();
-  const tbody=document.getElementById('workerTbody');
-  tbody.innerHTML='';
-  const filtered=DB.workers.filter(w=>w.name.toLowerCase().includes(search)||(w.code&&w.code.toLowerCase().includes(search)));
-  if(!filtered.length){tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--slate);">Koi worker nahi mila...</td></tr>';return;}
-  filtered.forEach((w,i)=>{
-    const lastEntry=[...DB.entries].reverse().find(e=>(e.workerCode&&e.workerCode===w.code)||(!e.workerCode&&e.name.trim()===w.name.trim()));
-    const tr=document.createElement('tr');
-    tr.innerHTML=`<td>${i+1}</td><td><span style="background:var(--navy);color:var(--gold);padding:3px 8px;border-radius:6px;font-size:11px;font-weight:800;">${w.code||'—'}</span></td><td><strong>${w.name}</strong></td><td>Rs. ${(w.basic||0).toLocaleString()}</td><td style="color:var(--red);font-weight:700;">Rs. ${(w.remAdv||0).toLocaleString()}</td><td>${lastEntry?lastEntry.month:'—'}</td><td style="display:flex;gap:6px;"><button class="btn btn-gold btn-sm" onclick="editWorker(${w.id})">✏️</button><button class="btn btn-danger btn-sm" onclick="deleteWorker(${w.id})">🗑️</button></td>`;
-    tbody.appendChild(tr);
-  });
+function nextSrFor(month){return DB.entries.filter(e=>e.month===month).length+1;}
+function setEntryModeLabel(){
+  const lbl=el('entryModeLbl');const btn=el('btnSaveEntry');const del=el('btnDelEntry');
+  if(_editEntryId){lbl.innerHTML='✏️ <b>Edit</b> — is worker ki is mahine ki entry pehle se hai';lbl.className='mode-lbl edit';btn.textContent='💾 Update Entry';del.style.display='';}
+  else{lbl.innerHTML='➕ <b>Nayi entry</b>';lbl.className='mode-lbl';btn.textContent='💾 Save Entry';del.style.display='none';}
 }
+function loadEntryToForm(e){
+  _editEntryId=e.id;setEntryModeLabel();
+  el('f_worker').value=e.workerCode;el('f_month').value=e.month;el('f_date').value=e.date||'';el('f_sr').value=e.sr||'';
+  el('f_basic').value=e.basic;el('f_ot').value=e.ot||'';el('f_days').value=e.days||'';
+  el('f_midMonth').value=e.midMonth||'';el('f_prevAdv').value=e.prevAdv||'';el('f_newAdv').value=e.newAdv||'';el('f_deductAdv').value=e.deductAdv||'';
+  calcAll();
+  // stored values vs records: show a notice, never change silently
+  const a=autoValues(e.workerCode,e.month);const diffs=[];
+  if(r0(a.mid)!==r0(e.midMonth)&&a.mid>0)diffs.push('Mid Month: entry '+fmt(e.midMonth)+' / records '+fmt(a.mid));
+  if(r0(a.prev)!==r0(e.prevAdv))diffs.push('Prev Adv: entry '+fmt(e.prevAdv)+' / khata '+fmt(a.prev));
+  if(r0(a.nw)!==r0(e.newAdv))diffs.push('New Adv: entry '+fmt(e.newAdv)+' / khata '+fmt(a.nw));
+  const n=el('entryNotice');
+  if(diffs.length){n.style.display='block';n.innerHTML='ℹ️ Saved entry aur records mein farq: <b>'+esc(diffs.join(' • '))+'</b><br><button class="btn btn-gold btn-sm" style="margin-top:6px;" onclick="applyAutoToForm()">🔄 Records wali raqam lagayein</button>';}
+}
+function applyAutoToForm(){const a=autoValues(el('f_worker').value,el('f_month').value);el('f_prevAdv').value=a.prev||'';el('f_newAdv').value=a.nw||'';el('f_midMonth').value=a.mid||'';el('entryNotice').style.display='none';calcAll();showToast('🔄 Records se raqam lag gayi — Update dabayein');}
+async function saveEntry(){
+  if(_entrySaving)return;
+  const code=el('f_worker').value,month=el('f_month').value;const w=workerByCode(code);
+  if(!w){showToast('⚠️ Worker chunein!');return;}
+  if(!month){showToast('⚠️ Month chunein!');return;}
+  if(!v('f_basic')){showToast('⚠️ Basic salary zaroori hai!');return;}
+  if(v('f_days')<0||v('f_days')>31){showToast('⚠️ Days 0 se 31 ke darmiyan hon');return;}
+  if(v('f_ot')<0){showToast('⚠️ OT minus nahi ho sakta');return;}
+  calcAll();
+  if(v('f_deductAdv')>v('f_totalAdv')+0.5){showToast('⚠️ Katauti kul advance se zyada hai!',3500);return;}
+  const dup=DB.entries.find(e=>e.workerCode===code&&e.month===month&&e.id!==_editEntryId);
+  if(dup){showToast('⚠️ '+w.name+' ki '+monthName(month)+' ki entry pehle se hai — wahi khul gayi',3500);loadEntryToForm(dup);return;}
+  if(v('f_totalRemSalary')<0&&!confirm('Total Rem. Salary minus (Rs.'+fmt(v('f_totalRemSalary'))+') aa rahi hai. Phir bhi save karein?'))return;
+  const entry={id:_editEntryId||DB.nextEntryId,date:el('f_date').value||todayStr(),month,sr:v('f_sr')||nextSrFor(month),name:w.name,workerCode:code,
+    basic:v('f_basic'),ot:v('f_ot'),overDays:v('f_overDays'),oh:v('f_oh'),ohp:v('f_ohp'),days:v('f_days'),totalDays:v('f_totalDays'),mSalary:v('f_mSalary'),
+    midMonth:v('f_midMonth'),remSalary:v('f_remSalary'),prevAdv:v('f_prevAdv'),newAdv:v('f_newAdv'),totalAdv:v('f_totalAdv'),deductAdv:v('f_deductAdv'),
+    remAdv:v('f_remAdv'),totalRemSalary:v('f_totalRemSalary')};
+  _entrySaving=true;el('btnSaveEntry').disabled=true;
+  try{
+    if(_editEntryId){const i=DB.entries.findIndex(e=>e.id===_editEntryId);DB.entries[i]=entry;}
+    else{DB.entries.push(entry);DB.nextEntryId++;}
+    await saveDB();
+    showToast('✅ '+w.name+' — '+monthName(month)+' entry '+(_editEntryId?'update':'save')+' ho gayi!');
+    el('saveMsg').textContent='✅ '+w.name+' ('+code+') — '+monthName(month)+' — Total Rem. Salary '+rs(entry.totalRemSalary);
+    setTimeout(()=>el('saveMsg').textContent='',5000);
+    clearForm(true);renderMonthEntries();
+  }finally{_entrySaving=false;el('btnSaveEntry').disabled=false;}
+}
+async function deleteEntry(id){
+  const e=DB.entries.find(x=>x.id===id);if(!e)return;
+  if(!confirm(e.name+' ki '+monthName(e.month)+' ki salary entry delete karein?\n(Is ki katauti advance khata se hat jaye gi.)'))return;
+  DB.entries=DB.entries.filter(x=>x.id!==id);
+  DB.archivedEntries.push(Object.assign({},e,{archivedReason:'Deleted by user '+todayStr()}));
+  await saveDB();if(_editEntryId===id)clearForm(true);renderMonthEntries();showToast('🗑️ Entry delete (Archive mein mehfooz)');
+}
+function deleteCurrentEntry(){if(_editEntryId)deleteEntry(_editEntryId);}
+function clearForm(keepMonth){
+  ['f_sr','f_basic','f_ot','f_overDays','f_oh','f_ohp','f_days','f_totalDays','f_mSalary','f_midMonth','f_remSalary','f_prevAdv','f_newAdv','f_totalAdv','f_deductAdv','f_remAdv','f_totalRemSalary'].forEach(id=>el(id).value='');
+  el('f_worker').value='';_editEntryId=null;setEntryModeLabel();el('entryNotice').style.display='none';el('dedWarn').style.display='none';
+  if(!keepMonth){el('f_date').value=todayStr();}
+}
+function editEntry(id){const e=DB.entries.find(x=>x.id===id);if(!e)return;showPage('dataEntry');loadEntryToForm(e);window.scrollTo({top:0,behavior:'smooth'});}
+function renderMonthEntries(){
+  const month=el('f_month').value;const tb=el('monthEntriesBody');if(!tb)return;
+  el('monthEntriesTitle').textContent='📋 '+monthName(month)+' ki entries';
+  const list=DB.entries.filter(e=>e.month===month).sort((a,b)=>orderOf(a.workerCode)-orderOf(b.workerCode));
+  const done=new Set(list.map(e=>e.workerCode));
+  const pending=activeWorkers().filter(w=>!done.has(w.code));
+  el('monthPending').innerHTML=pending.length?'⏳ Baqi ('+pending.length+'): '+pending.map(w=>'<span class="chip" data-c="'+esc(w.code)+'" onclick="pickWorker(this.dataset.c)">'+esc(w.code+' '+w.name)+'</span>').join(' '):'✅ Sab active workers ki entry ho gayi';
+  if(!list.length){tb.innerHTML='<tr><td colspan="7" style="text-align:center;padding:16px;color:var(--slate);">Is mahine abhi koi entry nahi</td></tr>';return;}
+  tb.innerHTML=list.map((e,i)=>'<tr><td>'+(i+1)+'</td><td><span class="code-badge">'+esc(e.workerCode)+'</span></td><td><b>'+esc(e.name)+'</b></td><td>'+fmt(e.mSalary)+'</td><td>'+fmt(e.deductAdv)+'</td><td style="font-weight:800;color:var(--green);">'+fmt(e.totalRemSalary)+'</td>'+
+    '<td style="white-space:nowrap;"><button class="btn btn-gold btn-sm" onclick="editEntry('+e.id+')">✏️</button> <button class="btn btn-danger btn-sm" onclick="deleteEntry('+e.id+')">🗑️</button></td></tr>').join('');
+}
+function pickWorker(code){el('f_worker').value=code;onEntryWorkerOrMonth();window.scrollTo({top:0,behavior:'smooth'});}
+function orderOf(code){const i=DB.workers.findIndex(w=>w.code===code);return i<0?999:i;}
 
+// ============================================================
+//  WORKERS
+// ============================================================
+let _workerTab='active';
+function setWorkerTab(t){_workerTab=t;el('wTabA').className='btn btn-sm '+(t==='active'?'btn-save':'btn-clear');el('wTabL').className='btn btn-sm '+(t==='left'?'btn-save':'btn-clear');renderWorkerTable();}
+function renderWorkerTable(){
+  const q=normName(el('workerSearch').value);const tb=el('workerTbody');
+  const list=(_workerTab==='left'?leftWorkers():activeWorkers()).filter(w=>!q||normName(w.name).includes(q)||w.code.toLowerCase().includes(q));
+  el('wTabA').textContent='✅ Active ('+activeWorkers().length+')';el('wTabL').textContent='🚪 Chhor gaye ('+leftWorkers().length+')';
+  if(!list.length){tb.innerHTML='<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--slate);">Koi worker nahi mila...</td></tr>';return;}
+  tb.innerHTML=list.map((w,i)=>{const bal=balanceOf(w.code);
+    return '<tr><td>'+(i+1)+'</td><td><span class="code-badge">'+esc(w.code)+'</span></td><td><strong>'+esc(w.name)+'</strong>'+(w.left?'<div style="font-size:11px;color:var(--red);">Chhor gaya: '+esc(fmtDate(w.leaveDate)||'—')+'</div>':'')+'</td>'+
+      '<td>'+rs(w.basic)+'</td><td style="font-size:12px;">'+esc(fmtDate(w.joinDate))+'</td><td style="color:'+(bal>0?'var(--red)':'var(--green)')+';font-weight:800;">'+(bal>0?rs(bal):'Clear')+'</td>'+
+      '<td style="white-space:nowrap;"><button class="btn btn-gold btn-sm" onclick="editWorker('+w.id+')">✏️</button> <button class="btn btn-green btn-sm" data-c="'+esc(w.code)+'" onclick="openWorkerReport(this.dataset.c)">📄</button> <button class="btn btn-danger btn-sm" onclick="deleteWorker('+w.id+')">🗑️</button></td></tr>';}).join('');
+}
 function openAddWorker(){
-  document.getElementById('wm_id').value='';
-  document.getElementById('wm_name').value='';
-  document.getElementById('wm_basic').value='';
-  document.getElementById('wm_remAdv').value='';
-  document.getElementById('workerModal').style.display='flex';
+  el('wm_id').value='';el('wm_title').textContent='➕ Naya Worker';
+  el('wm_code').value=codeStr(DB.nextWorkerCode)+' (auto)';el('wm_join').value=todayStr();el('wm_name').value='';el('wm_basic').value='';
+  el('wm_adv').value='';el('wm_reason').value='';el('wm_advRow').style.display='';
+  el('wm_left').checked=false;el('wm_leave').value='';el('wm_leaveRow').style.display='none';el('wm_dupNote').textContent='';
+  el('workerModal').style.display='flex';setTimeout(()=>el('wm_name').focus(),50);
 }
 function editWorker(id){
   const w=DB.workers.find(x=>x.id===id);if(!w)return;
-  document.getElementById('wm_id').value=w.id;
-  document.getElementById('wm_name').value=w.name;
-  document.getElementById('wm_basic').value=w.basic||'';
-  document.getElementById('wm_remAdv').value=w.remAdv||'';
-  document.getElementById('workerModal').style.display='flex';
+  el('wm_id').value=w.id;el('wm_title').textContent='✏️ Worker Update — '+w.code;
+  el('wm_code').value=w.code;el('wm_join').value=w.joinDate||'';el('wm_name').value=w.name;el('wm_basic').value=w.basic||'';
+  el('wm_advRow').style.display='none';el('wm_left').checked=!!w.left;el('wm_leave').value=w.leaveDate||'';el('wm_leaveRow').style.display=w.left?'':'none';el('wm_dupNote').textContent='';
+  el('workerModal').style.display='flex';
 }
+function wmLeftToggle(){el('wm_leaveRow').style.display=el('wm_left').checked?'':'none';if(el('wm_left').checked&&!el('wm_leave').value)el('wm_leave').value=todayStr();}
+function wmNameCheck(){
+  const n=normName(el('wm_name').value),id=parseInt(el('wm_id').value)||0;
+  const same=DB.workers.filter(w=>w.id!==id&&normName(w.name)===n);
+  el('wm_dupNote').textContent=same.length?'ℹ️ Is naam ke worker pehle se hain: '+same.map(w=>w.code+(w.left?' (Left)':'')).join(', ')+' — naya alag code milega':'';
+}
+let _workerSaving=false;
 async function saveWorker(){
-  const id=parseInt(document.getElementById('wm_id').value);
-  const name=document.getElementById('wm_name').value.trim();
+  if(_workerSaving)return;
+  const id=parseInt(el('wm_id').value)||0;const name=el('wm_name').value.trim().replace(/\s+/g,' ');
   if(!name){showToast('⚠️ Worker ka naam daalen!');return;}
-  const data={name,basic:parseFloat(document.getElementById('wm_basic').value)||0,remAdv:parseFloat(document.getElementById('wm_remAdv').value)||0};
-  if(id){const idx=DB.workers.findIndex(w=>w.id===id);if(idx>-1)Object.assign(DB.workers[idx],data);}
-  else{const code='FGI-'+String(DB.nextWorkerCode).padStart(3,'0');DB.nextWorkerCode++;DB.workers.push({id:DB.nextWorkerId++,code,...data});}
-  await saveDB();renderWorkerDatalist();renderWorkerTable();closeWorkerModal();showToast('✅ Worker saved!');updateDbStatus();
+  const basic=parseFloat(el('wm_basic').value)||0;if(!basic){showToast('⚠️ Basic salary daalen!');return;}
+  const left=el('wm_left').checked,leave=left?(el('wm_leave').value||todayStr()):'';
+  _workerSaving=true;
+  try{
+    if(id){
+      const w=DB.workers.find(x=>x.id===id);
+      if(left&&!w.left){const bal=balanceOf(w.code);if(bal>0.5&&!confirm(w.name+' ki taraf Rs.'+fmt(bal)+' advance baqi hai. Phir bhi "Chhor gaya" mark karein? (record mehfooz rahe ga)'))return;}
+      Object.assign(w,{name,basic,joinDate:el('wm_join').value||'',left,leaveDate:leave});
+      DB.entries.forEach(e=>{if(e.workerCode===w.code&&e.month>=thisMonth())e.name=name;});
+      DB.midMonthRecords.forEach(r=>{if(r.workerCode===w.code)r.workerName=name;});
+    } else {
+      const dupSame=DB.workers.find(w=>!w.left&&normName(w.name)===normName(name)&&w.basic===basic);
+      if(dupSame&&!confirm('"'+name+'" ('+dupSame.code+') isi salary ke saath pehle se hai. Kya yeh NAYA alag worker hai?'))return;
+      const code=codeStr(DB.nextWorkerCode);DB.nextWorkerCode++;DB.usedCodes.push(code);
+      const w={id:DB.nextWorkerId++,code,name,basic,joinDate:el('wm_join').value||todayStr(),leaveDate:leave,left,remAdv:0};
+      DB.workers.push(w);
+      const adv=parseFloat(el('wm_adv').value)||0;
+      if(adv>0){const dt=w.joinDate;DB.advances.push({id:DB.nextAdvanceId++,date:dt,month:dt.slice(0,7),workerCode:code,amount:adv,reason:el('wm_reason').value.trim()||'Joining par advance',kind:'joining'});}
+    }
+    await saveDB();fillAllWorkerSelects();renderWorkerTable();closeWorkerModal();showToast(id?'✅ Worker update ho gaya!':'✅ Naya worker: '+DB.workers[DB.workers.length-1].code);updateDbStatus();
+  }finally{_workerSaving=false;}
 }
 async function deleteWorker(id){
-  const worker=DB.workers.find(w=>w.id===id);if(!worker)return;
-  if(!confirm(`"${worker.name}" aur us ki SARI entries delete ho jayengi!`))return;
-  if(worker.code)DB.entries=DB.entries.filter(e=>e.workerCode!==worker.code);
-  else DB.entries=DB.entries.filter(e=>e.name.trim()!==worker.name.trim());
-  DB.workers=DB.workers.filter(w=>w.id!==id);
-  await saveDB();renderWorkerTable();renderWorkerDatalist();showToast(`🗑️ ${worker.name} delete ho gaya!`);
+  const w=DB.workers.find(x=>x.id===id);if(!w)return;
+  const n=DB.entries.filter(e=>e.workerCode===w.code).length+advOf(w.code).length+DB.midMonthRecords.filter(r=>r.workerCode===w.code).length;
+  if(n){
+    if(!w.left){if(confirm(w.name+' ke '+n+' records hain. Delete ki jagah "Chhor gaya" mark karein? (record mehfooz rahe ga)')){editWorker(id);el('wm_left').checked=true;wmLeftToggle();}return;}
+    if(!confirm('⚠️ '+w.name+' ('+w.code+') aur us ke SAARE '+n+' records hamesha ke liye delete hon ge. Pakka?'))return;
+    if(prompt('Tasdeeq ke liye worker ka code likhein ('+w.code+'):')!==w.code){showToast('❌ Code match nahi hua — kuch delete nahi hua');return;}
+    DB.entries=DB.entries.filter(e=>e.workerCode!==w.code);DB.advances=DB.advances.filter(a=>a.workerCode!==w.code);DB.midMonthRecords=DB.midMonthRecords.filter(r=>r.workerCode!==w.code);
+  } else if(!confirm(w.name+' ('+w.code+') delete karein?'))return;
+  DB.workers=DB.workers.filter(x=>x.id!==id);   // code stays in usedCodes → never reused
+  await saveDB();fillAllWorkerSelects();renderWorkerTable();showToast('🗑️ '+w.name+' delete — code '+w.code+' dobara kisi ko nahi milega');
 }
-function closeWorkerModal(){document.getElementById('workerModal').style.display='none';}
-document.getElementById('workerModal').addEventListener('click',function(e){if(e.target===this)closeWorkerModal();});
+function closeWorkerModal(){el('workerModal').style.display='none';}
+
+// ============================================================
+//  WORKERS ADVANCE (any time)
+// ============================================================
+let _advEditId=null,_advSaving=false;
+function initAdvance(){if(!el('adv_date').value)el('adv_date').value=todayStr();fillWorkerSelect('adv_worker',{withLeft:true});fillWorkerSelect('adv_filter',{withLeft:true});el('adv_filter').options[0].text='Sab workers';advWorkerInfo();renderAdvTable();}
+function advWorkerInfo(){const c=el('adv_worker').value;el('adv_info').innerHTML=c?'Is waqt kul baqi advance: <b style="color:var(--red);">'+rs(balanceOf(c))+'</b>':'';}
+async function saveAdvance(){
+  if(_advSaving)return;
+  const code=el('adv_worker').value,date=el('adv_date').value,amt=parseFloat(el('adv_amount').value)||0,reason=el('adv_reason').value.trim();
+  if(!workerByCode(code)){showToast('⚠️ Worker chunein!');return;}
+  if(!date){showToast('⚠️ Date chunein!');return;}
+  if(!amt){showToast('⚠️ Amount likhein!');return;}
+  if(!_advEditId&&DB.advances.some(a=>a.workerCode===code&&a.date===date&&r0(a.amount)===r0(amt))&&!confirm('Isi worker ka isi din Rs.'+fmt(amt)+' ka advance pehle se darj hai. Dobara darj karein?'))return;
+  _advSaving=true;el('adv_save').disabled=true;
+  try{
+    if(_advEditId){const a=DB.advances.find(x=>x.id===_advEditId);Object.assign(a,{date,month:date.slice(0,7),workerCode:code,amount:amt,reason});}
+    else DB.advances.push({id:DB.nextAdvanceId++,date,month:date.slice(0,7),workerCode:code,amount:amt,reason,kind:'advance'});
+    await saveDB();showToast('✅ Advance '+(_advEditId?'update':'save')+': '+workerByCode(code).name+' '+rs(amt));
+    clearAdvForm();renderAdvTable();
+  }finally{_advSaving=false;el('adv_save').disabled=false;}
+}
+function clearAdvForm(){_advEditId=null;el('adv_amount').value='';el('adv_reason').value='';el('adv_save').textContent='💾 Save Advance';el('adv_date').value=todayStr();advWorkerInfo();}
+function editAdvance(id){const a=DB.advances.find(x=>x.id===id);if(!a)return;showPage('advance');_advEditId=id;el('adv_worker').value=a.workerCode;el('adv_date').value=a.date;el('adv_amount').value=a.amount;el('adv_reason').value=a.reason||'';el('adv_save').textContent='✏️ Update Advance';advWorkerInfo();window.scrollTo({top:0,behavior:'smooth'});}
+async function deleteAdvance(id){const a=DB.advances.find(x=>x.id===id);if(!a)return;const w=workerByCode(a.workerCode);
+  if(!confirm((w?w.name:'')+' ka '+fmtDate(a.date)+' wala '+rs(a.amount)+' advance delete karein?'))return;
+  DB.advances=DB.advances.filter(x=>x.id!==id);await saveDB();if(_advEditId===id)clearAdvForm();renderAdvTable();showToast('🗑️ Advance delete');}
+const KIND_LBL={advance:'Advance',joining:'Joining',opening:'Opening',history:'Purana record',adjust:'Adjustment'};
+function renderAdvTable(){
+  const f=el('adv_filter').value,m=el('adv_month').value;
+  const list=DB.advances.filter(a=>(!f||a.workerCode===f)&&(!m||a.month===m)).sort((a,b)=>b.date<a.date?-1:b.date>a.date?1:b.id-a.id);
+  const tot=list.reduce((s,a)=>s+(+a.amount||0),0);
+  el('adv_tbody').innerHTML=list.length?list.map((a,i)=>{const w=workerByCode(a.workerCode);
+    return '<tr><td>'+(i+1)+'</td><td style="white-space:nowrap;">'+esc(fmtDate(a.date))+'</td><td><span class="code-badge">'+esc(a.workerCode)+'</span> '+esc(w?w.name:'?')+'</td><td style="font-weight:800;color:var(--red);">'+rs(a.amount)+'</td><td style="font-size:12px;">'+esc(a.reason||'—')+' <span class="kind">'+esc(KIND_LBL[a.kind]||a.kind||'')+'</span></td>'+
+      '<td style="white-space:nowrap;"><button class="btn btn-gold btn-sm" onclick="editAdvance('+a.id+')">✏️</button> <button class="btn btn-danger btn-sm" onclick="deleteAdvance('+a.id+')">🗑️</button></td></tr>';}).join('')+
+    '<tr style="background:var(--navy);color:var(--gold);"><td colspan="3" style="font-weight:800;text-align:right;">Kul ('+list.length+')</td><td style="font-weight:900;">'+rs(tot)+'</td><td colspan="2"></td></tr>'
+    :'<tr><td colspan="6" style="text-align:center;padding:18px;color:var(--slate);">Koi advance record nahi</td></tr>';
+}
+
+// ============================================================
+//  MID MONTH KHARCHA (many times a month — all are added)
+// ============================================================
+let _mmEditId=null,_mmSaving=false;
+function initMidMonth(){
+  if(!el('mm_date').value)el('mm_date').value=todayStr();if(!el('mm_month').value)el('mm_month').value=thisMonth();
+  fillWorkerSelect('mm_worker',{withLeft:true});
+  const months=[...new Set(DB.midMonthRecords.map(r=>r.month))].sort().reverse();const sel=el('mmTableMonth'),cur=sel.value;
+  sel.innerHTML='<option value="">Sab months</option>'+months.map(m=>'<option value="'+m+'"'+(m===cur?' selected':'')+'>'+monthName(m)+'</option>').join('');
+  onMidMonthWorkerSelect();renderMidMonthTable();
+}
+function onMidMonthWorkerSelect(){
+  const w=workerByCode(el('mm_worker').value),m=el('mm_month').value;
+  el('mm_basicDisplay').textContent=w?rs(w.basic):'—';
+  el('mm_lastMidDisplay').textContent=w&&m?rs(midFor(w.code,m)):'—';
+  el('mm_remAdvDisplay').textContent=w?rs(balanceOf(w.code)):'—';
+}
+async function saveMidMonthRecord(){
+  if(_mmSaving)return;
+  const w=workerByCode(el('mm_worker').value);if(!w){showToast('⚠️ Worker chunein!');return;}
+  const kharcha=parseFloat(el('mm_kharcha').value)||0;if(!(kharcha>0)){showToast('⚠️ Kharcha ki raqam likhein!');return;}
+  const date=el('mm_date').value||todayStr(),month=el('mm_month').value;if(!month){showToast('⚠️ Month chunein!');return;}
+  const note=el('mm_note').value.trim();
+  if(!_mmEditId&&DB.midMonthRecords.some(r=>r.workerCode===w.code&&r.date===date&&r0(r.midKharcha)===r0(kharcha))&&!confirm(w.name+' ka isi din '+rs(kharcha)+' kharcha pehle se darj hai. Dobara darj karein?'))return;
+  _mmSaving=true;el('mm-save-btn').disabled=true;
+  try{
+    const data={date,month,workerCode:w.code,workerName:w.name,salary:w.basic||0,remAdv:balanceOf(w.code),midKharcha:kharcha,note};
+    if(_mmEditId){const i=DB.midMonthRecords.findIndex(r=>r.id===_mmEditId);if(i>-1)DB.midMonthRecords[i]=Object.assign(DB.midMonthRecords[i],data);}
+    else DB.midMonthRecords.push(Object.assign({id:DB.nextMidMonthId++},data));
+    await saveDB();
+    el('mmSaveMsg').textContent='✅ '+w.name+' — '+monthName(month)+' ka kul kharcha ab '+rs(midFor(w.code,month));setTimeout(()=>el('mmSaveMsg').textContent='',4000);
+    showToast('✅ Mid Month saved!');clearMidMonthForm(true);initMidMonth();
+  }finally{_mmSaving=false;el('mm-save-btn').disabled=false;}
+}
+function editMidMonthRecord(id){const r=DB.midMonthRecords.find(x=>x.id===id);if(!r)return;_mmEditId=id;el('mm_worker').value=r.workerCode;el('mm_date').value=r.date||'';el('mm_month').value=r.month||'';el('mm_kharcha').value=r.midKharcha||'';el('mm_note').value=r.note||'';
+  onMidMonthWorkerSelect();const b=el('mm-save-btn');b.textContent='✏️ Update';b.style.background='var(--green)';window.scrollTo({top:0,behavior:'smooth'});}
+function clearMidMonthForm(keepWorker){_mmEditId=null;if(!keepWorker)el('mm_worker').value='';el('mm_kharcha').value='';el('mm_note').value='';el('mm_date').value=todayStr();const b=el('mm-save-btn');b.textContent='💾 Save';b.style.background='var(--navy)';onMidMonthWorkerSelect();}
+function renderMidMonthTable(){
+  const q=normName(el('mmTableSearch').value),m=el('mmTableMonth').value;
+  const recs=DB.midMonthRecords.filter(r=>(!q||normName(r.workerName).includes(q)||String(r.workerCode).toLowerCase().includes(q))&&(!m||r.month===m)).sort((a,b)=>b.id-a.id);
+  const tot=recs.reduce((s,r)=>s+(+r.midKharcha||0),0);
+  el('mmTableBody').innerHTML=recs.length?recs.map((r,i)=>'<tr><td style="text-align:center;font-weight:700;">'+(recs.length-i)+'</td><td style="white-space:nowrap;">'+esc(fmtDate(r.date))+'</td><td><span class="month-badge">'+esc(monthName(r.month))+'</span></td><td><span class="code-badge">'+esc(r.workerCode)+'</span> <strong>'+esc(r.workerName)+'</strong></td><td style="color:#8a6010;font-weight:800;">'+rs(r.midKharcha)+'</td><td style="font-size:12px;color:var(--slate);">'+esc(r.note||'—')+'</td>'+
+    '<td><button class="btn btn-gold btn-sm" onclick="editMidMonthRecord('+r.id+')">✏️</button></td><td><button class="btn btn-danger btn-sm" onclick="deleteMidMonthRecord('+r.id+')">🗑️</button></td></tr>').join('')+
+    '<tr style="background:var(--navy);color:var(--gold);"><td colspan="4" style="text-align:right;font-weight:800;">Kul ('+recs.length+')</td><td style="font-weight:900;">'+rs(tot)+'</td><td colspan="3"></td></tr>'
+    :'<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--slate);">Koi record nahi mila...</td></tr>';
+}
+async function deleteMidMonthRecord(id){if(!confirm('Yeh mid month record delete karein?'))return;DB.midMonthRecords=DB.midMonthRecords.filter(r=>r.id!==id);if(_mmEditId===id)clearMidMonthForm();await saveDB();initMidMonth();showToast('🗑️ Record deleted!');}
+
+// ============================================================
+//  BACKLE (unchanged logic; local date; edit needs a selection)
+// ============================================================
+let _backleSaving=false;
+function initBackle(){if(!el('b_date').value)el('b_date').value=todayStr();if(!el('b_month').value)el('b_month').value=thisMonth();if(DB.lastBacklePrice&&!el('b_price').value)el('b_price').value=DB.lastBacklePrice;populateBackleEditSelect();renderBackleTable();}
+function calcBackle(){const q=parseFloat(el('b_qty').value)||0,p=parseFloat(el('b_price').value)||0;el('b_total').value=q&&p?Math.round(q*p):'';}
+async function saveBackleEntry(){
+  if(_backleSaving)return;
+  const qty=parseFloat(el('b_qty').value)||0,price=parseFloat(el('b_price').value)||0;
+  if(!qty||!price){showToast('⚠️ Qty aur Price daalna zaroori hai!');return;}
+  const mode=el('backleMode').value;const selId=parseInt(el('backleEditSelect').value);
+  if(mode==='edit'&&!selId){showToast('⚠️ Edit ke liye pehle entry chunein!');return;}
+  const entry={id:DB.nextBackleId,date:el('b_date').value,month:el('b_month').value,note:el('b_note').value.trim(),qty,price,total:Math.round(qty*price)};
+  _backleSaving=true;
+  try{
+    if(mode==='edit'){const i=DB.backleEntries.findIndex(e=>e.id===selId);if(i<0){showToast('❌ Entry nahi mili');return;}entry.id=selId;DB.backleEntries[i]=entry;}
+    else{DB.backleEntries.push(entry);DB.nextBackleId++;}
+    DB.lastBacklePrice=price;await saveDB();renderBackleTable();populateBackleEditSelect();if(mode==='new')clearBackleForm();
+    showToast('✅ Backle entry saved!');el('backleSaveMsg').textContent='✅ Saved! Total: '+rs(entry.total);setTimeout(()=>el('backleSaveMsg').textContent='',3000);
+  }finally{_backleSaving=false;}
+}
+function clearBackleForm(){el('b_qty').value='';el('b_total').value='';el('b_note').value='';el('b_date').value=todayStr();el('b_month').value=thisMonth();if(DB.lastBacklePrice)el('b_price').value=DB.lastBacklePrice;}
+function toggleBackleMode(){const s=el('backleEditSelect');if(el('backleMode').value==='edit'){s.style.display='';populateBackleEditSelect();}else{s.style.display='none';clearBackleForm();}}
+function populateBackleEditSelect(){el('backleEditSelect').innerHTML='<option value="">-- Select --</option>'+[...DB.backleEntries].reverse().map(e=>'<option value="'+e.id+'">#'+e.id+' | '+esc(e.month)+' | Qty:'+e.qty+' | Rs.'+fmt(e.total)+'</option>').join('');}
+function loadBackleEdit(){const id=parseInt(el('backleEditSelect').value);const e=DB.backleEntries.find(x=>x.id===id);if(!e)return;el('b_date').value=e.date||'';el('b_month').value=e.month||'';el('b_note').value=e.note||'';el('b_qty').value=e.qty;el('b_price').value=e.price;el('b_total').value=e.total;}
+function editBackle(id){el('backleMode').value='edit';toggleBackleMode();el('backleEditSelect').value=id;loadBackleEdit();window.scrollTo({top:0,behavior:'smooth'});}
+function renderBackleTable(){
+  const tb=el('backleTbody');if(!DB.backleEntries.length){tb.innerHTML='<tr><td colspan="8" style="text-align:center;padding:18px;color:var(--slate);">Koi backle entry nahi...</td></tr>';return;}
+  let g=0;tb.innerHTML=[...DB.backleEntries].reverse().map((e,i)=>{g+=e.total;return '<tr><td>'+(DB.backleEntries.length-i)+'</td><td>'+esc(fmtDate(e.date))+'</td><td><span class="month-badge">'+esc(monthName(e.month))+'</span></td><td style="color:var(--slate);">'+esc(e.note||'—')+'</td><td style="text-align:center;font-weight:700;">'+fmt(e.qty)+'</td><td>Rs. '+esc(e.price)+'</td><td style="font-weight:800;color:#8a6010;">'+rs(e.total)+'</td><td style="white-space:nowrap;"><button class="btn btn-gold btn-sm" onclick="editBackle('+e.id+')">✏️</button> <button class="btn btn-danger btn-sm" onclick="deleteBackleEntry('+e.id+')">🗑️</button></td></tr>';}).join('')+
+    '<tr style="background:var(--navy);color:var(--gold);"><td colspan="6" style="font-weight:800;text-align:right;padding:10px 12px;">Kul Total:</td><td style="font-weight:900;font-size:15px;">'+rs(g)+'</td><td></td></tr>';
+}
+async function deleteBackleEntry(id){if(!confirm('Yeh backle entry delete karni hai?'))return;DB.backleEntries=DB.backleEntries.filter(e=>e.id!==id);await saveDB();renderBackleTable();populateBackleEditSelect();showToast('🗑️ Entry deleted!');}
+
+// ============================================================
+//  CALCULATOR (unchanged)
+// ============================================================
+let calcRows=[];
+function initCalculator(){fillAllWorkerSelects();renderCalcTable();}
+function calcAutoLoad(){const n=normName(el('calc_name').value);const w=DB.workers.find(x=>normName(x.name)===n&&!x.left);if(w&&w.basic)el('calc_basic').value=w.basic;calcPreview();}
+function calcPreview(){const b=parseFloat(el('calc_basic').value)||0;el('calc_perDay').value=b>0?Math.round(b/30):'';el('calc_perHour').value=b>0?Math.round(b/30/8):'';}
+function addCalcRow(){const name=el('calc_name').value.trim(),basic=parseFloat(el('calc_basic').value)||0;if(!name){showToast('⚠️ Worker ka naam daalen!');return;}if(!basic){showToast('⚠️ Basic salary daalen!');return;}
+  if(calcRows.find(r=>normName(r.name)===normName(name))){showToast('⚠️ Already list mein hai!');return;}calcRows.push({name,basic,perDay:Math.round(basic/30),perHour:Math.round(basic/30/8)});renderCalcTable();clearCalcInput();showToast('✅ '+name+' add ho gaya!');}
+function addAllToCalc(){activeWorkers().forEach(w=>{if(!calcRows.find(r=>normName(r.name)===normName(w.name)))calcRows.push({name:w.name,basic:w.basic,perDay:Math.round(w.basic/30),perHour:Math.round(w.basic/30/8)});});renderCalcTable();}
+function removeCalcRow(i){calcRows.splice(i,1);renderCalcTable();}
+function clearCalcInput(){['calc_name','calc_basic','calc_perDay','calc_perHour'].forEach(i=>el(i).value='');}
+function renderCalcTable(){
+  const card=el('calcListCard');if(!calcRows.length){card.style.display='none';return;}card.style.display='';
+  let tb=0,td=0,th=0;el('calcTbody').innerHTML=calcRows.map((r,i)=>{tb+=r.basic;td+=r.perDay;th+=r.perHour;return '<tr><td style="text-align:center;font-weight:700;">'+(i+1)+'</td><td><strong>'+esc(r.name)+'</strong></td><td>'+rs(r.basic)+'</td><td style="font-weight:800;color:var(--navy);">'+rs(r.perDay)+'</td><td style="font-weight:800;color:var(--slate);">'+rs(r.perHour)+'</td><td><button class="btn btn-danger btn-sm" onclick="removeCalcRow('+i+')">🗑️</button></td></tr>';}).join('')+
+    '<tr style="background:var(--navy);color:var(--gold);"><td colspan="2" style="font-weight:800;text-align:center;">TOTAL ('+calcRows.length+')</td><td style="font-weight:800;">'+rs(tb)+'</td><td style="font-weight:900;">'+rs(td)+'</td><td style="font-weight:900;">'+rs(th)+'</td><td></td></tr>';
+}
 
 // ============================================================
 //  REPORTS
 // ============================================================
-function initReport(){
-  const today=new Date();
-  document.getElementById('rpt_month').value=today.toISOString().slice(0,7);
-  renderWorkerDatalist();loadReport();
+function switchReportMode(mode){
+  ['monthly','worker','remadv'].forEach((m,i)=>{el('rptSec_'+m).style.display=m===mode?'':'none';el('rptModeBtn'+(i+1)).className='btn btn-sm '+(m===mode?'btn-save':'btn-clear');});
+  if(mode==='worker')renderWorkerReportList();if(mode==='remadv')renderRemAdvOverview();if(mode==='monthly')loadReport();
 }
-
+function initReport(){if(!el('rpt_month').value)el('rpt_month').value=defaultSalaryMonth();loadReport();}
+function defaultSalaryMonth(){const d=new Date().getDate();return d<=15?prevMonth(thisMonth()):thisMonth();}
+function monthEntries(month){return DB.entries.filter(e=>!month||e.month===month).sort((a,b)=>a.month!==b.month?(a.month<b.month?-1:1):orderOf(a.workerCode)-orderOf(b.workerCode));}
 function loadReport(){
-  const month=document.getElementById('rpt_month').value;
-  const workerFilter=document.getElementById('rpt_worker').value.trim().toLowerCase();
-  const activeCodes=DB.workers.map(w=>w.code).filter(Boolean);
-  const hasDupNames=new Set(DB.workers.map(w=>w.name.trim().toLowerCase()).filter((n,i,arr)=>arr.indexOf(n)!==i));
-  let entries=DB.entries.filter(e=>{
-    const mMatch=!month||e.month===month;
-    const wMatch=!workerFilter||e.name.toLowerCase().includes(workerFilter);
-    let isActive=false;
-    if(e.workerCode)isActive=activeCodes.includes(e.workerCode);
-    else if(hasDupNames.has(e.name.trim().toLowerCase()))isActive=false;
-    else isActive=DB.workers.some(w=>w.name.trim()===e.name.trim());
-    return mMatch&&wMatch&&isActive;
+  const month=el('rpt_month').value;const q=normName(el('rpt_worker').value);
+  const entries=monthEntries(month).filter(e=>!q||normName(e.name).includes(q)||e.workerCode.toLowerCase().includes(q));
+  const cards=el('reportCards'),tw=el('reportTable'),tb=el('reportTbody');cards.innerHTML='';tb.innerHTML='';
+  if(!entries.length){cards.innerHTML='<div style="color:var(--slate);font-size:15px;padding:20px;">Koi data nahi mila.</div>';tw.style.display='none';return;}
+  tw.style.display='';let sum=0;
+  entries.forEach((e,i)=>{sum+=r0(e.totalRemSalary);
+    cards.insertAdjacentHTML('beforeend','<div class="report-worker-card"><div class="worker-name">👷 '+esc(e.name)+' <span class="code-badge">'+esc(e.workerCode)+'</span></div><div style="font-size:12px;color:var(--slate);margin-bottom:8px;">📅 '+esc(monthName(e.month))+'</div><div class="worker-amount">'+rs(e.totalRemSalary)+' <span style="font-size:12px;color:var(--slate);font-weight:600;">Total Rem. Salary</span></div><div style="margin-top:8px;font-size:12px;color:var(--slate);">Mid: <strong style="color:#8a6010;">'+rs(e.midMonth)+'</strong> | Rem.Adv: <strong style="color:var(--red);">'+rs(e.remAdv)+'</strong></div><div style="display:flex;gap:8px;margin-top:10px;"><button class="btn btn-save btn-sm" onclick="printSingle('+e.id+')">📄 Slip PDF</button><button class="btn btn-gold btn-sm" onclick="editEntry('+e.id+')">✏️</button></div></div>');
+    tb.insertAdjacentHTML('beforeend','<tr><td>'+(i+1)+'</td><td><strong>'+esc(e.name)+'</strong></td><td>'+esc(e.month)+'</td><td>'+fmt(e.basic)+'</td><td>'+(e.ot||0)+'</td><td>'+(e.overDays||0)+'</td><td>'+(e.oh||0)+'</td><td>'+fmt(e.ohp)+'</td><td>'+(e.days||0)+'</td><td>'+(e.totalDays||0)+'</td><td>'+fmt(e.mSalary)+'</td><td>'+fmt(e.midMonth)+'</td><td>'+fmt(e.remSalary)+'</td><td>'+fmt(e.prevAdv)+'</td><td>'+fmt(e.newAdv)+'</td><td>'+fmt(e.totalAdv)+'</td><td>'+fmt(e.deductAdv)+'</td><td>'+fmt(e.remAdv)+'</td><td style="font-weight:800;color:var(--green);">'+fmt(e.totalRemSalary)+'</td><td><button class="btn btn-gold btn-sm" onclick="printSingle('+e.id+')">📄</button></td></tr>');
   });
-  // DEDUP FIX: same workerCode + same month ka sirf latest entry rakhein
-  const dedupMap2=new Map();
-  entries.forEach(e=>{
-    const key=(e.workerCode||e.name.trim())+'|'+(e.month||'');
-    if(!dedupMap2.has(key)||e.id>dedupMap2.get(key).id)dedupMap2.set(key,e);
-  });
-  entries=[...dedupMap2.values()];
-  const cards=document.getElementById('reportCards');
-  const tableWrap=document.getElementById('reportTable');
-  const tbody=document.getElementById('reportTbody');
-  cards.innerHTML='';tbody.innerHTML='';
-  if(!entries.length){cards.innerHTML='<div style="color:var(--slate);font-size:15px;padding:20px;">Koi data nahi mila.</div>';tableWrap.style.display='none';return;}
-  tableWrap.style.display='';
-  let totalRemSalSum=0;
-  entries.forEach(e=>{
-    totalRemSalSum+=Math.round(e.totalRemSalary||0);
-    const card=document.createElement('div');
-    card.className='report-worker-card';
-    card.innerHTML=`<div class="worker-name">👷 ${e.name}</div><div class="worker-date" style="font-size:12px;color:var(--slate);margin-bottom:8px;">📅 ${e.month} &nbsp; <span class="month-badge">Sr #${e.sr}</span></div><div class="worker-amount">Rs. ${Math.round(e.totalRemSalary||0).toLocaleString()} <span style="font-size:12px;color:var(--slate);font-weight:600;">Total Rem. Salary</span></div><div style="margin-top:8px;font-size:12px;color:var(--slate);">Mid: <strong style="color:#8a6010;">Rs. ${(e.midMonth||0).toLocaleString()}</strong> &nbsp;|&nbsp; Rem.Adv: <strong style="color:var(--red);">Rs. ${Math.round(e.remAdv||0).toLocaleString()}</strong></div><div style="display:flex;gap:8px;margin-top:10px;"><button class="btn btn-save btn-sm" onclick="printSingle(${e.id})">🖨️ Print</button></div>`;
-    cards.appendChild(card);
-    const tr=document.createElement('tr');
-    tr.innerHTML=`<td>${e.sr}</td><td><strong>${e.name}</strong></td><td>${e.month}</td><td>${(e.basic||0).toLocaleString()}</td><td>${e.ot||0}</td><td>${e.overDays||0}</td><td>${e.oh||0}</td><td>${Math.round(e.ohp||0).toLocaleString()}</td><td>${e.days||0}</td><td>${e.totalDays||0}</td><td>${Math.round(e.mSalary||0).toLocaleString()}</td><td>${(e.midMonth||0).toLocaleString()}</td><td>${Math.round(e.remSalary||0).toLocaleString()}</td><td>${(e.prevAdv||0).toLocaleString()}</td><td>${(e.newAdv||0).toLocaleString()}</td><td>${(e.totalAdv||0).toLocaleString()}</td><td>${(e.deductAdv||0).toLocaleString()}</td><td>${Math.round(e.remAdv||0).toLocaleString()}</td><td style="font-weight:800;color:var(--green);">${Math.round(e.totalRemSalary||0).toLocaleString()}</td><td><button class="btn btn-gold btn-sm" onclick="printSingle(${e.id})">🖨️</button></td>`;
-    tbody.appendChild(tr);
-  });
-  const backleEntries=DB.backleEntries.filter(e=>!month||e.month===month);
-  const backleSum=backleEntries.reduce((s,e)=>s+(e.total||0),0);
-  const grandSum=totalRemSalSum+backleSum;
-  if(backleEntries.length>0&&!workerFilter){
-    const bh=document.createElement('div');bh.style.cssText='grid-column:1/-1;';
-    bh.innerHTML=`<div style="background:linear-gradient(135deg,#7a5a00,#b8860b);border-radius:12px;padding:12px 20px;display:flex;align-items:center;gap:12px;"><span style="font-size:20px;">🧱</span><div><div style="color:#ffe090;font-size:11px;font-weight:700;text-transform:uppercase;">Backle Section</div><div style="color:#fff8dc;font-size:13px;font-weight:600;">${backleEntries.length} entries</div></div></div>`;
-    cards.appendChild(bh);
-    backleEntries.forEach(e=>{
-      const bc=document.createElement('div');bc.className='report-worker-card';bc.style.borderColor='var(--gold)';
-      bc.innerHTML=`<div class="worker-name" style="font-size:14px;color:#6b4a00;">${e.note||'(No description)'}</div><div style="font-size:12px;color:var(--slate);margin-bottom:8px;">📅 ${e.date||''} &nbsp; <span class="month-badge">${e.month}</span></div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;font-size:12px;"><div><span style="color:var(--slate);display:block;font-size:10px;font-weight:700;">QTY</span><strong>${(e.qty||0).toLocaleString()}</strong></div><div><span style="color:var(--slate);display:block;font-size:10px;font-weight:700;">PRICE</span><strong>Rs. ${e.price||0}</strong></div><div><span style="color:var(--slate);display:block;font-size:10px;font-weight:700;">TOTAL</span><strong style="color:#8a6010;">Rs. ${(e.total||0).toLocaleString()}</strong></div></div>`;
-      cards.appendChild(bc);
-    });
-    const bt=document.createElement('div');bt.style.cssText='grid-column:1/-1;';
-    bt.innerHTML=`<div style="background:linear-gradient(135deg,#5a4000,#8a6010);border-radius:12px;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;"><div style="color:#ffe090;font-size:13px;font-weight:700;">🧱 Kul Backle Total</div><div style="color:var(--gold);font-family:'Playfair Display',serif;font-size:24px;font-weight:900;">Rs. ${backleSum.toLocaleString()}</div></div>`;
-    cards.appendChild(bt);
-  }
-  if(entries.length>=1){
-    const tc=document.createElement('div');tc.style.cssText='grid-column:1/-1;margin-top:4px;';
-    tc.innerHTML=`<div style="background:linear-gradient(135deg,var(--navy),#1a3a60);border-radius:14px;padding:20px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;"><div><div style="color:#adc4e0;font-size:11px;font-weight:700;text-transform:uppercase;">Total Workers: ${entries.length}</div><div style="color:#adc4e0;font-size:12px;margin-top:6px;">T.Rem.Salary: <strong style="color:var(--gold-light);">Rs. ${totalRemSalSum.toLocaleString()}</strong></div>${backleSum>0?`<div style="color:#adc4e0;font-size:12px;margin-top:4px;">Backle: <strong style="color:var(--gold-light);">Rs. ${backleSum.toLocaleString()}</strong></div>`:''}</div><div style="text-align:right;"><div style="color:#adc4e0;font-size:11px;font-weight:700;text-transform:uppercase;">🏆 Grand Total</div><div style="color:var(--gold);font-family:'Playfair Display',serif;font-size:30px;font-weight:900;">Rs. ${grandSum.toLocaleString()}</div></div></div>`;
-    cards.appendChild(tc);
-  }
+  const bl=DB.backleEntries.filter(b=>!month||b.month===month);const bs=bl.reduce((s,b)=>s+(b.total||0),0);
+  if(bl.length&&!q)cards.insertAdjacentHTML('beforeend','<div style="grid-column:1/-1;background:linear-gradient(135deg,#5a4000,#8a6010);border-radius:12px;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;"><div style="color:#ffe090;font-size:13px;font-weight:700;">🧱 Backle ('+bl.length+')</div><div style="color:var(--gold);font-family:\'Playfair Display\',serif;font-size:22px;font-weight:900;">'+rs(bs)+'</div></div>');
+  cards.insertAdjacentHTML('beforeend','<div style="grid-column:1/-1;background:linear-gradient(135deg,var(--navy),#1a3a60);border-radius:14px;padding:20px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;"><div><div style="color:#adc4e0;font-size:11px;font-weight:700;text-transform:uppercase;">Total Workers: '+entries.length+'</div><div style="color:#adc4e0;font-size:12px;margin-top:6px;">T.Rem.Salary: <strong style="color:var(--gold-light);">'+rs(sum)+'</strong></div>'+(bs&&!q?'<div style="color:#adc4e0;font-size:12px;margin-top:4px;">Backle: <strong style="color:var(--gold-light);">'+rs(bs)+'</strong></div>':'')+'</div><div style="text-align:right;"><div style="color:#adc4e0;font-size:11px;font-weight:700;text-transform:uppercase;">🏆 Grand Total</div><div style="color:var(--gold);font-family:\'Playfair Display\',serif;font-size:30px;font-weight:900;">'+rs(sum+(q?0:bs))+'</div></div></div>');
+}
+function renderRemAdvOverview(){
+  const q=normName(el('rptRemAdvSearch').value);const c=el('remAdvCards');c.innerHTML='';
+  const ws=activeWorkers().filter(w=>!q||normName(w.name).includes(q));let tot=0;
+  ws.forEach(w=>{const b=balanceOf(w.code);tot+=b;c.insertAdjacentHTML('beforeend','<div class="report-worker-card" data-c="'+esc(w.code)+'" onclick="openWorkerReport(this.dataset.c)"><div class="worker-name">👷 '+esc(w.name)+'</div><span class="code-badge">'+esc(w.code)+'</span><div style="margin-top:8px;font-size:10px;color:var(--slate);font-weight:700;text-transform:uppercase;">Rem. Total Advance</div><div style="font-size:20px;font-weight:900;color:'+(b>0?'var(--red)':'var(--green)')+';">'+rs(b)+'</div></div>');});
+  c.insertAdjacentHTML('beforeend','<div style="grid-column:1/-1;background:linear-gradient(135deg,var(--navy),#1a3a60);border-radius:14px;padding:20px 24px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:14px;"><div style="color:#adc4e0;font-size:11px;font-weight:700;text-transform:uppercase;">Active Workers: '+ws.length+'</div><div style="text-align:right;"><div style="color:#adc4e0;font-size:11px;font-weight:700;">💳 TOTAL REM. ADVANCE</div><div style="color:var(--gold);font-family:\'Playfair Display\',serif;font-size:28px;font-weight:900;">'+rs(tot)+'</div></div></div>');
 }
 
-async function cleanOrphanEntries(){
-  const activeCodes=DB.workers.map(w=>w.code).filter(Boolean);
-  const hasDupNames=new Set(DB.workers.map(w=>w.name.trim().toLowerCase()).filter((n,i,arr)=>arr.indexOf(n)!==i));
-  const before=DB.entries.length;
-  DB.entries=DB.entries.filter(e=>{
-    if(e.workerCode)return activeCodes.includes(e.workerCode);
-    if(hasDupNames.has(e.name.trim().toLowerCase()))return false;
-    return DB.workers.some(w=>w.name.trim()===e.name.trim());
-  });
-  const removed=before-DB.entries.length;
-  await saveDB();loadReport();
-  showToast(`🧹 ${removed} entries clean ho gayi!`);
+// ---------------- WORKER REPORT ----------------
+let _wrTab='active';
+function setWrTab(t){_wrTab=t;el('wrTabA').className='btn btn-sm '+(t==='active'?'btn-save':'btn-clear');el('wrTabL').className='btn btn-sm '+(t==='left'?'btn-save':'btn-clear');renderWorkerReportList();}
+function renderWorkerReportList(){
+  el('wrDetail').innerHTML='';el('wrList').style.display='';
+  el('wrTabA').textContent='✅ Kaam kar rahe ('+activeWorkers().length+')';el('wrTabL').textContent='🚪 Chhor gaye ('+leftWorkers().length+')';
+  const q=normName(el('wrSearch').value);
+  const ws=(_wrTab==='left'?leftWorkers():activeWorkers()).filter(w=>!q||normName(w.name).includes(q)||w.code.toLowerCase().includes(q));
+  el('wrList').innerHTML=ws.length?ws.map(w=>{const b=balanceOf(w.code);return '<div class="wr-item" data-c="'+esc(w.code)+'" onclick="openWorkerReport(this.dataset.c)"><span class="code-badge">'+esc(w.code)+'</span> <b>'+esc(w.name)+'</b>'+(w.left?' <span style="font-size:11px;color:var(--slate);">— chhora: '+esc(fmtDate(w.leaveDate)||'—')+'</span>':'')+'<span class="wr-bal" style="color:'+(b>0.5?'var(--red)':'var(--green)')+';">'+(b>0.5?'Baqi '+rs(b):'✅ Clear')+'</span></div>';}).join(''):'<div style="color:var(--slate);padding:16px;">Koi worker nahi</div>';
+}
+function workerReportData(code){
+  const w=workerByCode(code);if(!w)return null;
+  const advs=advOf(code).slice().sort((a,b)=>a.date<b.date?-1:a.date>b.date?1:a.id-b.id);
+  const ents=DB.entries.filter(e=>e.workerCode===code).sort((a,b)=>a.month<b.month?-1:1);
+  const mids=DB.midMonthRecords.filter(r=>r.workerCode===code).sort((a,b)=>a.month!==b.month?(a.month<b.month?-1:1):(a.date<b.date?-1:1));
+  // advance khata with running balance (advances by date, returns at salary month)
+  const ev=[];advs.forEach(a=>ev.push({sort:a.date+'#0',date:fmtDate(a.date),month:a.month,desc:(a.reason||'Advance')+(a.kind&&a.kind!=='advance'?' ['+(KIND_LBL[a.kind]||a.kind)+']':''),taken:+a.amount||0,ret:0}));
+  ents.forEach(e=>{if(+e.deductAdv)ev.push({sort:e.month+'-31#1',date:monthName(e.month),month:e.month,desc:'Salary se katauti ('+monthName(e.month)+')',taken:0,ret:+e.deductAdv});});
+  ev.sort((a,b)=>a.sort<b.sort?-1:a.sort>b.sort?1:0);let bal=0;ev.forEach(x=>{bal=r2(bal+x.taken-x.ret);x.bal=bal;});
+  const midByMonth={};mids.forEach(r=>{midByMonth[r.month]=(midByMonth[r.month]||0)+(+r.midKharcha||0);});
+  return {w,advs,ents,mids,ev,midByMonth,taken:totalTaken(code),returned:totalReturned(code),balance:balanceOf(code),midTotal:mids.reduce((s,r)=>s+(+r.midKharcha||0),0)};
+}
+function openWorkerReport(code){
+  showPage('report');switchReportMode('worker');
+  const D=workerReportData(code);if(!D)return;const w=D.w;
+  el('wrList').style.display='none';
+  const box=(v,l,c)=>'<div class="wr-box"><div style="font-size:17px;font-weight:900;color:'+c+';">'+v+'</div><div class="wr-box-l">'+l+'</div></div>';
+  el('wrDetail').innerHTML='<div class="card" style="padding:14px;"><div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;"><button class="btn btn-clear btn-sm" onclick="renderWorkerReportList()">◀ Wapas</button><button class="btn btn-save btn-sm" data-c="'+esc(code)+'" onclick="workerReportPDF(this.dataset.c)">📄 PDF</button><button class="btn btn-green btn-sm" data-c="'+esc(code)+'" onclick="workerReportImage(this.dataset.c)">📸 HD Image</button></div>'+
+    '<div id="wrPrintable">'+workerReportHTML(D)+'</div></div>';
+  window.scrollTo(0,0);
+}
+// Black & white friendly report (also used for the HD image)
+function workerReportHTML(D){
+  const w=D.w;
+  const row=(cells,b)=>'<tr'+(b?' class="tot"':'')+'>'+cells.map(c=>'<td>'+c+'</td>').join('')+'</tr>';
+  let h='<div class="bw-rep"><div class="bw-h"><div class="bw-co">FAISAL GORAYA INDUSTRY</div><div class="bw-sub">WORKER REPORT — Advance & Mid Month Khata · Printed '+fmtDate(todayStr())+'</div></div>';
+  h+='<table class="bw-info"><tr><td><b>Code:</b> '+esc(w.code)+'</td><td><b>Naam:</b> '+esc(w.name)+'</td><td><b>Basic:</b> '+rs(w.basic)+'</td></tr><tr><td><b>Join:</b> '+esc(fmtDate(w.joinDate))+'</td><td><b>Status:</b> '+(w.left?'Chhor gaya ('+esc(fmtDate(w.leaveDate))+')':'Kaam kar raha hai')+'</td><td><b>Baqi Advance:</b> '+(D.balance>0.5?rs(D.balance):'CLEAR')+'</td></tr></table>';
+  h+='<table class="bw-sum"><tr><td>Kul Advance Liya<b>'+rs(D.taken)+'</b></td><td>Wapas (Salary se)<b>'+rs(D.returned)+'</b></td><td>Baqi Advance<b>'+(D.balance>0.5?rs(D.balance):'CLEAR')+'</b></td><td>Kul Mid Month<b>'+rs(D.midTotal)+'</b></td></tr></table>';
+  h+='<div class="bw-t">1) ADVANCE KHATA (liya / wapas)</div><table class="bw-tbl"><thead><tr><th>#</th><th>Date</th><th>Tafseel / Wajah</th><th>Liya</th><th>Wapas</th><th>Baqi</th></tr></thead><tbody>'+
+    (D.ev.length?D.ev.map((x,i)=>row([i+1,esc(x.date),esc(x.desc),x.taken?fmt(x.taken):'—',x.ret?fmt(x.ret):'—','<b>'+fmt(x.bal)+'</b>'])).join(''):row(['—','—','Koi advance nahi','—','—','0']))+
+    row(['','','<b>KUL</b>','<b>'+fmt(D.taken)+'</b>','<b>'+fmt(D.returned)+'</b>','<b>'+fmt(D.balance)+'</b>'],1)+'</tbody></table>';
+  h+='<div class="bw-t">2) MID MONTH KHARCHA</div><table class="bw-tbl"><thead><tr><th>#</th><th>Date</th><th>Mahina</th><th>Note</th><th>Raqam</th></tr></thead><tbody>'+
+    (D.mids.length?D.mids.map((r,i)=>row([i+1,esc(fmtDate(r.date)),esc(monthName(r.month)),esc(r.note||'—'),fmt(r.midKharcha)])).join(''):row(['—','—','—','Koi record nahi','0']))+
+    row(['','','','<b>KUL</b>','<b>'+fmt(D.midTotal)+'</b>'],1)+'</tbody></table>';
+  h+='<div class="bw-t">3) SALARY RECORD</div><table class="bw-tbl"><thead><tr><th>Mahina</th><th>Days</th><th>M.Salary</th><th>Mid Month</th><th>Adv Katauti</th><th>Rem. Adv</th><th>T.R.Salary</th></tr></thead><tbody>'+
+    (D.ents.length?D.ents.map(e=>row([esc(monthName(e.month)),e.totalDays||0,fmt(e.mSalary),fmt(e.midMonth),fmt(e.deductAdv),fmt(e.remAdv),'<b>'+fmt(e.totalRemSalary)+'</b>'])).join(''):row(['—','','','','','','Koi entry nahi']))+'</tbody></table>';
+  h+='<div class="bw-sig"><span>Worker Signature</span><span>Faisal Goraya Industry (FGI)</span><span>Manager / Owner</span></div></div>';
+  return h;
+}
+async function workerReportImage(code){
+  const D=workerReportData(code);if(!D)return;
+  showToast('📸 HD image ban rahi hai...',3000);
+  let wrap=el('img-wrap');if(!wrap){wrap=document.createElement('div');wrap.id='img-wrap';document.body.appendChild(wrap);}
+  wrap.style.cssText='position:fixed;left:-12000px;top:0;width:820px;background:#fff;';wrap.innerHTML=workerReportHTML(D);
+  try{try{await document.fonts.ready;}catch(e){}
+    const canvas=await html2canvas(wrap.firstChild,{scale:2,backgroundColor:'#ffffff',width:820,windowWidth:820,logging:false});
+    const blob=await new Promise(r=>canvas.toBlob(r,'image/png'));
+    openFolderPicker('📸 Worker Report Image','HD image ('+canvas.width+'×'+canvas.height+')',blob,'FGI_Worker_'+D.w.code+'_'+D.w.name.replace(/[^A-Za-z0-9]+/g,'_')+'.png');
+  }catch(e){showToast('❌ Image error: '+e.message,4000);}
+  finally{wrap.innerHTML='';}
 }
 
 // ============================================================
-//  PRINT
+//  PDF — vector, black & white friendly (no blank pages)
 // ============================================================
-function buildSlipHTML(e){
-  const now=new Date().toLocaleDateString('en-PK');
-  const r=v=>Math.round(v||0).toLocaleString();
-  const rs=v=>'Rs. '+r(v);
-  return `<div class="print-page"><div class="print-header"><h1>FAISAL GORAYA INDUSTRY</h1><p>SALARY SLIP &nbsp;·&nbsp; FGI Production Unit</p></div><div class="print-info"><span><strong>Worker:</strong> ${e.name}</span><span><strong>Sr #:</strong> ${e.sr}</span><span><strong>Month:</strong> ${e.month}</span><span><strong>Date:</strong> ${fmtDate(e.date)}</span><span><strong>Printed:</strong> ${now}</span></div><table class="print-table"><thead><tr><th style="width:5%">#</th><th style="width:45%">Description</th><th style="width:50%">Value</th></tr></thead><tbody><tr><td>1</td><td>Basic Salary</td><td>${rs(e.basic)}</td></tr><tr><td>2</td><td>OT Hours</td><td>${e.ot||0} hrs</td></tr><tr><td>3</td><td>Over Days (OT÷8)</td><td>${e.overDays||0} days</td></tr><tr><td>4</td><td>OH — Over Hours</td><td>${e.oh||0} hrs</td></tr><tr><td>5</td><td>Over Hrs Pay (OHP)</td><td>${rs(e.ohp)}</td></tr><tr><td>6</td><td>Days Worked</td><td>${e.days||0} days</td></tr><tr><td>7</td><td>Total Days</td><td>${e.totalDays||0} days</td></tr><tr><td>8</td><td>Monthly Salary</td><td>${rs(e.mSalary)}</td></tr><tr><td>9</td><td>Mid Month Kharcha</td><td>${rs(e.midMonth)}</td></tr><tr><td>10</td><td>Rem. Monthly Salary</td><td>${rs(e.remSalary)}</td></tr><tr><td>11</td><td>Total Advance</td><td>${rs(e.totalAdv)}</td></tr><tr><td>12</td><td>Deduction from Advance</td><td>${rs(e.deductAdv)}</td></tr><tr><td>13</td><td>Rem. Total Advance</td><td>${rs(e.remAdv)}</td></tr><tr style="background:#f0f5ff;font-weight:700;"><td>14</td><td>Total Rem. Salary (10−12)</td><td>${rs(e.totalRemSalary)}</td></tr></tbody></table><div class="print-footer"><div><div class="sig-line">Worker Signature</div></div><div style="text-align:center;font-size:8pt;color:#555;align-self:flex-end;"><em>Faisal Goraya Industry (FGI) — Official Salary Record</em></div><div><div class="sig-line">Manager Signature</div></div></div></div>`;
+const BW={head:{fillColor:[255,255,255],textColor:[0,0,0],fontStyle:'bold',lineColor:[0,0,0],lineWidth:0.35,halign:'center'},
+  body:{textColor:[0,0,0],lineColor:[60,60,60],lineWidth:0.2,cellPadding:1.8},foot:{fillColor:[255,255,255],textColor:[0,0,0],fontStyle:'bold',lineColor:[0,0,0],lineWidth:0.35}};
+function pdfHeader(doc,title,sub){
+  const W=doc.internal.pageSize.getWidth();
+  doc.setFont('times','bold');doc.setFontSize(18);doc.setTextColor(0);doc.text('FAISAL GORAYA INDUSTRY',W/2,13,{align:'center'});
+  doc.setFont('helvetica','bold');doc.setFontSize(9.5);doc.text(title,W/2,19,{align:'center'});
+  if(sub){doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.text(sub,W/2,23.5,{align:'center'});}
+  doc.setLineWidth(0.6);doc.line(10,26,W-10,26);doc.setLineWidth(0.2);doc.line(10,27,W-10,27);
+  return 30;
 }
-
-let _currentPrintHTML='';
-function openPrintModal(html){
-  _currentPrintHTML=html;
-  document.getElementById('printModalBody').innerHTML=html;
-  document.getElementById('printModal').classList.add('open');
-  document.getElementById('shareBtn').style.display=navigator.share?'':'none';
+function pdfHeadersAllPages(doc,title){const n=doc.getNumberOfPages();for(let p=2;p<=n;p++){doc.setPage(p);pdfHeader(doc,title+'  (continued)','Page '+p+' of '+n);}doc.setPage(n);}
+function pdfFooter(doc,left,right){
+  const n=doc.getNumberOfPages(),W=doc.internal.pageSize.getWidth(),H=doc.internal.pageSize.getHeight();
+  for(let p=1;p<=n;p++){doc.setPage(p);doc.setFont('helvetica','normal');doc.setFontSize(7.5);doc.setTextColor(0);doc.text('Faisal Goraya Industry (FGI) — Official Salary Record',10,H-6);doc.text('Page '+p+' of '+n,W-10,H-6,{align:'right'});}
 }
-function closePrintModal(){
-  document.getElementById('printModal').classList.remove('open');
-  document.getElementById('printModalBody').innerHTML='';
-}
-
-async function _buildPDFBlob(){
-  const isLandscape=_currentPrintHTML.includes('277mm');
-  const wrapper=document.createElement('div');
-  wrapper.style.cssText='position:fixed;left:-9999px;top:0;background:#fff;z-index:-1;';
-  wrapper.style.width=isLandscape?'1060px':'794px';
-  wrapper.innerHTML=`<style>*{box-sizing:border-box;margin:0;padding:0;}body{font-family:'Nunito',sans-serif;}.print-page{width:100%;padding:28px 34px;background:#fff;}.print-header{text-align:center;border-bottom:3px double #000;padding-bottom:10px;margin-bottom:14px;}.print-header h1{font-family:'Playfair Display',serif;font-size:22pt;font-weight:900;letter-spacing:2px;margin:0;}.print-header p{font-size:9pt;letter-spacing:2px;color:#333;margin:4px 0 0;}.print-info{display:flex;justify-content:flex-start;flex-wrap:wrap;gap:6px 16px;font-size:9pt;margin-bottom:14px;background:#f5f5f5;padding:8px 12px;border-radius:6px;}.print-table{width:100%;border-collapse:collapse;font-size:8pt;table-layout:fixed;border:1.5px solid #333;}.print-table th{background:#2a2a2a;color:#fff;padding:5px 2px;text-align:center;font-size:7.8pt;border:1px solid #555;}.print-table td{padding:4px 3px;border:1px solid #bbb;}.print-table tr:nth-child(even) td{background:#f9f9f9;}.print-grand td{background:#c9a84c!important;color:#000!important;font-weight:900!important;}.print-footer{margin-top:16px;border-top:1px solid #000;padding-top:10px;display:flex;justify-content:space-between;font-size:8pt;}.sig-line{border-top:1px solid #000;padding-top:4px;width:120px;text-align:center;font-size:8pt;margin-top:20px;}</style>${_currentPrintHTML}`;
-  document.body.appendChild(wrapper);
-  try{
-    const canvas=await html2canvas(wrapper,{scale:2,useCORS:true,backgroundColor:'#ffffff',logging:false});
-    const {jsPDF}=window.jspdf;
-    const orientation=isLandscape?'landscape':'portrait';
-    const pdf=new jsPDF({orientation,unit:'mm',format:'a4'});
-    const pageW=pdf.internal.pageSize.getWidth(),pageH=pdf.internal.pageSize.getHeight();
-    const imgW=pageW,imgH=(canvas.height*imgW)/canvas.width;
-    if(imgH<=pageH){pdf.addImage(canvas.toDataURL('image/jpeg',.95),'JPEG',0,0,imgW,imgH);}
-    else{
-      let remaining=imgH,pageNum=0;
-      while(remaining>0){
-        if(pageNum>0)pdf.addPage();
-        const sliceH=Math.min(pageH,remaining);
-        const srcY=pageNum*pageH*(canvas.height/imgH),srcH=sliceH*(canvas.height/imgH);
-        const sc=document.createElement('canvas');sc.width=canvas.width;sc.height=srcH;
-        sc.getContext('2d').drawImage(canvas,0,srcY,canvas.width,srcH,0,0,canvas.width,srcH);
-        pdf.addImage(sc.toDataURL('image/jpeg',.95),'JPEG',0,0,imgW,sliceH);
-        remaining-=pageH;pageNum++;
-      }
-    }
-    return pdf;
-  }finally{document.body.removeChild(wrapper);}
-}
-
-async function doPDF(){
-  const btn=document.getElementById('printBtn');
-  btn.textContent='⏳ PDF ban rahi hai...';btn.disabled=true;
-  try{
-    const pdf=await _buildPDFBlob();
-    const blob=pdf.output('blob');
-    const fname=`FGI-Salary-${new Date().toISOString().slice(0,10)}.pdf`;
-    openFolderPicker('📄 PDF Kahan Save Karein?','Salary slip PDF ki jagah choose karein',blob,fname);
-    closePrintModal();
-  }catch(e){showToast('⚠️ PDF error: '+e.message);}
-  finally{btn.textContent='📄 Save PDF';btn.disabled=false;}
-}
-
-async function doSharePDF(){
-  const btn=document.getElementById('shareBtn');
-  btn.textContent='⏳...';btn.disabled=true;
-  try{
-    const pdf=await _buildPDFBlob();
-    const fname=`FGI-Salary-${new Date().toISOString().slice(0,10)}.pdf`;
-    const blob=pdf.output('blob');
-    const file=new File([blob],fname,{type:'application/pdf'});
-    if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){
-      await navigator.share({files:[file],title:'FGI Salary Slip'});showToast('✅ PDF share ho gayi!');
-    }else{
-      openFolderPicker('📄 PDF Kahan Save Karein?','',blob,fname);
-      closePrintModal();
-    }
-  }catch(e){showToast('⚠️ Share error: '+e.message);}
-  finally{btn.textContent='📤 Share';btn.disabled=false;}
-}
-
-function printSingle(id){
-  const e=DB.entries.find(x=>x.id===id);if(!e)return;
-  openPrintModal(buildSlipHTML(e));
-}
+function signLines(doc,y,labels){const W=doc.internal.pageSize.getWidth(),H=doc.internal.pageSize.getHeight();if(y>H-32){doc.addPage();y=30;}y+=14;doc.setLineWidth(0.3);doc.setFont('helvetica','normal');doc.setFontSize(8.5);
+  doc.line(12,y,62,y);doc.text(labels[0],37,y+4,{align:'center'});doc.line(W-62,y,W-12,y);doc.text(labels[1],W-37,y+4,{align:'center'});}
+function newPDF(orientation){const {jsPDF}=window.jspdf;return new jsPDF({orientation,unit:'mm',format:'a4'});}
+function savePDF(doc,title,fname){openFolderPicker(title,'PDF kahan save karein?',doc.output('blob'),fname);}
 
 function printAllWorkers(){
-  const month=document.getElementById('rpt_month').value;
-  const activeCodes=DB.workers.map(w=>w.code).filter(Boolean);
-  const hasDupNames=new Set(DB.workers.map(w=>w.name.trim().toLowerCase()).filter((n,i,arr)=>arr.indexOf(n)!==i));
-  let entries=DB.entries.filter(e=>{
-    if(e.workerCode)return activeCodes.includes(e.workerCode);
-    if(hasDupNames.has(e.name.trim().toLowerCase()))return false;
-    return DB.workers.some(w=>w.name.trim()===e.name.trim());
-  });
-  if(month)entries=entries.filter(e=>e.month===month);
-  // DEDUP FIX: same workerCode + same month ka sirf latest (highest id) entry rakhein
-  const dedupMap=new Map();
-  entries.forEach(e=>{
-    const key=(e.workerCode||e.name.trim())+'|'+(e.month||'');
-    if(!dedupMap.has(key)||e.id>dedupMap.get(key).id)dedupMap.set(key,e);
-  });
-  entries=[...dedupMap.values()];
+  const month=el('rpt_month').value;const entries=monthEntries(month);
   if(!entries.length){showToast('⚠️ Koi data nahi!');return;}
-  const workerOrder=DB.workers.map(w=>w.code);
-  entries.sort((a,b)=>{const ai=workerOrder.indexOf(a.workerCode),bi=workerOrder.indexOf(b.workerCode);if(ai===-1&&bi===-1)return 0;if(ai===-1)return 1;if(bi===-1)return -1;return ai-bi;});
-  entries=entries.map((e,i)=>({...e,sr:i+1}));
-  const now=new Date().toLocaleDateString('en-PK');
-  const r=v=>Math.round(v||0).toLocaleString();
-  const totals=entries.reduce((acc,e)=>{acc.basic+=e.basic||0;acc.ot+=e.ot||0;acc.overDays+=e.overDays||0;acc.oh+=e.oh||0;acc.ohp+=e.ohp||0;acc.days+=e.days||0;acc.totalDays+=e.totalDays||0;acc.mSalary+=e.mSalary||0;acc.midMonth+=e.midMonth||0;acc.remSalary+=e.remSalary||0;acc.totalAdv+=e.totalAdv||0;acc.deductAdv+=e.deductAdv||0;acc.remAdv+=e.remAdv||0;acc.totalRemSalary+=e.totalRemSalary||0;return acc;},{basic:0,ot:0,overDays:0,oh:0,ohp:0,days:0,totalDays:0,mSalary:0,midMonth:0,remSalary:0,totalAdv:0,deductAdv:0,remAdv:0,totalRemSalary:0});
-  const rows=entries.map((e,i)=>`<tr style="font-size:8pt;background:#fff;color:#000;"><td style="text-align:center;font-weight:700;padding:4px 2px;border:1px solid #888;">${e.sr||i+1}</td><td style="font-weight:600;padding:4px 3px;border:1px solid #888;">${e.name}</td><td style="text-align:center;padding:4px 3px;border:1px solid #888;">${r(e.basic)}</td><td style="text-align:center;padding:4px 2px;border:1px solid #888;">${e.ot||0}</td><td style="text-align:center;padding:4px 2px;border:1px solid #888;">${e.overDays||0}</td><td style="text-align:center;padding:4px 2px;border:1px solid #888;">${e.oh||0}</td><td style="text-align:center;padding:4px 3px;border:1px solid #888;">${r(e.ohp)}</td><td style="text-align:center;padding:4px 2px;border:1px solid #888;">${e.days||0}</td><td style="text-align:center;font-weight:700;padding:4px 2px;border:1px solid #888;">${e.totalDays||0}</td><td style="text-align:center;padding:4px 3px;border:1px solid #888;">${r(e.mSalary)}</td><td style="text-align:center;padding:4px 3px;border:1px solid #888;">${r(e.midMonth)}</td><td style="text-align:center;font-weight:700;padding:4px 3px;border:1px solid #888;">${r(e.remSalary)}</td><td style="text-align:center;padding:4px 3px;border:1px solid #888;">${r(e.totalAdv)}</td><td style="text-align:center;padding:4px 3px;border:1px solid #888;">${r(e.deductAdv)}</td><td style="text-align:center;padding:4px 3px;border:1px solid #888;">${r(e.remAdv)}</td><td style="text-align:center;font-weight:800;padding:4px 3px;border:1px solid #888;">${r(e.totalRemSalary)}</td></tr>`).join('');
-  const backleEntries=DB.backleEntries.filter(e=>!month||e.month===month);
-  const backleTotal=backleEntries.reduce((s,e)=>s+(e.total||0),0);
-  const totalRemSalSum=Math.round(totals.totalRemSalary);
-  const grandTotal=totalRemSalSum+backleTotal;
-  const backleSection=backleEntries.length>0?`<div style="margin-top:14px;"><div style="background:#7a5a00;color:#ffe090;font-size:8pt;font-weight:800;padding:6px 10px;border-radius:4px 4px 0 0;text-transform:uppercase;">🧱 Backle — ${backleEntries.length} Entries</div><table class="print-table" style="font-size:8pt;"><thead><tr><th style="width:5%;background:#000;color:#fff;">Sr</th><th style="width:15%;background:#000;color:#fff;">Date</th><th style="width:30%;background:#000;color:#fff;">Note</th><th style="background:#000;color:#fff;">Qty</th><th style="background:#000;color:#fff;">Price</th><th style="background:#000;color:#fff;">Total</th></tr></thead><tbody>${backleEntries.map((e,i)=>`<tr style="background:#fff;color:#000;"><td style="text-align:center;">${i+1}</td><td>${e.date||''}</td><td>${e.note||'—'}</td><td style="text-align:center;">${(e.qty||0).toLocaleString()}</td><td>Rs. ${e.price||0}</td><td style="font-weight:800;">Rs. ${(e.total||0).toLocaleString()}</td></tr>`).join('')}<tr style="background:#000;color:#fff;font-weight:800;"><td colspan="5">Kul Backle</td><td>Rs. ${backleTotal.toLocaleString()}</td></tr></tbody></table></div>`:'';
-  const grandTotalBar=`<div style="margin-top:12px;background:#000;color:#fff;border-radius:6px;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;"><div style="font-size:8pt;color:#ccc;">T.Rem.Salary: <strong>Rs. ${totalRemSalSum.toLocaleString()}</strong>${backleTotal>0?` + Backle: <strong>Rs. ${backleTotal.toLocaleString()}</strong>`:''}</div><div style="font-size:11pt;font-weight:900;font-family:'Playfair Display',serif;">🏆 Grand Total: Rs. ${grandTotal.toLocaleString()}</div></div>`;
-  const html=`<div class="print-page" style="width:277mm;min-height:190mm;padding:8mm 10mm;"><div class="print-header"><h1 style="font-size:16pt;">FAISAL GORAYA INDUSTRY</h1><p>ALL WORKERS SALARY REPORT &nbsp;·&nbsp; ${month||'All Months'} &nbsp;·&nbsp; Printed: ${now}</p></div><table class="print-table" style="font-size:8pt;margin-top:8px;table-layout:fixed;width:100%;border:1.5px solid #333;"><colgroup><col style="width:3%"><col style="width:10%"><col style="width:6%"><col style="width:3.5%"><col style="width:4%"><col style="width:4%"><col style="width:5%"><col style="width:3.5%"><col style="width:4.5%"><col style="width:6.5%"><col style="width:7%"><col style="width:7%"><col style="width:6%"><col style="width:5.5%"><col style="width:6%"><col style="width:7%"></colgroup><thead><tr style="background:#000;color:#fff;font-size:7.8pt;font-weight:700;"><th style="text-align:center;padding:5px 2px;border:1px solid #555;">Sr</th><th style="text-align:center;padding:5px 3px;border:1px solid #555;">Name</th><th style="text-align:center;padding:5px 2px;border:1px solid #555;">Salary</th><th style="text-align:center;padding:5px 2px;border:1px solid #555;">OT</th><th style="text-align:center;padding:5px 2px;border:1px solid #555;">OvDay</th><th style="text-align:center;padding:5px 2px;border:1px solid #555;">OvHr</th><th style="text-align:center;padding:5px 2px;border:1px solid #555;">OvPay</th><th style="text-align:center;padding:5px 2px;border:1px solid #555;">Day</th><th style="text-align:center;padding:5px 2px;border:1px solid #555;">T.Days</th><th style="text-align:center;padding:5px 2px;border:1px solid #555;">M.Sal</th><th style="text-align:center;padding:5px 2px;border:1px solid #555;">M.Adv</th><th style="text-align:center;padding:5px 2px;border:1px solid #555;">MT.Sal</th><th style="text-align:center;padding:5px 2px;border:1px solid #555;">T.Adv</th><th style="text-align:center;padding:5px 2px;border:1px solid #555;">Dec.Adv</th><th style="text-align:center;padding:5px 2px;border:1px solid #555;">Rem.Adv</th><th style="text-align:center;padding:5px 2px;border:1px solid #555;">TR.Sal</th></tr></thead><tbody>${rows}<tr style="background:#000!important;color:#fff!important;font-weight:800;font-size:8pt;"><td colspan="2" style="text-align:center;padding:5px 2px;border:1px solid #555;background:#000!important;color:#fff!important;">TOTAL (${entries.length})</td><td style="text-align:center;padding:5px 3px;border:1px solid #555;background:#000!important;color:#fff!important;">${r(totals.basic)}</td><td style="text-align:center;padding:5px 2px;border:1px solid #555;background:#000!important;color:#fff!important;">${r(totals.ot)}</td><td style="text-align:center;padding:5px 2px;border:1px solid #555;background:#000!important;color:#fff!important;">${r(totals.overDays)}</td><td style="text-align:center;padding:5px 2px;border:1px solid #555;background:#000!important;color:#fff!important;">${r(totals.oh)}</td><td style="text-align:center;padding:5px 3px;border:1px solid #555;background:#000!important;color:#fff!important;">${r(totals.ohp)}</td><td style="text-align:center;padding:5px 2px;border:1px solid #555;background:#000!important;color:#fff!important;">${r(totals.days)}</td><td style="text-align:center;padding:5px 2px;border:1px solid #555;background:#000!important;color:#fff!important;">${r(totals.totalDays)}</td><td style="text-align:center;padding:5px 3px;border:1px solid #555;background:#000!important;color:#fff!important;">${r(totals.mSalary)}</td><td style="text-align:center;padding:5px 3px;border:1px solid #555;background:#000!important;color:#fff!important;">${r(totals.midMonth)}</td><td style="text-align:center;padding:5px 3px;border:1px solid #555;background:#000!important;color:#fff!important;">${r(totals.remSalary)}</td><td style="text-align:center;padding:5px 3px;border:1px solid #555;background:#000!important;color:#fff!important;">${r(totals.totalAdv)}</td><td style="text-align:center;padding:5px 3px;border:1px solid #555;background:#000!important;color:#fff!important;">${r(totals.deductAdv)}</td><td style="text-align:center;padding:5px 3px;border:1px solid #555;background:#000!important;color:#fff!important;">${r(totals.remAdv)}</td><td style="text-align:center;padding:5px 3px;border:1px solid #555;background:#000!important;color:#fff!important;">${r(totals.totalRemSalary)}</td></tr></tbody></table>${backleSection}${grandTotalBar}<div class="print-footer" style="margin-top:12px;"><div><div class="sig-line">Prepared By</div></div><div style="text-align:center;font-size:7pt;color:#555;align-self:flex-end;"><em>Faisal Goraya Industry (FGI) — Official Salary Record</em></div><div><div class="sig-line">Manager / Owner</div></div></div></div>`;
-  openPrintModal(html);
+  const doc=newPDF('landscape');let y=pdfHeader(doc,'ALL WORKERS SALARY REPORT  ·  '+(month?monthName(month):'All Months'),'Printed: '+fmtDate(todayStr()));
+  const T={basic:0,ot:0,overDays:0,oh:0,ohp:0,days:0,totalDays:0,mSalary:0,midMonth:0,remSalary:0,totalAdv:0,deductAdv:0,remAdv:0,totalRemSalary:0};
+  const body=entries.map((e,i)=>{Object.keys(T).forEach(k=>T[k]+=+e[k]||0);return [i+1,e.workerCode,e.name,fmt(e.basic),e.ot||0,e.overDays||0,e.oh||0,fmt(e.ohp),e.days||0,e.totalDays||0,fmt(e.mSalary),fmt(e.midMonth),fmt(e.remSalary),fmt(e.totalAdv),fmt(e.deductAdv),fmt(e.remAdv),fmt(e.totalRemSalary)];});
+  doc.autoTable({startY:y,margin:{top:30,left:8,right:8,bottom:14},theme:'grid',
+    head:[['Sr','Code','Name','Salary','OT','OvDay','OvHr','OvPay','Day','T.Days','M.Sal','M.Adv','MT.Sal','T.Adv','Dec.Adv','Rem.Adv','TR.Sal']],
+    body,foot:[['','','TOTAL ('+entries.length+')',fmt(T.basic),r0(T.ot),r0(T.overDays),r0(T.oh),fmt(T.ohp),r0(T.days),r0(T.totalDays),fmt(T.mSalary),fmt(T.midMonth),fmt(T.remSalary),fmt(T.totalAdv),fmt(T.deductAdv),fmt(T.remAdv),fmt(T.totalRemSalary)]],
+    styles:Object.assign({fontSize:9,halign:'center',font:'helvetica'},BW.body),headStyles:Object.assign({fontSize:8.5},BW.head),footStyles:Object.assign({fontSize:9,halign:'center'},BW.foot),
+    columnStyles:{2:{halign:'left',fontStyle:'bold',cellWidth:30},16:{fontStyle:'bold'}},rowPageBreak:'avoid',showHead:'everyPage',showFoot:'lastPage'});
+  y=doc.lastAutoTable.finalY+5;
+  const bl=DB.backleEntries.filter(b=>!month||b.month===month);const bt=bl.reduce((s,b)=>s+(b.total||0),0);
+  const W=doc.internal.pageSize.getWidth(),H=doc.internal.pageSize.getHeight();
+  const need=bl.length?14+7*(bl.length+2):24;if(y+need>H-14){doc.addPage();y=32;}
+  const y0=y;let boxX=8,boxW=W-16;
+  if(bl.length){doc.autoTable({startY:y,margin:{top:30,left:8,right:8,bottom:12},theme:'grid',head:[['Sr','Date','Note','Qty','Price','Total']],
+    body:bl.map((b,i)=>[i+1,fmtDate(b.date),b.note||'—',fmt(b.qty),'Rs. '+b.price,rs(b.total)]),foot:[['','','BACKLE TOTAL','','',rs(bt)]],
+    styles:Object.assign({fontSize:9},BW.body),headStyles:BW.head,footStyles:BW.foot,tableWidth:150,rowPageBreak:'avoid',showFoot:'lastPage'});
+    boxX=164;boxW=W-8-164;}
+  doc.setLineWidth(0.8);doc.rect(boxX,y0,boxW,20);doc.setFont('helvetica','bold');doc.setFontSize(9.5);doc.setTextColor(0);
+  doc.text('T.Rem.Salary: '+rs(T.totalRemSalary)+(bt?'  +  Backle: '+rs(bt):''),boxX+4,y0+7);
+  doc.setFontSize(14);doc.text('GRAND TOTAL: '+rs(r0(T.totalRemSalary)+bt),boxX+4,y0+15.5);
+  y=Math.max(y0+20,bl.length?doc.lastAutoTable.finalY:0);
+  signLines(doc,y-4,['Prepared By','Manager / Owner']);pdfHeadersAllPages(doc,'ALL WORKERS SALARY REPORT  ·  '+(month?monthName(month):'All Months'));pdfFooter(doc);
+  savePDF(doc,'📄 All Workers PDF','FGI_Salary_'+(month||'All')+'.pdf');
 }
-
-// ============================================================
-//  EXPORT / IMPORT
-// ============================================================
-function exportData(){
-  const blob=new Blob([JSON.stringify(DB,null,2)],{type:'application/json'});
-  const fname=`FGI_Salary_Backup_${new Date().toISOString().slice(0,10)}.json`;
-  openFolderPicker('💾 Backup Kahan Save Karein?','JSON backup file ki jagah choose karein',blob,fname);
+function printSingle(id){
+  const e=DB.entries.find(x=>x.id===id);if(!e)return;
+  const doc=newPDF('portrait');let y=pdfHeader(doc,'SALARY SLIP  ·  '+monthName(e.month),'Printed: '+fmtDate(todayStr()));
+  doc.autoTable({startY:y,theme:'grid',margin:{top:30,bottom:14},showHead:'everyPage',body:[['Worker',e.name,'Code',e.workerCode],['Month',monthName(e.month),'Date',fmtDate(e.date)]],styles:Object.assign({fontSize:10.5},BW.body),columnStyles:{0:{fontStyle:'bold',cellWidth:28},2:{fontStyle:'bold',cellWidth:22}}});
+  const rows=[['Basic Salary',rs(e.basic)],['OT Hours',(e.ot||0)+' hrs'],['Over Days (OT ÷ 8)',(e.overDays||0)+' days'],['OH — Over Hours',(e.oh||0)+' hrs'],['Over Hrs Pay (OHP)',rs(e.ohp)],['Days Worked',(e.days||0)+' days'],['Total Days',(e.totalDays||0)+' days'],
+    ['Monthly Salary',rs(e.mSalary)],['Mid Month Kharcha',rs(e.midMonth)],['Rem. Monthly Salary',rs(e.remSalary)],['Previous Advance',rs(e.prevAdv)],['New Advance',rs(e.newAdv)],['Total Advance',rs(e.totalAdv)],['Deduction from Advance',rs(e.deductAdv)],['Rem. Total Advance',rs(e.remAdv)]];
+  doc.autoTable({startY:doc.lastAutoTable.finalY+4,theme:'grid',margin:{top:30,bottom:14},showHead:'everyPage',head:[['#','Description','Value']],body:rows.map((r,i)=>[i+1,r[0],r[1]]),
+    foot:[['','TOTAL REM. SALARY',rs(e.totalRemSalary)]],styles:Object.assign({fontSize:11},BW.body),headStyles:BW.head,footStyles:Object.assign({fontSize:12.5},BW.foot),columnStyles:{0:{cellWidth:12,halign:'center'},2:{halign:'right',fontStyle:'bold'}}});
+  signLines(doc,doc.lastAutoTable.finalY+4,['Worker Signature','Manager Signature']);pdfHeadersAllPages(doc,'SALARY SLIP — '+e.name);pdfFooter(doc);
+  savePDF(doc,'📄 Salary Slip','FGI_Slip_'+e.workerCode+'_'+e.name.replace(/[^A-Za-z0-9]+/g,'_')+'_'+e.month+'.pdf');
 }
-
-async function importData(event){
-  const file=event.target.files[0];if(!file)return;
-  const reader=new FileReader();
-  reader.onload=async e=>{
-    try{
-      const data=JSON.parse(e.target.result);
-      if(data.entries!==undefined){
-        DB=data;
-        if(!Array.isArray(DB.backleEntries))DB.backleEntries=[];
-        if(!DB.nextBackleId)DB.nextBackleId=1;
-        if(DB.lastBacklePrice===undefined)DB.lastBacklePrice='';
-        if(!DB.nextWorkerCode)DB.nextWorkerCode=1;
-        if(!Array.isArray(DB.midMonthRecords))DB.midMonthRecords=[];
-        if(!DB.nextMidMonthId)DB.nextMidMonthId=1;
-        await saveDB();initDataEntry();renderWorkerDatalist();
-        const msg=document.getElementById('importMsg');
-        if(msg){msg.style.color='var(--green)';msg.textContent=`✅ Import successful! ${DB.workers.length} workers, ${DB.entries.length} entries.`;}
-        showToast('✅ Data import ho gaya!');updateDbStatus();
-      }else{showToast('❌ Invalid backup file!');}
-    }catch{showToast('❌ File read error!');}
-  };
-  reader.readAsText(file);
-  event.target.value='';
-}
-
-// ============================================================
-//  TOAST
-// ============================================================
-let toastTimer;
-function showToast(msg){
-  const t=document.getElementById('toast');
-  t.textContent=msg;t.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer=setTimeout(()=>t.classList.remove('show'),3000);
-}
-
-// ============================================================
-//  BACKLE PAGE
-// ============================================================
-function initBackle(){
-  const today=new Date();
-  document.getElementById('b_date').value=today.toISOString().slice(0,10);
-  document.getElementById('b_month').value=today.toISOString().slice(0,7);
-  if(DB.lastBacklePrice)document.getElementById('b_price').value=DB.lastBacklePrice;
-  populateBackleEditSelect();renderBackleTable();
-}
-function calcBackle(){
-  const qty=parseFloat(document.getElementById('b_qty').value)||0;
-  const price=parseFloat(document.getElementById('b_price').value)||0;
-  document.getElementById('b_total').value=qty&&price?Math.round(qty*price):'';
-}
-async function saveBackleEntry(){
-  const qty=parseFloat(document.getElementById('b_qty').value)||0;
-  const price=parseFloat(document.getElementById('b_price').value)||0;
-  if(!qty||!price){showToast('⚠️ Qty aur Price daalna zaroori hai!');return;}
-  const entry={id:DB.nextBackleId,date:document.getElementById('b_date').value,month:document.getElementById('b_month').value,note:document.getElementById('b_note').value.trim(),qty,price,total:Math.round(qty*price)};
-  const mode=document.getElementById('backleMode').value;
-  if(mode==='edit'){
-    const selId=parseInt(document.getElementById('backleEditSelect').value);
-    const idx=DB.backleEntries.findIndex(e=>e.id===selId);
-    if(idx>-1){entry.id=selId;DB.backleEntries[idx]=entry;}
-  }else{DB.backleEntries.push(entry);DB.nextBackleId++;}
-  DB.lastBacklePrice=price;
-  await saveDB();renderBackleTable();populateBackleEditSelect();
-  if(mode==='new')clearBackleForm();
-  showToast('✅ Backle entry saved!');
-  document.getElementById('backleSaveMsg').textContent=`✅ Saved! Total: Rs. ${entry.total.toLocaleString()}`;
-  setTimeout(()=>document.getElementById('backleSaveMsg').textContent='',3000);
-}
-function clearBackleForm(){
-  document.getElementById('b_qty').value='';document.getElementById('b_total').value='';document.getElementById('b_note').value='';
-  const today=new Date();
-  document.getElementById('b_date').value=today.toISOString().slice(0,10);
-  document.getElementById('b_month').value=today.toISOString().slice(0,7);
-  if(DB.lastBacklePrice)document.getElementById('b_price').value=DB.lastBacklePrice;
-}
-function toggleBackleMode(){
-  const mode=document.getElementById('backleMode').value;
-  const sel=document.getElementById('backleEditSelect');
-  if(mode==='edit'){sel.style.display='';populateBackleEditSelect();}else{sel.style.display='none';clearBackleForm();}
-}
-function populateBackleEditSelect(){
-  const sel=document.getElementById('backleEditSelect');
-  sel.innerHTML='<option value="">-- Select --</option>';
-  [...DB.backleEntries].reverse().forEach(e=>{const opt=document.createElement('option');opt.value=e.id;opt.textContent=`#${e.id} | ${e.month} | Qty:${e.qty} | Rs.${e.total.toLocaleString()}`;sel.appendChild(opt);});
-}
-function loadBackleEdit(){
-  const id=parseInt(document.getElementById('backleEditSelect').value);if(!id)return;
-  const e=DB.backleEntries.find(x=>x.id===id);if(!e)return;
-  document.getElementById('b_date').value=e.date||'';document.getElementById('b_month').value=e.month||'';
-  document.getElementById('b_note').value=e.note||'';document.getElementById('b_qty').value=e.qty;
-  document.getElementById('b_price').value=e.price;document.getElementById('b_total').value=e.total;
-}
-function renderBackleTable(){
-  const tbody=document.getElementById('backleTbody');tbody.innerHTML='';
-  if(!DB.backleEntries.length){tbody.innerHTML='<tr><td colspan="8" style="text-align:center;padding:18px;color:var(--slate);">Koi backle entry nahi...</td></tr>';return;}
-  let grandTotal=0;
-  [...DB.backleEntries].reverse().forEach((e,i)=>{
-    grandTotal+=e.total;
-    const tr=document.createElement('tr');
-    tr.innerHTML=`<td>${DB.backleEntries.length-i}</td><td>${fmtDate(e.date)||''}</td><td><span class="month-badge">${e.month}</span></td><td style="color:var(--slate);">${e.note||'—'}</td><td style="text-align:center;font-weight:700;">${e.qty.toLocaleString()}</td><td>Rs. ${e.price}</td><td style="font-weight:800;color:#8a6010;">Rs. ${e.total.toLocaleString()}</td><td><button class="btn btn-danger btn-sm" onclick="deleteBackleEntry(${e.id})">🗑️</button></td>`;
-    tbody.appendChild(tr);
-  });
-  const tr=document.createElement('tr');
-  tr.style.background='var(--navy)';tr.style.color='var(--gold)';
-  tr.innerHTML=`<td colspan="6" style="font-weight:800;text-align:right;padding:10px 12px;">Kul Total:</td><td style="font-weight:900;font-size:15px;padding:10px 12px;">Rs. ${grandTotal.toLocaleString()}</td><td></td>`;
-  tbody.appendChild(tr);
-}
-async function deleteBackleEntry(id){
-  if(!confirm('Yeh backle entry delete karni hai?'))return;
-  DB.backleEntries=DB.backleEntries.filter(e=>e.id!==id);
-  await saveDB();renderBackleTable();populateBackleEditSelect();showToast('🗑️ Entry deleted!');
-}
-
-// ============================================================
-//  CALCULATOR
-// ============================================================
-let calcRows=[];
-function initCalculator(){
-  renderWorkerDatalist();renderCalcTable();
-}
-function calcAutoLoad(){
-  const name=document.getElementById('calc_name').value.trim();
-  const worker=DB.workers.find(w=>w.name.toLowerCase()===name.toLowerCase());
-  if(worker&&worker.basic)document.getElementById('calc_basic').value=worker.basic;
-  calcPreview();
-}
-function calcPreview(){
-  const basic=parseFloat(document.getElementById('calc_basic').value)||0;
-  document.getElementById('calc_perDay').value=basic>0?Math.round(basic/30):'';
-  document.getElementById('calc_perHour').value=basic>0?Math.round(basic/30/8):'';
-}
-function addCalcRow(){
-  const name=document.getElementById('calc_name').value.trim();
-  const basic=parseFloat(document.getElementById('calc_basic').value)||0;
-  if(!name){showToast('⚠️ Worker ka naam daalen!');return;}
-  if(!basic){showToast('⚠️ Basic salary daalen!');return;}
-  if(calcRows.find(r=>r.name.toLowerCase()===name.toLowerCase())){showToast('⚠️ Already list mein hai!');return;}
-  calcRows.push({name,basic,perDay:Math.round(basic/30),perHour:Math.round(basic/30/8)});
-  renderCalcTable();clearCalcInput();showToast(`✅ ${name} add ho gaya!`);
-}
-function removeCalcRow(idx){calcRows.splice(idx,1);renderCalcTable();}
-function clearCalcInput(){
-  document.getElementById('calc_name').value='';document.getElementById('calc_basic').value='';
-  document.getElementById('calc_perDay').value='';document.getElementById('calc_perHour').value='';
-}
-function renderCalcTable(){
-  const card=document.getElementById('calcListCard');const tbody=document.getElementById('calcTbody');const summary=document.getElementById('calcSummary');
-  if(!calcRows.length){card.style.display='none';return;}
-  card.style.display='';tbody.innerHTML='';
-  let totalBasic=0,totalPerDay=0,totalPerHour=0;
-  calcRows.forEach((r,i)=>{
-    totalBasic+=r.basic;totalPerDay+=r.perDay;totalPerHour+=r.perHour;
-    const tr=document.createElement('tr');
-    tr.innerHTML=`<td style="text-align:center;font-weight:700;">${i+1}</td><td><strong>${r.name}</strong></td><td>Rs. ${r.basic.toLocaleString()}</td><td style="font-weight:800;color:var(--navy);">Rs. ${r.perDay.toLocaleString()}</td><td style="font-weight:800;color:var(--slate);">Rs. ${r.perHour.toLocaleString()}</td><td><button class="btn btn-danger btn-sm" onclick="removeCalcRow(${i})">🗑️</button></td>`;
-    tbody.appendChild(tr);
-  });
-  const tr=document.createElement('tr');tr.style.background='var(--navy)';tr.style.color='var(--gold)';
-  tr.innerHTML=`<td colspan="2" style="font-weight:800;text-align:center;padding:10px;">TOTAL (${calcRows.length})</td><td style="font-weight:800;">Rs. ${totalBasic.toLocaleString()}</td><td style="font-weight:900;font-size:15px;">Rs. ${totalPerDay.toLocaleString()}</td><td style="font-weight:900;font-size:15px;">Rs. ${totalPerHour.toLocaleString()}</td><td></td>`;
-  tbody.appendChild(tr);
-  summary.innerHTML=`<div style="background:var(--white);border-radius:12px;padding:14px;box-shadow:var(--shadow);border-left:4px solid var(--navy);"><div style="font-size:11px;color:var(--slate);font-weight:700;text-transform:uppercase;">Total Workers</div><div style="font-size:26px;font-weight:900;color:var(--navy);margin-top:4px;">${calcRows.length}</div></div><div style="background:var(--white);border-radius:12px;padding:14px;box-shadow:var(--shadow);border-left:4px solid var(--gold);"><div style="font-size:11px;color:var(--slate);font-weight:700;text-transform:uppercase;">Kul Per Day</div><div style="font-size:26px;font-weight:900;color:var(--navy);margin-top:4px;">Rs. ${totalPerDay.toLocaleString()}</div></div><div style="background:var(--white);border-radius:12px;padding:14px;box-shadow:var(--shadow);border-left:4px solid var(--green);"><div style="font-size:11px;color:var(--slate);font-weight:700;text-transform:uppercase;">Kul Per Hour</div><div style="font-size:26px;font-weight:900;color:var(--navy);margin-top:4px;">Rs. ${totalPerHour.toLocaleString()}</div></div>`;
+function workerReportPDF(code){
+  const D=workerReportData(code);if(!D)return;const w=D.w;
+  const doc=newPDF('portrait');let y=pdfHeader(doc,'WORKER REPORT — Advance & Mid Month Khata','Printed: '+fmtDate(todayStr()));
+  const st=Object.assign({fontSize:9.5},BW.body);
+  doc.autoTable({startY:y,theme:'grid',margin:{top:30,bottom:14},showHead:'everyPage',body:[['Code',w.code,'Naam',w.name],['Join',fmtDate(w.joinDate),'Basic',rs(w.basic)],['Status',w.left?'Chhor gaya ('+fmtDate(w.leaveDate)+')':'Kaam kar raha hai','Baqi Advance',D.balance>0.5?rs(D.balance):'CLEAR']],styles:st,columnStyles:{0:{fontStyle:'bold',cellWidth:24},2:{fontStyle:'bold',cellWidth:28}}});
+  doc.autoTable({startY:doc.lastAutoTable.finalY+3,theme:'grid',margin:{top:30,bottom:14},showHead:'everyPage',head:[['Kul Advance Liya','Wapas (Salary se)','Baqi Advance','Kul Mid Month']],body:[[rs(D.taken),rs(D.returned),D.balance>0.5?rs(D.balance):'CLEAR',rs(D.midTotal)]],styles:Object.assign({},st,{fontSize:11,fontStyle:'bold',halign:'center'}),headStyles:BW.head});
+  const sec=(t)=>{let yy=doc.lastAutoTable.finalY+7;if(yy>265){doc.addPage();yy=34;}doc.setFont('helvetica','bold');doc.setFontSize(10.5);doc.text(t,10,yy);return yy+2;};
+  doc.autoTable({startY:sec('1) ADVANCE KHATA (liya / wapas)'),theme:'grid',margin:{top:30,bottom:14},showHead:'everyPage',head:[['#','Date','Tafseel / Wajah','Liya','Wapas','Baqi']],
+    body:D.ev.length?D.ev.map((x,i)=>[i+1,x.date,x.desc,x.taken?fmt(x.taken):'—',x.ret?fmt(x.ret):'—',fmt(x.bal)]):[['—','—','Koi advance nahi','—','—','0']],
+    foot:[['','','KUL',fmt(D.taken),fmt(D.returned),fmt(D.balance)]],styles:st,headStyles:BW.head,footStyles:BW.foot,columnStyles:{0:{cellWidth:9},3:{halign:'right'},4:{halign:'right'},5:{halign:'right',fontStyle:'bold'}},rowPageBreak:'avoid',showFoot:'lastPage'});
+  doc.autoTable({startY:sec('2) MID MONTH KHARCHA'),theme:'grid',margin:{top:30,bottom:14},showHead:'everyPage',head:[['#','Date','Mahina','Note','Raqam']],
+    body:D.mids.length?D.mids.map((r,i)=>[i+1,fmtDate(r.date),monthName(r.month),r.note||'—',fmt(r.midKharcha)]):[['—','—','—','Koi record nahi','0']],
+    foot:[['','','','KUL',fmt(D.midTotal)]],styles:st,headStyles:BW.head,footStyles:BW.foot,columnStyles:{4:{halign:'right'}},rowPageBreak:'avoid',showFoot:'lastPage'});
+  doc.autoTable({startY:sec('3) SALARY RECORD'),theme:'grid',margin:{top:30,bottom:14},showHead:'everyPage',head:[['Mahina','Days','M.Salary','Mid Month','Adv Katauti','Rem. Adv','T.R.Salary']],
+    body:D.ents.length?D.ents.map(e=>[monthName(e.month),e.totalDays||0,fmt(e.mSalary),fmt(e.midMonth),fmt(e.deductAdv),fmt(e.remAdv),fmt(e.totalRemSalary)]):[['—','','','','','','Koi entry nahi']],
+    styles:Object.assign({},st,{halign:'right'}),headStyles:BW.head,columnStyles:{0:{halign:'left'},6:{fontStyle:'bold'}},rowPageBreak:'avoid'});
+  signLines(doc,doc.lastAutoTable.finalY+2,['Worker Signature','Manager / Owner']);pdfHeadersAllPages(doc,'WORKER REPORT — '+w.code+' '+w.name);pdfFooter(doc);
+  savePDF(doc,'📄 Worker Report PDF','FGI_Worker_'+w.code+'_'+w.name.replace(/[^A-Za-z0-9]+/g,'_')+'.pdf');
 }
 function printCalcReport(){
   if(!calcRows.length){showToast('⚠️ Pehle workers add karo!');return;}
-  const now=new Date().toLocaleDateString('en-PK');
-  const rows=calcRows.map((r,i)=>`<tr><td style="text-align:center;">${i+1}</td><td style="font-weight:700;">${r.name}</td><td>Rs. ${r.basic.toLocaleString()}</td><td style="font-weight:800;">Rs. ${r.perDay.toLocaleString()}</td><td style="font-weight:800;">Rs. ${r.perHour.toLocaleString()}</td></tr>`).join('');
-  const totalBasic=calcRows.reduce((s,r)=>s+r.basic,0),totalPerDay=calcRows.reduce((s,r)=>s+r.perDay,0),totalPerHour=calcRows.reduce((s,r)=>s+r.perHour,0);
-  const html=`<div class="print-page"><div class="print-header"><h1>FAISAL GORAYA INDUSTRY</h1><p>PER DAY / PER HOUR CALCULATOR &nbsp;·&nbsp; Printed: ${now}</p></div><table class="print-table" style="font-size:10pt;margin-top:14px;"><thead><tr><th style="text-align:center;width:5%">#</th><th style="width:35%">Worker Name</th><th>Basic Salary</th><th>Per Day</th><th>Per Hour</th></tr></thead><tbody>${rows}<tr style="background:#0f2744;color:#c9a84c;font-weight:900;font-size:11pt;"><td colspan="2" style="text-align:center;">TOTAL (${calcRows.length})</td><td>Rs. ${totalBasic.toLocaleString()}</td><td>Rs. ${totalPerDay.toLocaleString()}</td><td>Rs. ${totalPerHour.toLocaleString()}</td></tr></tbody></table><div class="print-footer" style="margin-top:20px;"><div><div class="sig-line">Prepared By</div></div><div style="text-align:center;font-size:8pt;color:#555;align-self:flex-end;"><em>Faisal Goraya Industry (FGI)</em></div><div><div class="sig-line">Manager / Owner</div></div></div></div>`;
-  openPrintModal(html);
+  const doc=newPDF('portrait');const y=pdfHeader(doc,'PER DAY / PER HOUR CALCULATOR','Printed: '+fmtDate(todayStr()));
+  const tb=calcRows.reduce((s,r)=>s+r.basic,0),td=calcRows.reduce((s,r)=>s+r.perDay,0),th=calcRows.reduce((s,r)=>s+r.perHour,0);
+  doc.autoTable({startY:y,theme:'grid',margin:{top:30,bottom:14},showHead:'everyPage',head:[['#','Worker Name','Basic Salary','Per Day','Per Hour']],body:calcRows.map((r,i)=>[i+1,r.name,rs(r.basic),rs(r.perDay),rs(r.perHour)]),
+    foot:[['','TOTAL ('+calcRows.length+')',rs(tb),rs(td),rs(th)]],styles:Object.assign({fontSize:10.5},BW.body),headStyles:BW.head,footStyles:BW.foot,showFoot:'lastPage'});
+  signLines(doc,doc.lastAutoTable.finalY+2,['Prepared By','Manager / Owner']);pdfHeadersAllPages(doc,'PER DAY / PER HOUR CALCULATOR');pdfFooter(doc);savePDF(doc,'📄 Calculator PDF','FGI_PerDay_'+todayStr()+'.pdf');
 }
 
 // ============================================================
-//  MID MONTH
+//  BACKUP / RESTORE (old backups are migrated automatically)
 // ============================================================
-function initMidMonth(){
-  const today=new Date();
-  document.getElementById('mm_date').value=today.toISOString().slice(0,10);
-  document.getElementById('mm_month').value=today.toISOString().slice(0,7);
-  renderWorkerDatalist();
-  const months=[...new Set(DB.midMonthRecords.map(r=>r.month))].sort().reverse();
-  const sel=document.getElementById('mmTableMonth');const cur=sel.value;
-  sel.innerHTML='<option value="">Sab months</option>';
-  months.forEach(m=>{const o=document.createElement('option');o.value=m;o.textContent=m;if(m===cur)o.selected=true;sel.appendChild(o);});
-  renderMidMonthTable();
+function exportData(){refreshWorkerRemAdv();openFolderPicker('💾 Backup Kahan Save Karein?','JSON backup',new Blob([JSON.stringify(DB,null,2)],{type:'application/json'}),'FGI_Salary_Backup_'+todayStr()+'.json');}
+async function importData(event){
+  const file=event.target.files[0];event.target.value='';if(!file)return;
+  let data;try{data=JSON.parse(await file.text());}catch(e){showToast('❌ File read error!');return;}
+  if(!data||!Array.isArray(data.entries)||!Array.isArray(data.workers)){showToast('❌ Invalid backup file! (workers/entries nahi)');return;}
+  const isOld=data.schema!==2;
+  if(!confirm('Backup import: '+data.workers.length+' workers, '+data.entries.length+' entries'+(isOld?' (purana version — khud v18 mein shift hoga)':'')+'.\n\nCurrent SAARA data is se badal jaye ga. (Current data ka backup pehle khud ban jaye ga.)\n\nImport karein?'))return;
+  await idbSave('backup_before_import',JSON.stringify(DB));
+  DB=normalizeDB(isOld?migrateToV18(data):data);await saveDB();
+  fillAllWorkerSelects();initDataEntry();updateDbStatus();
+  el('importMsg').style.color='var(--green)';el('importMsg').textContent='✅ Import: '+activeWorkers().length+' active + '+leftWorkers().length+' left workers, '+DB.entries.length+' entries.';
+  showToast('✅ Data import ho gaya!');
 }
-function onMidMonthWorkerSelect(){
-  const name=document.getElementById('mm_workerName').value.trim();
-  const worker=DB.workers.find(w=>w.name.toLowerCase()===name.toLowerCase());
-  if(worker){
-    document.getElementById('mm_basicDisplay').textContent='Rs. '+(worker.basic||0).toLocaleString();
-    document.getElementById('mm_remAdvDisplay').textContent='Rs. '+(worker.remAdv||0).toLocaleString();
-    const lastMid=[...DB.midMonthRecords].filter(r=>r.workerCode===worker.code).sort((a,b)=>b.id-a.id)[0];
-    document.getElementById('mm_lastMidDisplay').textContent=lastMid?'Rs. '+(lastMid.midKharcha||0).toLocaleString():'(koi nahi)';
-  }else{
-    document.getElementById('mm_basicDisplay').textContent='—';
-    document.getElementById('mm_lastMidDisplay').textContent='—';
-    document.getElementById('mm_remAdvDisplay').textContent='—';
-  }
-}
-let _mmEditId=null;
-async function saveMidMonthRecord(){
-  const name=document.getElementById('mm_workerName').value.trim();
-  if(!name){showToast('⚠️ Worker ka naam daalen!');return;}
-  const worker=DB.workers.find(w=>w.name.toLowerCase()===name.toLowerCase());
-  if(!worker){showToast('⚠️ Yeh worker system mein nahi hai!');return;}
-  const kharcha=parseFloat(document.getElementById('mm_kharcha').value)||0;
-  const note=document.getElementById('mm_note').value.trim();
-  const date=document.getElementById('mm_date').value;
-  const month=document.getElementById('mm_month').value;
-  if(_mmEditId!==null){
-    const idx=DB.midMonthRecords.findIndex(r=>r.id===_mmEditId);
-    if(idx>-1){DB.midMonthRecords[idx]={...DB.midMonthRecords[idx],date,month,workerCode:worker.code,workerName:worker.name,salary:worker.basic||0,remAdv:worker.remAdv||0,midKharcha:kharcha,note};}
-    _mmEditId=null;
-    const btn=document.getElementById('mm-save-btn');
-    btn.textContent='💾 Save';btn.style.background='var(--navy)';
-    document.getElementById('mmSaveMsg').textContent='✅ Record update ho gaya!';
-  }else{
-    const rec={id:DB.nextMidMonthId++,date,month,workerCode:worker.code,workerName:worker.name,salary:worker.basic||0,remAdv:worker.remAdv||0,midKharcha:kharcha,note};
-    DB.midMonthRecords.push(rec);
-    document.getElementById('mmSaveMsg').textContent=`✅ ${worker.name} ka mid month record saved!`;
-  }
-  await saveDB();
-  setTimeout(()=>document.getElementById('mmSaveMsg').textContent='',3500);
-  showToast('✅ Mid Month record saved!');
-  initMidMonth();onMidMonthWorkerSelect();
-}
-function editMidMonthRecord(id){
-  const r=DB.midMonthRecords.find(x=>x.id===id);if(!r)return;
-  _mmEditId=id;
-  document.getElementById('mm_workerName').value=r.workerName||'';
-  document.getElementById('mm_date').value=r.date||'';
-  document.getElementById('mm_month').value=r.month||'';
-  document.getElementById('mm_kharcha').value=r.midKharcha||'';
-  document.getElementById('mm_note').value=r.note||'';
-  onMidMonthWorkerSelect();
-  const btn=document.getElementById('mm-save-btn');
-  btn.textContent='✏️ Update';btn.style.background='var(--green)';
-  showToast('✏️ Edit mode — data load ho gaya!');
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-function clearMidMonthForm(){
-  _mmEditId=null;
-  document.getElementById('mm_workerName').value='';document.getElementById('mm_kharcha').value='';document.getElementById('mm_note').value='';
-  document.getElementById('mm_basicDisplay').textContent='—';document.getElementById('mm_lastMidDisplay').textContent='—';document.getElementById('mm_remAdvDisplay').textContent='—';
-  const btn=document.getElementById('mm-save-btn');
-  if(btn){btn.textContent='💾 Save';btn.style.background='var(--navy)';}
-}
-function renderMidMonthTable(){
-  const tbody=document.getElementById('mmTableBody');if(!tbody)return;
-  const search=(document.getElementById('mmTableSearch')?.value||'').toLowerCase();
-  const monthFilter=document.getElementById('mmTableMonth')?.value||'';
-  const records=[...DB.midMonthRecords].filter(r=>{const nm=!search||r.workerName.toLowerCase().includes(search);const mm=!monthFilter||r.month===monthFilter;return nm&&mm;}).sort((a,b)=>b.id-a.id);
-  tbody.innerHTML='';
-  if(!records.length){tbody.innerHTML='<tr><td colspan="10" style="text-align:center;padding:20px;color:var(--slate);">Koi record nahi mila...</td></tr>';return;}
-  records.forEach((r,i)=>{
-    const tr=document.createElement('tr');
-    tr.innerHTML=`<td style="font-weight:700;text-align:center;">${records.length-i}</td><td style="white-space:nowrap;">${fmtDate(r.date)}</td><td><span class="month-badge">${r.month}</span></td><td><strong>${r.workerName}</strong></td><td>Rs. ${(r.salary||0).toLocaleString()}</td><td style="color:#8a6010;font-weight:800;">Rs. ${(r.midKharcha||0).toLocaleString()}</td><td style="color:var(--red);font-weight:700;">Rs. ${(r.remAdv||0).toLocaleString()}</td><td style="color:var(--slate);font-size:12px;">${r.note||'—'}</td><td><button class="btn btn-gold btn-sm" onclick="editMidMonthRecord(${r.id})">✏️</button></td><td><button class="btn btn-danger btn-sm" onclick="deleteMidMonthRecord(${r.id})">🗑️</button></td>`;
-    tbody.appendChild(tr);
-  });
-}
-async function deleteMidMonthRecord(id){
-  if(!confirm('Yeh record delete karni hai?'))return;
-  DB.midMonthRecords=DB.midMonthRecords.filter(r=>r.id!==id);
-  if(_mmEditId===id){clearMidMonthForm();}
-  await saveDB();renderMidMonthTable();showToast('🗑️ Record deleted!');
-}
+async function downloadStored(key,fname,label){const raw=await idbLoad(key);if(!raw){showToast('ℹ️ '+label+' maujood nahi');return;}openFolderPicker('⏪ '+label,'Is file ko Import karke wapas la sakte hain',new Blob([raw],{type:'application/json'}),fname);}
+function downloadArchive(){if(!DB.archivedEntries.length){showToast('ℹ️ Archive khali hai');return;}openFolderPicker('🗄️ Archive','Duplicate / delete ki hui entries',new Blob([JSON.stringify(DB.archivedEntries,null,2)],{type:'application/json'}),'FGI_Salary_Archive_'+todayStr()+'.json');}
+function renderArchiveInfo(){const e=el('archiveInfo');if(e)e.textContent=DB.archivedEntries.length+' entries archive mein (duplicate ya delete ki hui) — koi record zaya nahi hua.';}
 
-// ============================================================
-//  REPORT MODE SWITCH
-// ============================================================
-function switchReportMode(mode){
-  document.getElementById('rptSectionMonthly').style.display=mode==='monthly'?'':'none';
-  document.getElementById('rptSectionRemAdv').style.display=mode==='remadv'?'':'none';
-  document.getElementById('rptModeBtn1').className=mode==='monthly'?'btn btn-save btn-sm':'btn btn-clear btn-sm';
-  document.getElementById('rptModeBtn2').className=mode==='remadv'?'btn btn-save btn-sm':'btn btn-clear btn-sm';
-  if(mode==='remadv')renderRemAdvOverview();
-}
-function renderRemAdvOverview(){
-  const search=(document.getElementById('rptRemAdvSearch')?.value||'').toLowerCase();
-  const container=document.getElementById('remAdvCards');container.innerHTML='';
-  const workers=DB.workers.filter(w=>!search||w.name.toLowerCase().includes(search));
-  if(!workers.length){container.innerHTML='<div style="color:var(--slate);padding:20px;">Koi worker nahi mila.</div>';return;}
-  let totalRemAdv=0;
-  workers.forEach(w=>{
-    const remAdv=w.remAdv||0;totalRemAdv+=remAdv;
-    const card=document.createElement('div');card.className='report-worker-card';
-    card.innerHTML=`<div class="worker-name">👷 ${w.name}</div><div style="margin-bottom:8px;"><span style="background:var(--navy);color:var(--gold);padding:2px 8px;border-radius:5px;font-size:11px;font-weight:800;">${w.code||'—'}</span></div><div style="margin-top:8px;"><div style="font-size:10px;color:var(--slate);font-weight:700;text-transform:uppercase;">Basic Salary</div><div style="font-size:16px;font-weight:800;color:var(--navy);">Rs. ${(w.basic||0).toLocaleString()}</div></div><div style="margin-top:8px;"><div style="font-size:10px;color:var(--slate);font-weight:700;text-transform:uppercase;">Rem. Total Advance</div><div style="font-size:20px;font-weight:900;color:${remAdv>0?'var(--red)':'var(--green)'};">Rs. ${remAdv.toLocaleString()}</div></div>`;
-    container.appendChild(card);
-  });
-  const tc=document.createElement('div');tc.style.cssText='grid-column:1/-1;';
-  tc.innerHTML=`<div style="background:linear-gradient(135deg,var(--navy),#1a3a60);border-radius:14px;padding:20px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;"><div style="color:#adc4e0;font-size:11px;font-weight:700;text-transform:uppercase;">Kul Workers: ${workers.length}</div><div style="text-align:right;"><div style="color:#adc4e0;font-size:11px;font-weight:700;text-transform:uppercase;">💳 Total Rem. Advance</div><div style="color:var(--gold);font-family:'Playfair Display',serif;font-size:28px;font-weight:900;">Rs. ${totalRemAdv.toLocaleString()}</div></div></div>`;
-  container.appendChild(tc);
-}
+// ---------- offline bar ----------
+(function(){const bar=el('offline-bar');function upd(){bar.style.display=navigator.onLine?'none':'block';}window.addEventListener('online',upd);window.addEventListener('offline',upd);upd();})();
+el('sq-question-sel').onchange=function(){el('sq-custom-row').style.display=this.value==='custom'?'block':'none';};
+el('workerModal').addEventListener('click',function(e){if(e.target===this)closeWorkerModal();});
+if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js',{scope:'./'}).catch(e=>console.warn('SW',e.message)));
 
-// ============================================================
-//  HELPERS
-// ============================================================
-function fmtDate(str){
-  if(!str)return'—';
-  if(/^\d{4}-\d{2}-\d{2}$/.test(str)){const[y,m,d]=str.split('-');return`${d}-${m}-${y}`;}
-  return str;
-}
-
-// ============================================================
-//  OFFLINE BAR
-// ============================================================
-(function(){
-  const bar=document.getElementById('offline-bar');
-  function upd(){bar.style.display=navigator.onLine?'none':'block';}
-  window.addEventListener('online',upd);window.addEventListener('offline',upd);upd();
-})();
 </script>
 </body>
 </html>
