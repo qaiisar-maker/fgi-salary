@@ -1,15 +1,25 @@
-FGI SALARY SYSTEM v18 — README
-==============================
-Faisal Goraya Industry, Ali Pur Chattha | Tayyar: 20-11-2026
+FGI SALARY SYSTEM v18.1 — README
+================================
+Faisal Goraya Industry, Ali Pur Chattha | Tayyar: 22-11-2026 (v18: 20-11-2026)
 Repo: github.com/qaiisar-maker/fgi-salary (GitHub Pages)
 
 1. ZIP MEIN KYA HAI
   index.html   poori app
-  sw.js        service worker (CACHE 'fgi-salary-v18')
+  sw.js        service worker (CACHE 'fgi-salary-v18.1')
   manifest.json + icons/   asli install (PNG icons)
   lib/         jsPDF, autotable, html2canvas (koi CDN nahi)
   fonts/       Nunito + Playfair Display
-  README.txt, FGI Salary v18 Test Report.txt
+  README.txt, FGI Salary v18.1 Test Report.txt
+
+v18.1 MEIN NAYA (22-11-2026)
+  - Salary entry Mid Month kharcha aur Advance ke saath khud update hoti hai — pehle,
+    salary ke waqt, ya baad mein likha ho, sab jud jata hai (formula wahi).
+  - Salary form mein "Kharcha darj karein" / "Advance darj karein" button.
+  - Phone browser ka auto-translate band; Worker Report phone par side scroll.
+  - Kisi worker ki salary reh jaye to alert (Entry page, Report, PDF, app kholte waqt).
+  - Upload: sirf index.html, sw.js, README.txt aur Test Report badle hain
+    (lib/ fonts/ icons/ wahi hain — dobara daal dein to bhi koi harj nahi).
+    Purana "FGI Salary v18 Test Report.txt" GitHub se delete kar dein.
 
 2. GITHUB PAR UPLOAD
   1) Pehle PURANI app se Settings > Export / Backup karke JSON mehfooz karein.

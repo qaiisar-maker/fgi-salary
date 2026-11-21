@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ur" dir="ltr">
+<html lang="en" dir="ltr" translate="no" class="notranslate">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
@@ -7,11 +7,12 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="google" content="notranslate">
 <meta name="apple-mobile-web-app-title" content="FGI Salary">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
-<title>FGI Salary System v18</title>
+<title>FGI Salary System v18.1</title>
 <link rel="stylesheet" href="fonts/fonts.css">
 <script src="lib/jspdf.umd.min.js"></script>
 <script src="lib/jspdf.plugin.autotable.min.js"></script>
@@ -190,9 +191,19 @@ button:disabled{opacity:.5;cursor:not-allowed;}
 .wr-box{flex:1;min-width:120px;}
 @media(max-width:520px){.field[style*="span 2"]{grid-column:1/-1!important;}}
 
+.wr-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid #e3e7ee;border-radius:8px;}
+.wr-scroll #wrPrintable{min-width:640px;}
+.qa-link{display:inline-block;margin-top:5px;background:none;border:1.5px dashed var(--navy);color:var(--navy);border-radius:8px;padding:4px 9px;font-size:12px;font-weight:800;cursor:pointer;font-family:inherit;}
+.qa-link:active{background:#eef2f8;}
+#toast{white-space:pre-line;max-width:min(92vw,440px);}
+
+.miss-box{background:#fff1f1;border:2px solid #d43a3a;color:#8a1c1c;border-radius:10px;padding:10px 12px;font-size:13px;line-height:1.5;margin-bottom:10px;}
+.ok-box{background:#effaf3;border:1.5px solid #2e9a5a;color:#1d6b3c;border-radius:10px;padding:8px 12px;font-size:13px;font-weight:700;margin-bottom:10px;}
+.chip.miss{background:#fff;border:1.5px solid #d43a3a;color:#8a1c1c;font-weight:800;}
+
 </style>
 </head>
-<body>
+<body translate="no" class="notranslate">
 
 <!-- ============ PIN LOCK SCREEN ============ -->
 <div id="lock-screen">
@@ -256,7 +267,7 @@ button:disabled{opacity:.5;cursor:not-allowed;}
 <div id="app">
   <div class="topbar">
     <div class="topbar-row1">
-      <div class="topbar-brand">FGI<span>Faisal Goraya Industry · Salary System v18</span></div>
+      <div class="topbar-brand">FGI<span>Faisal Goraya Industry · Salary System v18.1</span></div>
       <button class="logout-btn" onclick="lockApp()">🔒 Lock</button>
     </div>
     <div class="topbar-row2">
@@ -287,6 +298,7 @@ button:disabled{opacity:.5;cursor:not-allowed;}
         <div class="field"><label>Basic Salary (Rs.)</label><input type="number" id="f_basic" inputmode="numeric" oninput="calcAll()"></div>
       </div>
       <div id="entryNotice" class="notice" style="display:none;"></div>
+      <div id="entryMissTop"></div>
     </div>
     <div class="card">
       <div class="card-title">⏱️ Overtime</div>
@@ -308,10 +320,10 @@ button:disabled{opacity:.5;cursor:not-allowed;}
     <div class="card">
       <div class="card-title">💳 Advances &amp; Deductions</div>
       <div class="form-grid">
-        <div class="field"><label>Mid Month Kharcha (auto)</label><input type="number" id="f_midMonth" class="auto-calc" readonly><span class="field-note">Is mahine ke saare kharchon ka jod</span></div>
+        <div class="field"><label>Mid Month Kharcha (auto)</label><input type="number" id="f_midMonth" class="auto-calc" readonly><span class="field-note">Is mahine ke saare kharchon ka jod</span><button type="button" class="qa-link" onclick="openQuickAdd('mid')">➕ Kharcha darj karein</button></div>
         <div class="field"><label>Rem. Salary (auto)</label><input type="number" id="f_remSalary" class="auto-calc" readonly></div>
         <div class="field"><label>Previous Adv. (auto)</label><input type="number" id="f_prevAdv" class="auto-calc" readonly></div>
-        <div class="field"><label>New Advance (auto)</label><input type="number" id="f_newAdv" class="auto-calc" readonly><span class="field-note">Is mahine ke saare advance ka jod</span></div>
+        <div class="field"><label>New Advance (auto)</label><input type="number" id="f_newAdv" class="auto-calc" readonly><span class="field-note">Is mahine ke saare advance ka jod</span><button type="button" class="qa-link" onclick="openQuickAdd('adv')">➕ Advance darj karein</button></div>
         <div class="field"><label>Total Advance (auto)</label><input type="number" id="f_totalAdv" class="auto-calc" readonly></div>
         <div class="field"><label>Deduction from Adv.</label><input type="number" id="f_deductAdv" inputmode="numeric" placeholder="e.g. 5000" oninput="calcAll()"><span class="field-note">Optional — salary se kitna katna hai</span></div>
         <div class="field"><label>Rem. Advance (auto)</label><input type="number" id="f_remAdv" class="auto-calc" readonly></div>
@@ -375,6 +387,7 @@ button:disabled{opacity:.5;cursor:not-allowed;}
         <div class="field" style="min-width:160px;"><label>Note (optional)</label><input type="text" id="mm_note" placeholder="..."></div>
         <div style="display:flex;gap:8px;"><button class="btn btn-save" id="mm-save-btn" onclick="saveMidMonthRecord()">💾 Save</button><button class="btn btn-clear" onclick="clearMidMonthForm()">🗑️</button></div>
       </div>
+      <div id="mm_salNote" class="notice" style="display:none;margin-top:12px;"></div>
       <div id="mmSaveMsg" style="margin-top:8px;font-size:13px;font-weight:700;color:var(--green);min-height:18px;"></div>
     </div>
     <div class="card">
@@ -412,6 +425,7 @@ button:disabled{opacity:.5;cursor:not-allowed;}
         <div class="field"><label>Worker (blank = all)</label><input type="text" id="rpt_worker" placeholder="Naam / code..." oninput="loadReport()"></div>
         <button class="btn btn-gold btn-sm" onclick="printAllWorkers()">📄 All Workers PDF</button>
       </div>
+      <div id="rptMissing"></div>
       <div id="reportCards" class="report-cards"></div>
       <div id="reportTable" class="card" style="display:none;"><div class="table-wrap"><table><thead><tr><th>Sr</th><th>Worker</th><th>Month</th><th>Basic</th><th>OT</th><th>OvDay</th><th>OH</th><th>OHP</th><th>Days</th><th>T.Days</th><th>M.Sal</th><th>Mid</th><th>Rem.Sal</th><th>Prev.Adv</th><th>New Adv</th><th>T.Adv</th><th>Dec.Adv</th><th>Rem.Adv</th><th>T.Rem.Sal</th><th>Slip</th></tr></thead><tbody id="reportTbody"></tbody></table></div></div>
     </div>
@@ -426,6 +440,18 @@ button:disabled{opacity:.5;cursor:not-allowed;}
   </div>
 
   <!-- WORKER MODAL (outside pages so it opens from anywhere) -->
+    <div id="quickAddModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:210;align-items:center;justify-content:center;padding:12px;">
+      <div style="background:white;border-radius:18px;padding:20px;width:380px;max-width:96vw;box-shadow:0 20px 60px rgba(0,0,0,.3);">
+        <h3 id="qa_title" style="font-family:'Playfair Display',serif;font-size:18px;margin-bottom:6px;color:var(--navy);"></h3>
+        <div id="qa_sub" style="font-size:12px;color:var(--slate);margin-bottom:12px;"></div>
+        <div class="form-grid" style="grid-template-columns:1fr 1fr;">
+          <div class="field"><label>Raqam (Rs.)</label><input type="number" id="qa_amount" inputmode="numeric" placeholder="e.g. 2000"></div>
+          <div class="field"><label>Date</label><input type="date" id="qa_date"></div>
+          <div class="field" style="grid-column:1/-1;"><label id="qa_noteLbl">Note (optional)</label><input type="text" id="qa_note"></div>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:14px;"><button class="btn btn-save" onclick="saveQuickAdd()">💾 Save</button><button class="btn btn-clear" onclick="closeQuickAdd()">Cancel</button></div>
+      </div>
+    </div>
     <div id="workerModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:center;justify-content:center;padding:12px;">
       <div style="background:white;border-radius:18px;padding:22px;width:440px;max-width:96vw;max-height:92vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.3);">
         <h3 id="wm_title" style="font-family:'Playfair Display',serif;font-size:20px;margin-bottom:14px;color:var(--navy);">Worker</h3>
@@ -575,7 +601,7 @@ button:disabled{opacity:.5;cursor:not-allowed;}
       <div style="font-size:11px;color:var(--slate);margin-top:8px;line-height:1.7;">
         ✅ <b>IndexedDB</b> — Permanent storage<br>
         ✅ <b>localStorage</b> — Backup layer<br>
-        ✅ <b>No Google, No Cloud, No CDN</b> — 100% offline (libraries + fonts app ke andar)<br>ℹ️ FGI Salary System <b>v18</b>
+        ✅ <b>No Google, No Cloud, No CDN</b> — 100% offline (libraries + fonts app ke andar)<br>ℹ️ FGI Salary System <b>v18.1</b>
       </div>
     </div>
 
@@ -772,6 +798,7 @@ function migrateToV18(old){
     const cur=+w.remAdv||0;const lastM=seq.length?seq[seq.length-1].month:prevMonth(thisMonth());
     if(Math.abs(cur-bal)>=0.5)add(lastM,cur-bal,seq.length?'adjust':'opening',seq.length?'Worker profile ke Rem. Advance se milaya (auto)':'Opening balance (worker profile)',lastM+'-01');
   });
+  out.entries.forEach(e=>{e.live=false;});out.liveSince=out.nextEntryId;   // purani entries jaisi thin waisi rahen
   out.migrationReport={fixedEntryCodes:fixed,archived:out.archivedEntries.length,workers:out.workers.length,left:out.workers.filter(w=>w.left).length};
   return out;
 }
@@ -798,9 +825,23 @@ async function loadDB(){
     DB=normalizeDB(migrateToV18(d));await saveDB();
     const m=DB.migrationReport;setTimeout(()=>showToast(`✅ Data v18 mein shift: ${m.workers} workers (${m.left} left), ${m.archived} duplicate entries archive`,5000),600);
   } else DB=normalizeDB(d);
+  if(DB.liveSince===undefined){await markLiveEntries();await saveDB();}
+  else if(syncLiveEntries().length)await saveDB();
+}
+// v18.1: entries banayi gayi v18 mein = LIVE (records ke saath khud update); migrate hui purani = frozen
+async function markLiveEntries(){
+  let cut=1;
+  if(DB.migratedAt){
+    let old=null;try{const raw=await idbLoad('backup_pre_v18');if(raw)old=JSON.parse(raw);}catch(e){}
+    if(old&&Array.isArray(old.entries))cut=Math.max(1,...old.entries.map(e=>(+e.id||0)+1));
+    else{const md=String(DB.migratedAt).slice(0,10);cut=Math.max(1,...DB.entries.concat(DB.archivedEntries).filter(e=>(e.date||'')<=md).map(e=>(+e.id||0)+1));}
+  }
+  DB.liveSince=cut;
+  DB.entries.forEach(e=>{if(e.live===undefined)e.live=e.id>=cut;});
 }
 let _saving=false;
 async function saveDB(){
+  _lastSync=syncLiveEntries();
   refreshWorkerRemAdv();
   const data=JSON.stringify(DB);
   const ok=await idbSave('main_db',data);
@@ -825,7 +866,42 @@ function midFor(code,month){return r2(DB.midMonthRecords.filter(r=>r.workerCode=
 function balanceOf(code){return r2(advOf(code).reduce((s,x)=>s+(+x.amount||0),0)-dedOf(code).reduce((s,e)=>s+(+e.deductAdv||0),0));}
 function totalTaken(code){return r2(advOf(code).reduce((s,x)=>s+(+x.amount||0),0));}
 function totalReturned(code){return r2(dedOf(code).reduce((s,e)=>s+(+e.deductAdv||0),0));}
+// Same formula as calcAll() (unchanged) — only used to refresh live entries from records
+function calcEntryValues(e,prevAdv,newAdv,midMonth){
+  const R=x=>Math.round(x*100)/100;
+  const basic=+e.basic||0,ot=+e.ot||0,days=+e.days||0,deductAdv=+e.deductAdv||0;
+  const overDays=Math.floor(ot/8),oh=ot%8,ohp=(basic/30/8)*oh,totalDays=days+overDays;
+  const mSalary=(basic/30)*totalDays+ohp,remSalary=mSalary-midMonth,totalAdv=prevAdv+newAdv;
+  return {midMonth:R(midMonth),prevAdv:R(prevAdv),newAdv:R(newAdv),remSalary:Math.round(remSalary),totalAdv:R(totalAdv),remAdv:Math.round(totalAdv-deductAdv),totalRemSalary:Math.round(remSalary-deductAdv)};
+}
+let _lastSync=[];
+function isLive(e){return e.live===true;}
+function syncLiveEntries(){
+  const changed=[];
+  DB.entries.filter(isLive).sort((a,b)=>a.month<b.month?-1:a.month>b.month?1:a.id-b.id).forEach(e=>{
+    const n=calcEntryValues(e,prevAdvFor(e.workerCode,e.month),newAdvFor(e.workerCode,e.month),midFor(e.workerCode,e.month));
+    const diff=Object.keys(n).some(k=>Math.abs((+e[k]||0)-n[k])>0.004);
+    if(diff){changed.push({id:e.id,code:e.workerCode,name:e.name,month:e.month,oldTRS:+e.totalRemSalary||0,newTRS:n.totalRemSalary});Object.assign(e,n);}
+  });
+  return changed;
+}
+function syncMsg(code){const c=_lastSync.filter(x=>!code||x.code===code);if(!c.length)return '';
+  return c.map(x=>monthName(x.month)+' ki salary entry bhi update ho gayi — Total Rem. Salary '+rs(x.newTRS)).join(' • ');}
 function refreshWorkerRemAdv(){DB.workers.forEach(w=>{w.remAdv=balanceOf(w.code);});}
+// worker us mahine kaam par tha? (join se pehle / chhorne ke baad wala mahina nahi)
+function workerDueIn(w,month){
+  if(!w||!month)return false;
+  if(w.joinDate&&String(w.joinDate).slice(0,7)>month)return false;
+  if(w.left){if(!w.leaveDate)return false;if(String(w.leaveDate).slice(0,7)<month)return false;}
+  return true;
+}
+function missingSalary(month){const done=new Set(DB.entries.filter(e=>e.month===month).map(e=>e.workerCode));return DB.workers.filter(w=>workerDueIn(w,month)&&!done.has(w.code));}
+function missingAlertHTML(month,clickable){
+  const miss=missingSalary(month);
+  if(!miss.length)return '<div class="ok-box">✅ '+esc(monthName(month))+' — sab workers ki salary ban gayi</div>';
+  return '<div class="miss-box">⚠️ <b>'+esc(monthName(month))+'</b> — in <b>'+miss.length+'</b> worker'+(miss.length>1?'s':'')+' ki salary abhi <b>NAHI bani</b>:<div style="margin-top:6px;">'+
+    miss.map(w=>'<span class="chip miss"'+(clickable?' data-c="'+esc(w.code)+'" onclick="pickWorker(this.dataset.c)"':'')+'>'+esc(w.code+' '+w.name)+'</span>').join(' ')+'</div></div>';
+}
 function activeWorkers(){return DB.workers.filter(w=>!w.left);}
 function leftWorkers(){return DB.workers.filter(w=>w.left);}
 function workerLabel(w){return w.code+' — '+w.name+(w.left?' (Left)':'');}
@@ -858,7 +934,15 @@ function showPage(p,btn){
   if(p==='settings'){updateSQStatus();updateDbStatus();renderArchiveInfo();}
   window.scrollTo(0,0);
 }
-async function initApp(){await loadDB();fillAllWorkerSelects();initDataEntry();updateSQStatus();updateDbStatus();}
+async function initApp(){await loadDB();fillAllWorkerSelects();initDataEntry();updateSQStatus();updateDbStatus();setTimeout(missingSalaryReminder,1200);}
+// app khulte hi: jis mahine ki salary banni shuru ho chuki ho aur koi worker reh gaya ho
+function missingSalaryReminder(){
+  // sirf guzre hue salary mahine (jo chal raha hai woh Entry page par dikhta hai)
+  const cur=defaultSalaryMonth();
+  const ms=[prevMonth(prevMonth(cur)),prevMonth(cur)].filter(m=>DB.entries.some(e=>e.month===m));
+  const msg=ms.map(m=>{const x=missingSalary(m);return x.length?monthName(m)+': '+x.slice(0,6).map(w=>w.name).join(', ')+(x.length>6?' + '+(x.length-6)+' aur':''):'';}).filter(Boolean);
+  if(msg.length)showToast('⚠️ Salary NAHI bani —\n'+msg.join('\n'),7000);
+}
 function updateDbStatus(){const e=el('db-status');if(e)e.textContent=`✅ IndexedDB active — ${activeWorkers().length} active + ${leftWorkers().length} left workers, ${DB.entries.length} salary entries, ${DB.advances.length} advance, ${DB.midMonthRecords.length} mid month records`;}
 
 // ============================================================
@@ -871,8 +955,16 @@ function initDataEntry(){
   if(!el('f_date').value)el('f_date').value=todayStr();
   if(!el('f_month').value)el('f_month').value=defaultSalaryMonth();
   fillWorkerSelect('f_worker',{withLeft:true});
+  refreshEntryForm();
   renderMonthEntries();
 }
+// form khula ho aur beech mein kharcha / advance darj ho jaye — taaza raqam lagao
+function refreshEntryForm(){
+  const code=el('f_worker').value,month=el('f_month').value;if(!code||!month)return;
+  if(_editEntryId){const e=DB.entries.find(x=>x.id===_editEntryId);if(e&&isLive(e)){fillAutoFields(e.workerCode,e.month);}return;}
+  if(!DB.entries.some(e=>e.workerCode===code&&e.month===month))fillAutoFields(code,month);
+}
+function fillAutoFields(code,month){const a=autoValues(code,month);el('f_prevAdv').value=a.prev||'';el('f_newAdv').value=a.nw||'';el('f_midMonth').value=a.mid||'';calcAll();}
 // Old formula — unchanged
 function calcAll(){
   const basic=v('f_basic'),ot=v('f_ot'),days=v('f_days'),midMonth=v('f_midMonth'),prevAdv=v('f_prevAdv'),newAdv=v('f_newAdv'),deductAdv=v('f_deductAdv');
@@ -916,13 +1008,15 @@ function loadEntryToForm(e){
   el('f_basic').value=e.basic;el('f_ot').value=e.ot||'';el('f_days').value=e.days||'';
   el('f_midMonth').value=e.midMonth||'';el('f_prevAdv').value=e.prevAdv||'';el('f_newAdv').value=e.newAdv||'';el('f_deductAdv').value=e.deductAdv||'';
   calcAll();
-  // stored values vs records: show a notice, never change silently
+  const n0=el('entryNotice');
+  if(isLive(e)){fillAutoFields(e.workerCode,e.month);n0.style.display='none';return;}
+  // purani (v18 se pehle ki) entry: raqam khud nahi badalti, sirf farq batao
   const a=autoValues(e.workerCode,e.month);const diffs=[];
   if(r0(a.mid)!==r0(e.midMonth)&&a.mid>0)diffs.push('Mid Month: entry '+fmt(e.midMonth)+' / records '+fmt(a.mid));
   if(r0(a.prev)!==r0(e.prevAdv))diffs.push('Prev Adv: entry '+fmt(e.prevAdv)+' / khata '+fmt(a.prev));
   if(r0(a.nw)!==r0(e.newAdv))diffs.push('New Adv: entry '+fmt(e.newAdv)+' / khata '+fmt(a.nw));
   const n=el('entryNotice');
-  if(diffs.length){n.style.display='block';n.innerHTML='ℹ️ Saved entry aur records mein farq: <b>'+esc(diffs.join(' • '))+'</b><br><button class="btn btn-gold btn-sm" style="margin-top:6px;" onclick="applyAutoToForm()">🔄 Records wali raqam lagayein</button>';}
+  if(diffs.length){n.style.display='block';n.innerHTML='ℹ️ Purani entry — saved raqam aur records mein farq: <b>'+esc(diffs.join(' • '))+'</b><br><button class="btn btn-gold btn-sm" style="margin-top:6px;" onclick="applyAutoToForm()">🔄 Records wali raqam lagayein</button>';}
 }
 function applyAutoToForm(){const a=autoValues(el('f_worker').value,el('f_month').value);el('f_prevAdv').value=a.prev||'';el('f_newAdv').value=a.nw||'';el('f_midMonth').value=a.mid||'';el('entryNotice').style.display='none';calcAll();showToast('🔄 Records se raqam lag gayi — Update dabayein');}
 async function saveEntry(){
@@ -937,11 +1031,18 @@ async function saveEntry(){
   if(v('f_deductAdv')>v('f_totalAdv')+0.5){showToast('⚠️ Katauti kul advance se zyada hai!',3500);return;}
   const dup=DB.entries.find(e=>e.workerCode===code&&e.month===month&&e.id!==_editEntryId);
   if(dup){showToast('⚠️ '+w.name+' ki '+monthName(month)+' ki entry pehle se hai — wahi khul gayi',3500);loadEntryToForm(dup);return;}
+  // pichhle mahine ki salary reh gayi? (jaise Arshad ki October)
+  const pm=prevMonth(month);
+  if(!_editEntryId&&workerDueIn(w,pm)&&DB.entries.some(e=>e.month===pm)&&!DB.entries.some(e=>e.workerCode===code&&e.month===pm)&&
+     !confirm('⚠️ '+w.name+' ki '+monthName(pm)+' ki salary NAHI bani!\n\nAap '+monthName(month)+' ki salary bana rahe hain. Kya yahi mahina sahi hai?\n\n(Agar '+monthName(pm)+' ki banani hai to Cancel dabayein aur upar Month badlein.)'))return;
   if(v('f_totalRemSalary')<0&&!confirm('Total Rem. Salary minus (Rs.'+fmt(v('f_totalRemSalary'))+') aa rahi hai. Phir bhi save karein?'))return;
   const entry={id:_editEntryId||DB.nextEntryId,date:el('f_date').value||todayStr(),month,sr:v('f_sr')||nextSrFor(month),name:w.name,workerCode:code,
     basic:v('f_basic'),ot:v('f_ot'),overDays:v('f_overDays'),oh:v('f_oh'),ohp:v('f_ohp'),days:v('f_days'),totalDays:v('f_totalDays'),mSalary:v('f_mSalary'),
     midMonth:v('f_midMonth'),remSalary:v('f_remSalary'),prevAdv:v('f_prevAdv'),newAdv:v('f_newAdv'),totalAdv:v('f_totalAdv'),deductAdv:v('f_deductAdv'),
-    remAdv:v('f_remAdv'),totalRemSalary:v('f_totalRemSalary')};
+    remAdv:v('f_remAdv'),totalRemSalary:v('f_totalRemSalary'),live:true};
+  if(_editEntryId){const old=DB.entries.find(e=>e.id===_editEntryId);if(old&&old.live===false){const a=autoValues(code,month);
+    // purani entry: agar user ne records wali raqam lagayi to ab live ho jaye, warna waisi hi rahe
+    entry.live=r0(a.mid)===r0(entry.midMonth)&&r0(a.prev)===r0(entry.prevAdv)&&r0(a.nw)===r0(entry.newAdv);}}
   _entrySaving=true;el('btnSaveEntry').disabled=true;
   try{
     if(_editEntryId){const i=DB.entries.findIndex(e=>e.id===_editEntryId);DB.entries[i]=entry;}
@@ -972,8 +1073,8 @@ function renderMonthEntries(){
   el('monthEntriesTitle').textContent='📋 '+monthName(month)+' ki entries';
   const list=DB.entries.filter(e=>e.month===month).sort((a,b)=>orderOf(a.workerCode)-orderOf(b.workerCode));
   const done=new Set(list.map(e=>e.workerCode));
-  const pending=activeWorkers().filter(w=>!done.has(w.code));
-  el('monthPending').innerHTML=pending.length?'⏳ Baqi ('+pending.length+'): '+pending.map(w=>'<span class="chip" data-c="'+esc(w.code)+'" onclick="pickWorker(this.dataset.c)">'+esc(w.code+' '+w.name)+'</span>').join(' '):'✅ Sab active workers ki entry ho gayi';
+  el('monthPending').innerHTML=month?missingAlertHTML(month,true):'';
+  const mt=el('entryMissTop');if(mt){const x=month&&list.length?missingSalary(month):[];mt.innerHTML=x.length?missingAlertHTML(month,true):'';}
   if(!list.length){tb.innerHTML='<tr><td colspan="7" style="text-align:center;padding:16px;color:var(--slate);">Is mahine abhi koi entry nahi</td></tr>';return;}
   tb.innerHTML=list.map((e,i)=>'<tr><td>'+(i+1)+'</td><td><span class="code-badge">'+esc(e.workerCode)+'</span></td><td><b>'+esc(e.name)+'</b></td><td>'+fmt(e.mSalary)+'</td><td>'+fmt(e.deductAdv)+'</td><td style="font-weight:800;color:var(--green);">'+fmt(e.totalRemSalary)+'</td>'+
     '<td style="white-space:nowrap;"><button class="btn btn-gold btn-sm" onclick="editEntry('+e.id+')">✏️</button> <button class="btn btn-danger btn-sm" onclick="deleteEntry('+e.id+')">🗑️</button></td></tr>').join('');
@@ -1072,9 +1173,9 @@ async function saveAdvance(){
   if(!_advEditId&&DB.advances.some(a=>a.workerCode===code&&a.date===date&&r0(a.amount)===r0(amt))&&!confirm('Isi worker ka isi din Rs.'+fmt(amt)+' ka advance pehle se darj hai. Dobara darj karein?'))return;
   _advSaving=true;el('adv_save').disabled=true;
   try{
-    if(_advEditId){const a=DB.advances.find(x=>x.id===_advEditId);Object.assign(a,{date,month:date.slice(0,7),workerCode:code,amount:amt,reason});}
+    if(_advEditId){const a=DB.advances.find(x=>x.id===_advEditId);Object.assign(a,{date,month:a.date===date&&a.month?a.month:date.slice(0,7),workerCode:code,amount:amt,reason});}
     else DB.advances.push({id:DB.nextAdvanceId++,date,month:date.slice(0,7),workerCode:code,amount:amt,reason,kind:'advance'});
-    await saveDB();showToast('✅ Advance '+(_advEditId?'update':'save')+': '+workerByCode(code).name+' '+rs(amt));
+    await saveDB();const sm=syncMsg(code);showToast('✅ Advance '+(_advEditId?'update':'save')+': '+workerByCode(code).name+' '+rs(amt)+(sm?'\n'+sm:''),sm?5000:2500);
     clearAdvForm();renderAdvTable();
   }finally{_advSaving=false;el('adv_save').disabled=false;}
 }
@@ -1082,7 +1183,7 @@ function clearAdvForm(){_advEditId=null;el('adv_amount').value='';el('adv_reason
 function editAdvance(id){const a=DB.advances.find(x=>x.id===id);if(!a)return;showPage('advance');_advEditId=id;el('adv_worker').value=a.workerCode;el('adv_date').value=a.date;el('adv_amount').value=a.amount;el('adv_reason').value=a.reason||'';el('adv_save').textContent='✏️ Update Advance';advWorkerInfo();window.scrollTo({top:0,behavior:'smooth'});}
 async function deleteAdvance(id){const a=DB.advances.find(x=>x.id===id);if(!a)return;const w=workerByCode(a.workerCode);
   if(!confirm((w?w.name:'')+' ka '+fmtDate(a.date)+' wala '+rs(a.amount)+' advance delete karein?'))return;
-  DB.advances=DB.advances.filter(x=>x.id!==id);await saveDB();if(_advEditId===id)clearAdvForm();renderAdvTable();showToast('🗑️ Advance delete');}
+  DB.advances=DB.advances.filter(x=>x.id!==id);await saveDB();if(_advEditId===id)clearAdvForm();renderAdvTable();const sm=syncMsg(a.workerCode);showToast('🗑️ Advance delete'+(sm?'\n'+sm:''),sm?5000:2500);}
 const KIND_LBL={advance:'Advance',joining:'Joining',opening:'Opening',history:'Purana record',adjust:'Adjustment'};
 function renderAdvTable(){
   const f=el('adv_filter').value,m=el('adv_month').value;
@@ -1111,6 +1212,12 @@ function onMidMonthWorkerSelect(){
   el('mm_basicDisplay').textContent=w?rs(w.basic):'—';
   el('mm_lastMidDisplay').textContent=w&&m?rs(midFor(w.code,m)):'—';
   el('mm_remAdvDisplay').textContent=w?rs(balanceOf(w.code)):'—';
+  const nt=el('mm_salNote');if(!nt)return;
+  const e=w&&m?DB.entries.find(x=>x.workerCode===w.code&&x.month===m):null;
+  if(!e){nt.style.display='none';return;}
+  nt.style.display='block';
+  nt.innerHTML=isLive(e)?'ℹ️ '+esc(w.name)+' ki <b>'+esc(monthName(m))+'</b> ki salary ban chuki hai — yeh kharcha us mein <b>khud jud jaye ga</b> aur salary update ho jaye gi. Agar yeh agle mahine ka kharcha hai to upar <b>Month</b> badal dein.'
+    :'⚠️ '+esc(monthName(m))+' ki salary purani (v18 se pehle ki) entry hai — us mein khud update nahi hoga.';
 }
 async function saveMidMonthRecord(){
   if(_mmSaving)return;
@@ -1126,7 +1233,7 @@ async function saveMidMonthRecord(){
     else DB.midMonthRecords.push(Object.assign({id:DB.nextMidMonthId++},data));
     await saveDB();
     el('mmSaveMsg').textContent='✅ '+w.name+' — '+monthName(month)+' ka kul kharcha ab '+rs(midFor(w.code,month));setTimeout(()=>el('mmSaveMsg').textContent='',4000);
-    showToast('✅ Mid Month saved!');clearMidMonthForm(true);initMidMonth();
+    const sm=syncMsg(w.code);showToast('✅ Mid Month saved!'+(sm?'\n'+sm:''),sm?5000:2500);clearMidMonthForm(true);initMidMonth();
   }finally{_mmSaving=false;el('mm-save-btn').disabled=false;}
 }
 function editMidMonthRecord(id){const r=DB.midMonthRecords.find(x=>x.id===id);if(!r)return;_mmEditId=id;el('mm_worker').value=r.workerCode;el('mm_date').value=r.date||'';el('mm_month').value=r.month||'';el('mm_kharcha').value=r.midKharcha||'';el('mm_note').value=r.note||'';
@@ -1141,7 +1248,39 @@ function renderMidMonthTable(){
     '<tr style="background:var(--navy);color:var(--gold);"><td colspan="4" style="text-align:right;font-weight:800;">Kul ('+recs.length+')</td><td style="font-weight:900;">'+rs(tot)+'</td><td colspan="3"></td></tr>'
     :'<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--slate);">Koi record nahi mila...</td></tr>';
 }
-async function deleteMidMonthRecord(id){if(!confirm('Yeh mid month record delete karein?'))return;DB.midMonthRecords=DB.midMonthRecords.filter(r=>r.id!==id);if(_mmEditId===id)clearMidMonthForm();await saveDB();initMidMonth();showToast('🗑️ Record deleted!');}
+async function deleteMidMonthRecord(id){if(!confirm('Yeh mid month record delete karein?'))return;const r=DB.midMonthRecords.find(x=>x.id===id);DB.midMonthRecords=DB.midMonthRecords.filter(r=>r.id!==id);if(_mmEditId===id)clearMidMonthForm();await saveDB();initMidMonth();const sm=r?syncMsg(r.workerCode):'';showToast('🗑️ Record deleted!'+(sm?'\n'+sm:''),sm?5000:2500);}
+
+// ============================================================
+//  QUICK ADD — salary banate waqt hi kharcha / advance darj karein
+// ============================================================
+let _qaKind=null,_qaSaving=false;
+function openQuickAdd(kind){
+  const code=el('f_worker').value,month=el('f_month').value;const w=workerByCode(code);
+  if(!w||!month){showToast('⚠️ Pehle Worker aur Month chunein');return;}
+  _qaKind=kind;
+  el('qa_title').textContent=(kind==='mid'?'➕ Mid Month Kharcha':'➕ Naya Advance')+' — '+w.name;
+  el('qa_sub').innerHTML='Salary mahina: <b>'+esc(monthName(month))+'</b> · Is mahine ka ab tak: <b>'+rs(kind==='mid'?midFor(code,month):newAdvFor(code,month))+'</b>';
+  el('qa_date').value=todayStr();el('qa_amount').value='';el('qa_note').value='';
+  el('qa_noteLbl').textContent=kind==='mid'?'Note (optional)':'Wajah (optional)';
+  el('quickAddModal').style.display='flex';setTimeout(()=>el('qa_amount').focus(),50);
+}
+function closeQuickAdd(){el('quickAddModal').style.display='none';_qaKind=null;}
+async function saveQuickAdd(){
+  if(_qaSaving||!_qaKind)return;
+  const code=el('f_worker').value,month=el('f_month').value;const w=workerByCode(code);if(!w||!month)return;
+  const amt=parseFloat(el('qa_amount').value)||0;if(!(amt>0)){showToast('⚠️ Raqam likhein!');return;}
+  const date=el('qa_date').value||todayStr(),note=el('qa_note').value.trim();
+  if(_qaKind==='mid'&&DB.midMonthRecords.some(r=>r.workerCode===code&&r.month===month&&r.date===date&&r0(r.midKharcha)===r0(amt))&&!confirm(w.name+' ka isi din '+rs(amt)+' kharcha pehle se darj hai. Dobara darj karein?'))return;
+  if(_qaKind==='adv'&&DB.advances.some(a=>a.workerCode===code&&a.date===date&&r0(a.amount)===r0(amt))&&!confirm('Isi worker ka isi din '+rs(amt)+' advance pehle se darj hai. Dobara darj karein?'))return;
+  _qaSaving=true;
+  try{
+    if(_qaKind==='mid')DB.midMonthRecords.push({id:DB.nextMidMonthId++,date,month,workerCode:code,workerName:w.name,salary:w.basic||0,remAdv:balanceOf(code),midKharcha:amt,note});
+    else DB.advances.push({id:DB.nextAdvanceId++,date,month,workerCode:code,amount:amt,reason:note,kind:'advance'});
+    const kind=_qaKind;await saveDB();closeQuickAdd();
+    fillAutoFields(code,month);
+    showToast('✅ '+(kind==='mid'?'Kharcha':'Advance')+' darj: '+rs(amt)+' — '+monthName(month)+' ka kul ab '+rs(kind==='mid'?midFor(code,month):newAdvFor(code,month)),3500);
+  }finally{_qaSaving=false;}
+}
 
 // ============================================================
 //  BACKLE (unchanged logic; local date; edit needs a selection)
@@ -1208,6 +1347,7 @@ function loadReport(){
   const month=el('rpt_month').value;const q=normName(el('rpt_worker').value);
   const entries=monthEntries(month).filter(e=>!q||normName(e.name).includes(q)||e.workerCode.toLowerCase().includes(q));
   const cards=el('reportCards'),tw=el('reportTable'),tb=el('reportTbody');cards.innerHTML='';tb.innerHTML='';
+  const mb=el('rptMissing');if(mb)mb.innerHTML=month&&!q?missingAlertHTML(month,false):'';
   if(!entries.length){cards.innerHTML='<div style="color:var(--slate);font-size:15px;padding:20px;">Koi data nahi mila.</div>';tw.style.display='none';return;}
   tw.style.display='';let sum=0;
   entries.forEach((e,i)=>{sum+=r0(e.totalRemSalary);
@@ -1253,7 +1393,7 @@ function openWorkerReport(code){
   el('wrList').style.display='none';
   const box=(v,l,c)=>'<div class="wr-box"><div style="font-size:17px;font-weight:900;color:'+c+';">'+v+'</div><div class="wr-box-l">'+l+'</div></div>';
   el('wrDetail').innerHTML='<div class="card" style="padding:14px;"><div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;"><button class="btn btn-clear btn-sm" onclick="renderWorkerReportList()">◀ Wapas</button><button class="btn btn-save btn-sm" data-c="'+esc(code)+'" onclick="workerReportPDF(this.dataset.c)">📄 PDF</button><button class="btn btn-green btn-sm" data-c="'+esc(code)+'" onclick="workerReportImage(this.dataset.c)">📸 HD Image</button></div>'+
-    '<div id="wrPrintable">'+workerReportHTML(D)+'</div></div>';
+    '<div class="wr-scroll"><div id="wrPrintable">'+workerReportHTML(D)+'</div></div></div>';
   window.scrollTo(0,0);
 }
 // Black & white friendly report (also used for the HD image)
@@ -1313,6 +1453,8 @@ function savePDF(doc,title,fname){openFolderPicker(title,'PDF kahan save karein?
 function printAllWorkers(){
   const month=el('rpt_month').value;const entries=monthEntries(month);
   if(!entries.length){showToast('⚠️ Koi data nahi!');return;}
+  const miss=month?missingSalary(month):[];
+  if(miss.length&&!confirm('⚠️ '+monthName(month)+' mein '+miss.length+' worker'+(miss.length>1?'s':'')+' ki salary NAHI bani:\n'+miss.map(w=>'• '+w.code+' '+w.name).join('\n')+'\n\nPhir bhi PDF banayein?'))return;
   const doc=newPDF('landscape');let y=pdfHeader(doc,'ALL WORKERS SALARY REPORT  ·  '+(month?monthName(month):'All Months'),'Printed: '+fmtDate(todayStr()));
   const T={basic:0,ot:0,overDays:0,oh:0,ohp:0,days:0,totalDays:0,mSalary:0,midMonth:0,remSalary:0,totalAdv:0,deductAdv:0,remAdv:0,totalRemSalary:0};
   const body=entries.map((e,i)=>{Object.keys(T).forEach(k=>T[k]+=+e[k]||0);return [i+1,e.workerCode,e.name,fmt(e.basic),e.ot||0,e.overDays||0,e.oh||0,fmt(e.ohp),e.days||0,e.totalDays||0,fmt(e.mSalary),fmt(e.midMonth),fmt(e.remSalary),fmt(e.totalAdv),fmt(e.deductAdv),fmt(e.remAdv),fmt(e.totalRemSalary)];});
@@ -1387,7 +1529,7 @@ async function importData(event){
   const isOld=data.schema!==2;
   if(!confirm('Backup import: '+data.workers.length+' workers, '+data.entries.length+' entries'+(isOld?' (purana version — khud v18 mein shift hoga)':'')+'.\n\nCurrent SAARA data is se badal jaye ga. (Current data ka backup pehle khud ban jaye ga.)\n\nImport karein?'))return;
   await idbSave('backup_before_import',JSON.stringify(DB));
-  DB=normalizeDB(isOld?migrateToV18(data):data);await saveDB();
+  DB=normalizeDB(isOld?migrateToV18(data):data);if(DB.liveSince===undefined)await markLiveEntries();await saveDB();
   fillAllWorkerSelects();initDataEntry();updateDbStatus();
   el('importMsg').style.color='var(--green)';el('importMsg').textContent='✅ Import: '+activeWorkers().length+' active + '+leftWorkers().length+' left workers, '+DB.entries.length+' entries.';
   showToast('✅ Data import ho gaya!');
