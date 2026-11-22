@@ -1,7 +1,7 @@
 // FGI Salary System — Service Worker (v18, 100% offline, no CDN)
-const CACHE = 'fgi-salary-v18.1';
+const CACHE = 'fgi-salary-v18.2';
 const ASSETS = ['./','./index.html','./manifest.json',
-  './lib/jspdf.umd.min.js','./lib/jspdf.plugin.autotable.min.js','./lib/html2canvas.min.js',
+  './lib/jspdf.umd.min.js','./lib/jspdf.plugin.autotable.min.js','./lib/html2canvas.min.js','./lib/pdf.min.js','./lib/pdf.worker.min.js',
   './fonts/fonts.css','./fonts/nunito-latin-400-normal.woff2','./fonts/nunito-latin-600-normal.woff2',
   './fonts/nunito-latin-700-normal.woff2','./fonts/nunito-latin-800-normal.woff2',
   './fonts/playfair-display-latin-700-normal.woff2','./fonts/playfair-display-latin-900-normal.woff2',

@@ -1,0 +1,164 @@
+FGI SALARY SYSTEM v18.2 — TEST REPORT (naya hissa)
+==================================================
+Tareekh: 22-11-2026
+
+v18.2 KI TABDEELIYAN
+1) Har PDF pehle VIEW mein khulti hai (HD, saare pages, ➖/➕ zoom), phir neeche se
+   📥 Download, 📤 Share / WhatsApp ya ✖ Band. (All Workers, Slip, Worker Report,
+   Calculator aur naya Kharcha Sheet — sab.) Preview bhi offline chalta hai
+   (lib/pdf.min.js + lib/pdf.worker.min.js).
+2) Reports > "💵 Mid Kharcha Sheet": mahina chunein (jis ka kharcha dena hai).
+   Landscape, black/white print ke liye. Column:
+   Sr · Code · Worker · Pichhle mahine ka kharcha · Is mahine ab tak liya (har dafa
+   tareekh + raqam) · Ab tak Total · Is mahine Mid Kharcha (KHALI, pen se likhne ke
+   liye) · Dastakhat (khali). Neeche Total + Prepared By / Manager.
+   - Har kaam karne wala worker aata hai, chahe kharcha na liya ho.
+   - Jis ka is mahine koi record nahi, us ki tafseel khali rehti hai.
+   - Pichhla mahina: salary entry ka Mid Month; entry na ho to records ka total.
+   - Workers zyada hon to agle page par bhi header.
+
+NAYE TESTS (v18.2)                                                   NATIJA: 9 / 9 PASS
+M1 PASS  Kharcha Sheet ka mahina khud November (aaj ka mahina)
+M2 PASS  16 workers (15 + Joji), Oct kharcha salary entries se; Total 135,900
+M3 PASS  Joji: 17-11 Rs.3,000 · 21-11 Rs.10,000 · 21-11 Rs.2,000 → Total 15,000
+M4 PASS  Baqi workers ki "ab tak liya" tafseel khali, line maujood
+M5 PASS  PDF preview: 2 pages HD, zoom 150% kaam karta hai
+M6 PASS  Preview se Download → FGI_Mid_Kharcha_2026-11.pdf
+M7 PASS  Salary Slip bhi pehle preview mein (1 page)
+M8 PASS  46 workers par 4 pages, har page par header
+M9 PASS  Koi JavaScript error nahi
+
+Purane tests (34 + 12 + 5) dobara chalaye — sab PASS. Tafseel neeche:
+
+FGI SALARY SYSTEM v18.1 — TEST REPORT
+=====================================
+Tareekh: 22-11-2026
+Tareeqa: asal app headless Google Chrome mein chalayi, aap ka 22-11 wala backup
+(Joji Test FGI-20 samait) load karke.
+
+v18.1 KI TABDEELIYAN
+1) Salary entry ab records ke saath KHUD update hoti hai (v18 mein bani entries):
+   Mid Month kharcha / Advance chahe salary se pehle likha jaye, salary banate waqt,
+   ya salary ban jane ke baad — entry, slip, report aur PDF sab mein taaza raqam.
+   Formula bilkul wahi hai — sirf Mid Month, Prev Adv aur New Adv records se aate hain.
+2) Salary form mein "➕ Kharcha darj karein" aur "➕ Advance darj karein" button —
+   salary banate waqt wahin se darj karein, Mid Month page par jane ki zaroorat nahi.
+   Yeh raqam usi salary mahine mein judti hai.
+3) Mid Month page: agar us mahine ki salary ban chuki ho to note aata hai, aur save par
+   batata hai ke salary entry bhi update ho gayi (nayi Total Rem. Salary ke saath).
+4) Phone ka browser ab app ko English mein translate nahi karega ("Kul" → "Cool" khatam).
+5) Worker Report phone par screen se bahar nahi jata — side mein scroll hota hai.
+6) Feb–Oct ki purani entries jaisi thin waisi hi hain (un ke kharche haath se likhe the).
+7) SALARY REH JANE KA ALERT (Arshad ki October wala masla):
+   - Entry page: us mahine ke jo workers reh gaye hon, laal box mein naam (tap karke
+     seedha us ki entry khulti hai). Sab ban jayein to hara "sab ki salary ban gayi".
+   - Agar kisi worker ki pichhle mahine ki salary nahi bani aur aap agle mahine ki bana
+     rahe hain → pehle poochta hai "October ki salary NAHI bani! Kya yahi mahina sahi hai?"
+   - Reports > Monthly: reh gaye workers ka laal box; All Workers PDF se pehle bhi alert.
+   - App kholte hi: guzre mahine mein koi reh gaya ho to yaad dahani.
+   - Sirf woh workers gine jate hain jo us mahine kaam par the (join se pehle aur
+     chhorne ke baad wale mahine nahi).
+
+NAYE TESTS (v18.1)                                                   NATIJA: 17 / 17 PASS
+J1  PASS  Joji Nov entry khulte hi: Mid 15,000 (10,000+2,000+3,000), New Adv 27,000
+J2  PASS  Joji: Rem. Salary 19,250, Rem. Adv 22,750, Total Rem. Salary 15,000
+J3  PASS  Purani (migrated) 166 entries mein ek raqam bhi nahi badli
+J4  PASS  Entry form par purana "farq" notice nahi aata (raqam already sahi)
+J5  PASS  Salary form se "Kharcha darj" 1,000 → Mid 16,000, T.R.Salary 14,000 (save bhi)
+J6  PASS  Mid Month page: "Nov ki salary ban chuki hai" note dikhta hai
+J7  PASS  Mid page se 500 darj → toast: salary entry update (T.R.Salary 13,500); delete → wapas 14,000
+J8  PASS  28-11 ka advance 2,000 → New Adv 29,000, Rem. Adv 24,750 (salary same 14,000)
+J9  PASS  Dec form (nayi entry): Prev Adv 24,750 khud; form se Advance 3,000 + Kharcha 4,000 → khud lag gaye
+J10 PASS  Worker Report phone (400px) par side scroll, page bahar nahi nikalta
+J11 PASS  App lang="en" translate="no" + notranslate meta
+J12 PASS  Reload ke baad sab mehfooz; koi JavaScript error nahi
+K1  PASS  Asal data: October mein koi reh nahi gaya (15/15); November 14 baqi dikhate hain
+K2  PASS  Arshad ki Oct entry hata kar: Entry page + Report par "Arshad Goraya NAHI bani"
+K3  PASS  Arshad ki Nov salary banane par alert "Oct ki salary NAHI bani" → Cancel = save nahi hui
+K4  PASS  All Workers PDF (Oct) se pehle reh gaye worker ka alert
+K5  PASS  App kholne par: "Salary NAHI bani — Oct 2026: Arshad Goraya"
+
+PURANE 34 TESTS (v18) dobara chalaye — sab PASS. Tafseel neeche:
+
+FGI SALARY SYSTEM v18 — TEST REPORT
+===================================
+Tareekh: 20-11-2026
+Tareeqa: asal app headless Google Chrome mein UI se chalayi, aap ka asal backup
+(FGI_Salary_Backup_2026-11-20.json: 19 workers, 132 entries, 80 mid month, 13 backle) load karke.
+Har hisaab Python mein alag se calculate karke milaya.
+
+NATIJA: 36 / 36 PASS
+
+ID   STATUS  TEST
+---- ------  ----
+M1   PASS    15 active workers in Qaisar's order with FGI-01..FGI-15
+M2   PASS    4 others = Left (FGI-16..19): Tayyab, Wahab, Sufayan x2
+M3   PASS    Every worker: Advance Khata balance = old Rem. Advance (opening balance)
+M3b  PASS    Sufayan Malik (left) still owes 50,000
+M4   PASS    October: 15 entries, T.Rem.Salary 311,980 + Backle 17,525 = 329,505 (same as Qaisar's PDF)
+M5   PASS    8 duplicate entries archived (not deleted) — Arshad May x3, June x3, Rana Faisal May x1, M Ahmad May x1; 124 kept; 132 total
+M6   PASS    All kept salary entries keep their exact old numbers
+M7   PASS    Wrong-code entries fixed: Ayyaz Feb → FGI-04, M Taqi Apr → FGI-03
+M8   PASS    All 80 mid month records linked to a worker code (old FGI-006/017 fixed)
+M9   PASS    Untouched pre-v18 backup saved
+W1   PASS    New workers get unique auto codes; same name OK (FGI-20, FGI-21); joining advance 10,000 in khata
+W2   PASS    Deleted code FGI-21 is never reused (next = FGI-22)
+A1   PASS    Mid Month 2 dafa (2,000 + 5,000) → is mahine ka kul 7,000
+E1   PASS    Salary form auto: Basic 36,000, Prev Adv 10,000, New Adv 8,000 (5,000+3,000), Mid 7,000
+E2   PASS    Deduction 20,000 > total advance 18,000 → warning + NOT saved
+E3   PASS    Formula same: OT20 Days26 → OHP 600, M.Sal 34,200, Rem.Sal 27,200, TR.Sal 22,200, Rem.Adv 13,000; triple-tap = 1 entry
+E4   PASS    Same worker + same month again → existing entry opens in Edit (no duplicate)
+E5   PASS    Dec edited (katauti 8,000) → Jan Prev Advance khud 10,000 (18,000−8,000)
+E6   PASS    Clear resets worker selection (old "wrong worker" bug impossible)
+E7   PASS    Worker change → Mid Month is that worker's own (Hafiz Hafeez Dec = 0, not Arshad's)
+L1   PASS    Usman marked Left: hidden from active list, his 3 entries kept
+R1   PASS    Worker Report → Chhor gaye: Usman Clear, Sufayan baqi 50,000
+R2   PASS    Arshad report: liya/wapas/baqi consistent (taken − returned = balance)
+P1   PASS    All Workers PDF (Oct): every page has text (no blank page 2), Grand Total 329,505
+P2   PASS    PDF is real text (vector) — names searchable
+P3   PASS    Worker Report PDF has Advance khata, Mid Month, Salary record
+P4   PASS    Worker Report HD image 1640px wide
+B1   PASS    Export → Import (v18) round trip identical
+B2   PASS    Old backup JSON imports and migrates (19 workers, Oct 329,505)
+B3   PASS    Backup of data before import kept
+S1   PASS    No JavaScript errors
+S2   PASS    PIN recovery: "a" rejected
+S3   PASS    2:30 AM 1-Dec (Pakistan) → date 2026-12-01
+S4   PASS    OFFLINE: app opens, PDF library + image library + fonts work
+
+P45  PASS    45 workers PDF: 3 pages, har page par header + column heading + Page X of 3, Grand Total aakhri page par
+P75  PASS    75 workers PDF: 4 pages, har page par header + column heading + Page X of 4, Grand Total aakhri page par
+
+GROUPS: M = purane data ki migration, W = workers, A/E = advance + salary entry,
+        L = chhor jane wale, R/P = reports, PDF, image, B = backup, S = hifazat/offline
+
+MONTHLY REPORT — PURANA vs NAYA (T.Rem.Salary)
+  Mahina    Purani report        Nayi report          Wajah
+  Feb 2026  11 workers 209,802   12 workers 229,627   Ayyaz ki entry Hafiz Farooq ke code par thi (bug) — chhupi hui thi
+  Mar 2026  12  220,678          12  220,678          same
+  Apr 2026  12  228,212          13  260,120          M Taqi ki entry Basharat ke code par thi — chhupi hui thi
+  May 2026  14  263,369          13  240,586          M Ahmad do dafa gina ja raha tha (22,783 zyada)
+  Jun–Oct   bilkul same (Oct 311,980 + Backle 17,525 = 329,505 — aap ki PDF jaisa)
+  Nov 2026  1 entry (Arshad) same
+
+AAP KHUD CHECK KAR LEIN (asal data mein mila)
+  1. Arshad Goraya: June 2026 ka Mid Month kharcha 18,500 do dafa darj hai (25-06 aur 10-08).
+     Agar ek ghalti se hai to Mid Month page se 10-08-2026 wala delete kar dein.
+     (June ki purani salary entry nahi badli — wo 18,500 hi rakhti hai.)
+  2. Sufayan Malik (FGI-18, Chhor gaya): 50,000 advance baqi dikhta hai magar is ki koi
+     salary entry nahi (July ki entry asal mein M Ahmad ki thi). Agar yeh advance sahi
+     nahi to Advance page se adjust/delete kar dein.
+  3. Kuch purane mahinon mein advance ka hisaab toota hua tha (purana bug). Advance Khata mein
+     yeh 'Purane record ka farq (auto adjustment)' ke naam se dikhta hai — is se har worker
+     ka baqi advance bilkul wahi rehta hai jo pehle tha.
+  4. Purane workers ki Join Date = un ki pehli salary entry ka mahina (andaza). Workers page
+     se asal date bhar dein. Chhor jane walon ki Leave Date bhi bhar dein.
+
+PHONE PAR CHECKLIST
+  [ ] Upload se pehle purani app se Export Backup
+  [ ] App khol kar Workers: 15 active (FGI-01 Hafiz Hafeez ... FGI-15 Ali Haider) + 4 chhor gaye
+  [ ] Reports > Monthly > Oct 2026 = Grand Total 329,505
+  [ ] Advance page se ek test advance, Mid Month se kharcha, Entry mein auto aaye
+  [ ] All Workers PDF B/W print karke dekhein
+  [ ] Worker Report > HD Image WhatsApp par share
+  [ ] Airplane mode mein app khol kar dekhein

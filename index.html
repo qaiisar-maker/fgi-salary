@@ -12,7 +12,7 @@
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
-<title>FGI Salary System v18.1</title>
+<title>FGI Salary System v18.2</title>
 <link rel="stylesheet" href="fonts/fonts.css">
 <script src="lib/jspdf.umd.min.js"></script>
 <script src="lib/jspdf.plugin.autotable.min.js"></script>
@@ -201,6 +201,27 @@ button:disabled{opacity:.5;cursor:not-allowed;}
 .ok-box{background:#effaf3;border:1.5px solid #2e9a5a;color:#1d6b3c;border-radius:10px;padding:8px 12px;font-size:13px;font-weight:700;margin-bottom:10px;}
 .chip.miss{background:#fff;border:1.5px solid #d43a3a;color:#8a1c1c;font-weight:800;}
 
+#pdfPreview{position:fixed;inset:0;background:#3a4250;z-index:9990;display:none;flex-direction:column;}
+.pv-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--navy);color:#fff;padding:10px 14px;}
+.pv-title{font-weight:800;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.pv-sub{font-size:11px;opacity:.75;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.pv-x{background:rgba(255,255,255,.12);border:none;color:#fff;font-size:18px;border-radius:8px;width:38px;height:38px;cursor:pointer;flex:none;}
+.pv-zoom{display:flex;align-items:center;justify-content:center;gap:10px;background:#2c333f;padding:6px;color:#fff;font-weight:800;font-size:13px;}
+.pv-zoom .btn{background:#fff;}
+#pv_pages{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;padding:10px 8px;}
+.pv-page{display:block;margin:0 auto 12px;background:#fff;box-shadow:0 3px 14px rgba(0,0,0,.45);}
+.pv-load{color:#fff;text-align:center;padding:40px 16px;font-weight:700;}
+.pv-actions{display:flex;gap:8px;padding:10px;background:#fff;flex-wrap:wrap;}
+.pv-actions .btn{flex:1;justify-content:center;min-width:100px;}
+.kh-tbl{width:100%;border-collapse:collapse;font-size:13px;min-width:640px;background:#fff;}
+.kh-tbl th,.kh-tbl td{border:1px solid #999;padding:6px 7px;text-align:center;vertical-align:top;}
+.kh-tbl th{background:#f0f2f6;font-size:12px;}
+.kh-tbl td.l{text-align:left;}
+.kh-tbl .det{font-size:11.5px;color:#333;line-height:1.5;text-align:left;}
+.kh-tbl tfoot td{font-weight:800;background:#f7f7f7;}
+.kh-tbl td,.kh-tbl th{white-space:nowrap;}
+.kh-tbl td.det{white-space:nowrap;}
+
 </style>
 </head>
 <body translate="no" class="notranslate">
@@ -267,7 +288,7 @@ button:disabled{opacity:.5;cursor:not-allowed;}
 <div id="app">
   <div class="topbar">
     <div class="topbar-row1">
-      <div class="topbar-brand">FGI<span>Faisal Goraya Industry · Salary System v18.1</span></div>
+      <div class="topbar-brand">FGI<span>Faisal Goraya Industry · Salary System v18.2</span></div>
       <button class="logout-btn" onclick="lockApp()">🔒 Lock</button>
     </div>
     <div class="topbar-row2">
@@ -418,6 +439,7 @@ button:disabled{opacity:.5;cursor:not-allowed;}
       <button id="rptModeBtn1" class="btn btn-save btn-sm" onclick="switchReportMode('monthly')">📅 Monthly</button>
       <button id="rptModeBtn2" class="btn btn-clear btn-sm" onclick="switchReportMode('worker')">👷 Worker Report</button>
       <button id="rptModeBtn3" class="btn btn-clear btn-sm" onclick="switchReportMode('remadv')">💳 Rem. Advance</button>
+      <button id="rptModeBtn4" class="btn btn-clear btn-sm" onclick="switchReportMode('kharcha')">💵 Mid Kharcha Sheet</button>
     </div>
     <div id="rptSec_monthly">
       <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;margin-bottom:14px;">
@@ -433,6 +455,14 @@ button:disabled{opacity:.5;cursor:not-allowed;}
       <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;"><button id="wrTabA" class="btn btn-sm btn-save" onclick="setWrTab('active')">✅ Kaam kar rahe</button><button id="wrTabL" class="btn btn-sm btn-clear" onclick="setWrTab('left')">🚪 Chhor gaye</button><input type="text" id="wrSearch" class="mini-in" placeholder="Naam / code..." oninput="renderWorkerReportList()"></div>
       <div id="wrList"></div><div id="wrDetail"></div>
     </div>
+    <div id="rptSec_kharcha" style="display:none;">
+      <div class="notice" style="display:block;margin-bottom:12px;">Jis mahine ka mid month kharcha dena hai woh mahina chunein. Sheet mein har worker, pichhle mahine ka kharcha, is mahine ab tak liya (tareekh ke saath) aur likhne ke liye khali khana hota hai.</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;margin-bottom:14px;">
+        <div class="field"><label>Kharcha ka mahina</label><input type="month" id="kh_month" onchange="renderKharchaSheet()"></div>
+        <button class="btn btn-gold btn-sm" onclick="printKharchaSheet()">👁️ View / PDF</button>
+      </div>
+      <div id="khSheet"></div>
+    </div>
     <div id="rptSec_remadv" style="display:none;">
       <input type="text" id="rptRemAdvSearch" class="mini-in" placeholder="🔍 Worker search..." style="margin-bottom:14px;" oninput="renderRemAdvOverview()">
       <div id="remAdvCards" class="report-cards"></div>
@@ -440,6 +470,13 @@ button:disabled{opacity:.5;cursor:not-allowed;}
   </div>
 
   <!-- WORKER MODAL (outside pages so it opens from anywhere) -->
+    <div id="pdfPreview" style="display:none;">
+      <div class="pv-bar"><div style="min-width:0;"><div id="pv_title" class="pv-title"></div><div id="pv_sub" class="pv-sub"></div></div>
+        <button class="pv-x" onclick="closePdfPreview()" aria-label="Band">✖</button></div>
+      <div class="pv-zoom"><button class="btn btn-clear btn-sm" onclick="pvZoom(-1)">➖ Chota</button><span id="pv_z">100%</span><button class="btn btn-clear btn-sm" onclick="pvZoom(1)">➕ Bara</button></div>
+      <div id="pv_pages"></div>
+      <div class="pv-actions"><button class="btn btn-gold" onclick="pdfPreviewAction('download')">📥 Download</button><button class="btn btn-save" onclick="pdfPreviewAction('share')">📤 Share / WhatsApp</button><button class="btn btn-clear" onclick="closePdfPreview()">✖ Band</button></div>
+    </div>
     <div id="quickAddModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:210;align-items:center;justify-content:center;padding:12px;">
       <div style="background:white;border-radius:18px;padding:20px;width:380px;max-width:96vw;box-shadow:0 20px 60px rgba(0,0,0,.3);">
         <h3 id="qa_title" style="font-family:'Playfair Display',serif;font-size:18px;margin-bottom:6px;color:var(--navy);"></h3>
@@ -601,7 +638,7 @@ button:disabled{opacity:.5;cursor:not-allowed;}
       <div style="font-size:11px;color:var(--slate);margin-top:8px;line-height:1.7;">
         ✅ <b>IndexedDB</b> — Permanent storage<br>
         ✅ <b>localStorage</b> — Backup layer<br>
-        ✅ <b>No Google, No Cloud, No CDN</b> — 100% offline (libraries + fonts app ke andar)<br>ℹ️ FGI Salary System <b>v18.1</b>
+        ✅ <b>No Google, No Cloud, No CDN</b> — 100% offline (libraries + fonts app ke andar)<br>ℹ️ FGI Salary System <b>v18.2</b>
       </div>
     </div>
 
@@ -1337,8 +1374,8 @@ function renderCalcTable(){
 //  REPORTS
 // ============================================================
 function switchReportMode(mode){
-  ['monthly','worker','remadv'].forEach((m,i)=>{el('rptSec_'+m).style.display=m===mode?'':'none';el('rptModeBtn'+(i+1)).className='btn btn-sm '+(m===mode?'btn-save':'btn-clear');});
-  if(mode==='worker')renderWorkerReportList();if(mode==='remadv')renderRemAdvOverview();if(mode==='monthly')loadReport();
+  ['monthly','worker','remadv','kharcha'].forEach((m,i)=>{el('rptSec_'+m).style.display=m===mode?'':'none';el('rptModeBtn'+(i+1)).className='btn btn-sm '+(m===mode?'btn-save':'btn-clear');});
+  if(mode==='worker')renderWorkerReportList();if(mode==='remadv')renderRemAdvOverview();if(mode==='monthly')loadReport();if(mode==='kharcha'){if(!el('kh_month').value)el('kh_month').value=kharchaDefaultMonth();renderKharchaSheet();}
 }
 function initReport(){if(!el('rpt_month').value)el('rpt_month').value=defaultSalaryMonth();loadReport();}
 function defaultSalaryMonth(){const d=new Date().getDate();return d<=15?prevMonth(thisMonth()):thisMonth();}
@@ -1448,7 +1485,80 @@ function pdfFooter(doc,left,right){
 function signLines(doc,y,labels){const W=doc.internal.pageSize.getWidth(),H=doc.internal.pageSize.getHeight();if(y>H-32){doc.addPage();y=30;}y+=14;doc.setLineWidth(0.3);doc.setFont('helvetica','normal');doc.setFontSize(8.5);
   doc.line(12,y,62,y);doc.text(labels[0],37,y+4,{align:'center'});doc.line(W-62,y,W-12,y);doc.text(labels[1],W-37,y+4,{align:'center'});}
 function newPDF(orientation){const {jsPDF}=window.jspdf;return new jsPDF({orientation,unit:'mm',format:'a4'});}
-function savePDF(doc,title,fname){openFolderPicker(title,'PDF kahan save karein?',doc.output('blob'),fname);}
+// ---- PDF pehle VIEW (HD preview), phir Download / Share ----
+function savePDF(doc,title,fname){openPdfPreview(doc.output('blob'),title,fname);}
+let _pv=null,_pvZ=1,_pvPdf=null;
+function loadPdfJs(){return new Promise((res,rej)=>{if(window.pdfjsLib)return res(window.pdfjsLib);
+  const s=document.createElement('script');s.src='lib/pdf.min.js';
+  s.onload=()=>{try{pdfjsLib.GlobalWorkerOptions.workerSrc='lib/pdf.worker.min.js';res(pdfjsLib);}catch(e){rej(e);}};
+  s.onerror=()=>rej(new Error('preview library load nahi hui'));document.head.appendChild(s);});}
+async function openPdfPreview(blob,title,fname){
+  _pv={blob,title,fname};_pvZ=1;_pvPdf=null;
+  el('pv_title').textContent=title||'📄 PDF';el('pv_sub').textContent=fname;el('pv_z').textContent='100%';
+  el('pv_pages').innerHTML='<div class="pv-load">⏳ Preview ban raha hai...</div>';el('pdfPreview').style.display='flex';
+  try{const lib=await loadPdfJs();_pvPdf=await lib.getDocument({data:new Uint8Array(await blob.arrayBuffer())}).promise;
+    el('pv_sub').textContent=fname+'  ·  '+_pvPdf.numPages+' page'+(_pvPdf.numPages>1?'s':'');await pvRender();}
+  catch(e){el('pv_pages').innerHTML='<div class="pv-load">⚠️ Preview nahi ban saka ('+esc(e.message)+').<br>Aap phir bhi neeche se Download / Share kar sakte hain.</div>';}
+}
+async function pvRender(){
+  if(!_pvPdf||!_pv)return;const box=el('pv_pages');const pdf=_pvPdf;const tok=_pv;
+  const cw=Math.max(260,Math.min(box.clientWidth-16,1000))*_pvZ;const dpr=Math.min(3,Math.max(2,window.devicePixelRatio||1));
+  const frag=document.createDocumentFragment();const cs=[];
+  for(let i=1;i<=pdf.numPages;i++){const c=document.createElement('canvas');c.className='pv-page';frag.appendChild(c);cs.push(c);}
+  box.innerHTML='';box.appendChild(frag);
+  for(let i=1;i<=pdf.numPages;i++){if(_pv!==tok)return;
+    const pg=await pdf.getPage(i);const v1=pg.getViewport({scale:1});const sc=Math.min(cw*dpr,3200)/v1.width;const vp=pg.getViewport({scale:sc});
+    const c=cs[i-1];c.width=Math.round(vp.width);c.height=Math.round(vp.height);c.style.width=cw+'px';c.style.height=Math.round(cw*v1.height/v1.width)+'px';
+    await pg.render({canvasContext:c.getContext('2d'),viewport:vp}).promise;}
+}
+function pvZoom(d){_pvZ=Math.max(1,Math.min(3,_pvZ+d*0.5));el('pv_z').textContent=Math.round(_pvZ*100)+'%';pvRender();}
+function closePdfPreview(){el('pdfPreview').style.display='none';el('pv_pages').innerHTML='';_pv=null;_pvPdf=null;}
+function pdfPreviewAction(a){if(!_pv)return;_fpBlob=_pv.blob;_fpFilename=_pv.fname;folderPickerAction(a);}
+
+// ============================================================
+//  MID MONTH KHARCHA SHEET (print karke haath se likhne ke liye)
+// ============================================================
+function kharchaDefaultMonth(){return thisMonth();}
+function kharchaData(month){
+  const pm=prevMonth(month);
+  const ws=DB.workers.filter(w=>workerDueIn(w,month)).sort((a,b)=>orderOf(a.code)-orderOf(b.code));
+  const rows=ws.map(w=>{
+    const pe=DB.entries.find(e=>e.workerCode===w.code&&e.month===pm);
+    const last=pe?(+pe.midMonth||0):midFor(w.code,pm);
+    const recs=DB.midMonthRecords.filter(r=>r.workerCode===w.code&&r.month===month).sort((a,b)=>a.date<b.date?-1:a.date>b.date?1:a.id-b.id);
+    return {w,last:r0(last),recs,cur:r0(recs.reduce((s,r)=>s+(+r.midKharcha||0),0))};
+  });
+  return {month,pm,rows,tLast:rows.reduce((s,r)=>s+r.last,0),tCur:rows.reduce((s,r)=>s+r.cur,0)};
+}
+function shortD(d){if(!d)return '';const p=String(d).split('-');return p.length===3?p[2]+'-'+p[1]:d;}
+function renderKharchaSheet(){
+  const box=el('khSheet');const month=el('kh_month').value;if(!month){box.innerHTML='';return;}
+  const K=kharchaData(month);const pn=monthName(K.pm).split(' ')[0],cn=monthName(month).split(' ')[0];
+  if(!K.rows.length){box.innerHTML='<div class="notice" style="display:block;">Is mahine koi worker kaam par nahi.</div>';return;}
+  box.innerHTML='<div class="wr-scroll"><table class="kh-tbl"><thead><tr><th>Sr</th><th>Code</th><th>Worker</th><th>'+esc(pn)+' Kharcha</th><th>'+esc(cn)+' ab tak liya</th><th>'+esc(cn)+' Mid Kharcha</th><th>Dastakhat</th></tr></thead><tbody>'+
+    K.rows.map((r,i)=>'<tr><td>'+(i+1)+'</td><td>'+esc(r.w.code)+'</td><td class="l"><b>'+esc(r.w.name)+'</b></td><td>'+(r.last?fmt(r.last):'—')+'</td><td class="det">'+
+      (r.recs.length?r.recs.map(x=>esc(shortD(x.date))+' &nbsp; '+fmt(x.midKharcha)).join('<br>')+'<br><b>Total: '+fmt(r.cur)+'</b>':'')+'</td><td></td><td></td></tr>').join('')+
+    '</tbody><tfoot><tr><td colspan="3" class="l">TOTAL ('+K.rows.length+' workers)</td><td>'+fmt(K.tLast)+'</td><td>'+(K.tCur?fmt(K.tCur):'')+'</td><td></td><td></td></tr></tfoot></table></div>';
+}
+function printKharchaSheet(){
+  const month=el('kh_month').value;if(!month){showToast('⚠️ Mahina chunein');return;}
+  const K=kharchaData(month);if(!K.rows.length){showToast('⚠️ Is mahine koi worker nahi');return;}
+  const pn=monthName(K.pm),cn=monthName(month);const title='MID MONTH KHARCHA SHEET  ·  '+cn.toUpperCase();
+  const doc=newPDF('landscape');const y=pdfHeader(doc,title,'Printed: '+fmtDate(todayStr())+'   ·   '+K.rows.length+' workers');
+  const body=K.rows.map((r,i)=>[i+1,r.w.code,r.w.name,r.last?fmt(r.last):'—',
+    r.recs.length?r.recs.map(x=>shortD(x.date)+'   Rs. '+fmt(x.midKharcha)).join('\n'):'',r.recs.length?fmt(r.cur):'','','']);
+  doc.autoTable({startY:y+1,margin:{top:30,left:10,right:10,bottom:14},theme:'grid',
+    head:[['Sr','Code','Worker Name',pn+'\nKharcha',cn+' — ab tak liya\n(tareekh · raqam)',cn+'\nab tak Total',cn+'\nMid Kharcha',"Dastakhat"]],
+    body,foot:[['','','TOTAL ('+K.rows.length+')',fmt(K.tLast),'',K.tCur?fmt(K.tCur):'','','']],
+    styles:Object.assign({fontSize:10.5,halign:'center',valign:'middle',font:'helvetica',minCellHeight:12},BW.body,{cellPadding:2.2}),
+    headStyles:Object.assign({fontSize:9.5,valign:'middle'},BW.head),footStyles:Object.assign({fontSize:10.5,halign:'center'},BW.foot),
+    columnStyles:{0:{cellWidth:11},1:{cellWidth:19},2:{cellWidth:52,halign:'left',fontStyle:'bold',fontSize:11.5},3:{cellWidth:28},
+      4:{cellWidth:62,halign:'left',fontSize:9.5},5:{cellWidth:28,fontStyle:'bold'},6:{cellWidth:45},7:{cellWidth:32}},
+    rowPageBreak:'avoid',showHead:'everyPage',showFoot:'lastPage'});
+  signLines(doc,doc.lastAutoTable.finalY-2,['Prepared By','Manager / Owner']);
+  pdfHeadersAllPages(doc,title);pdfFooter(doc);
+  savePDF(doc,'💵 Mid Kharcha Sheet — '+cn,'FGI_Mid_Kharcha_'+month+'.pdf');
+}
 
 function printAllWorkers(){
   const month=el('rpt_month').value;const entries=monthEntries(month);

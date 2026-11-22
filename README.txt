@@ -1,15 +1,22 @@
-FGI SALARY SYSTEM v18.1 — README
+FGI SALARY SYSTEM v18.2 — README
 ================================
 Faisal Goraya Industry, Ali Pur Chattha | Tayyar: 22-11-2026 (v18: 20-11-2026)
 Repo: github.com/qaiisar-maker/fgi-salary (GitHub Pages)
 
 1. ZIP MEIN KYA HAI
   index.html   poori app
-  sw.js        service worker (CACHE 'fgi-salary-v18.1')
+  sw.js        service worker (CACHE 'fgi-salary-v18.2')
   manifest.json + icons/   asli install (PNG icons)
   lib/         jsPDF, autotable, html2canvas (koi CDN nahi)
   fonts/       Nunito + Playfair Display
-  README.txt, FGI Salary v18.1 Test Report.txt
+  README.txt, FGI Salary v18.2 Test Report.txt
+
+v18.2 MEIN NAYA (22-11-2026)
+  - Har PDF pehle View (HD preview + zoom), phir Download / Share.
+  - Reports > "Mid Kharcha Sheet" (print karke kharcha likhne ke liye).
+  - Upload: index.html, sw.js, README.txt, Test Report, aur lib/ folder mein 2 NAYI
+    files: pdf.min.js aur pdf.worker.min.js (zaroor daalein, warna preview nahi chale ga).
+    Purana "FGI Salary v18.1 Test Report.txt" delete kar dein.
 
 v18.1 MEIN NAYA (22-11-2026)
   - Salary entry Mid Month kharcha aur Advance ke saath khud update hoti hai — pehle,
